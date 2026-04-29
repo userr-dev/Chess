@@ -1,0 +1,118 @@
+##########
+# C# / .NET
+##########
+ 
+# Build results
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+ 
+# NuGet packages
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+!**/packages/repositories.config
+*.lock.json
+ 
+# MSBuild cache
+project.lock.json
+project.fragment.lock.json
+artifacts/
+ 
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+ 
+# Rider / JetBrains
+.idea/
+*.sln.iml
+ 
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+ 
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+ 
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+TestResults/
+*.trx
+*.coveragexml
+coverage*/
+*.coverage
+ 
+# Publish output
+publish/
+PublishProfiles/
+**/Properties/PublishProfiles/
+ 
+# Entity Framework migrations (keep tracked, but ignore temp files)
+*.dbmdl
+*.jfm
+ 
+# Roslyn cache
+*.aps
+ 
+# Windows-specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+ 
+# macOS-specific
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ 
+# Linux-specific
+*~
+ 
+# Secrets & config overrides (never commit these)
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+secrets.json
+*.pfx
+*.p12
+*.key
+ 
+# Docker
+docker-compose.override.yml
+ 
+# Generated code / scaffolding
+ScaffoldingReadMe.txt
+ 
+# MSTest
+*.TestAdapter.dll
+*.testlog
+ 
+# BenchmarkDotNet
+BenchmarkDotNet.Artifacts/
+ 
+# StyleCop
+StyleCop.Cache
+ 
+# Misc
+*.pidb
+*.svclog
+*.scc
+ 
