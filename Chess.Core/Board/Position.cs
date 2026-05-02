@@ -47,4 +47,68 @@ public readonly partial struct Position
         
         return new Position(column, row - 1);
     }
+
+    public static bool TryMoveUp(ref Position position)
+    {
+        if (position.Row == 7) return false;
+
+        position = Create(position.Column, position.Row + 1);
+        return true;
+    }
+
+    public static bool TryMoveDown(ref Position position)
+    {
+        if (position.Row == 0) return false;
+        
+        position = Create(position.Column, position.Row - 1);
+        return true;
+    }
+
+    public static bool TryMoveLeft(ref Position position)
+    {
+        if (position.Column == Column.A) return false;
+
+        position = Create(position.Column - 1, position.Row);
+        return true;
+    }
+
+    public static bool TryMoveRight(ref Position position)
+    {
+        if (position.Column == Column.H) return false;
+
+        position = Create(position.Column + 1, position.Row);
+        return true;
+    }
+
+    public static bool TryMoveLeftUp(ref Position position)
+    {
+        if (position.Column == Column.A || position.Row == 7) return false;
+
+        position = Create(position.Column - 1, position.Row + 1);
+        return true;
+    }
+
+    public static bool TryMoveLeftDown(ref Position position)
+    {
+        if (position.Column == Column.A || position.Row == 0) return false;
+
+        position = Create(position.Column - 1, position.Row - 1);
+        return true;
+    }
+
+    public static bool TryMoveRightUp(ref Position position)
+    {
+        if (position.Column == Column.H || position.Row == 7) return false;
+
+        position = Create(position.Column + 1, position.Row + 1);
+        return true;
+    }
+
+    public static bool TryMoveRightDown(ref Position position)
+    {
+        if (position.Column == Column.H || position.Row == 0) return false;
+        
+        position = Create(position.Column + 1, position.Row - 1);
+        return true;
+    }
 }
