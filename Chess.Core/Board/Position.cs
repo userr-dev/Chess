@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace Chess.Core.Board;
 
-public readonly partial struct Position
+public readonly partial record struct Position
 {
     private const string PositionFormat = "^[A-Ha-h][1-8]$";
     
@@ -48,67 +48,42 @@ public readonly partial struct Position
         return new Position(column, row - 1);
     }
 
-    public static bool TryMoveUp(ref Position position)
+    private static bool TryMoveVertical(ref Position position, int direction)
     {
-        if (position.Row == 7) return false;
+        var newRow = position.Row + direction;
+        if (newRow is < 0 or > 7) return false;
 
-        position = Create(position.Column, position.Row + 1);
+        position = Create(position.Column, newRow);
         return true;
     }
 
-    public static bool TryMoveDown(ref Position position)
+    private static bool TryMoveHorizontal(ref Position position, int direction)
     {
-        if (position.Row == 0) return false;
-        
-        position = Create(position.Column, position.Row - 1);
+        var newColumn = (int)position.Column + direction;
+        if (newColumn is < 0 or > 7) return false;
+
+        position = Create((Column)newColumn, position.Row);
         return true;
     }
-
-    public static bool TryMoveLeft(ref Position position)
+    
+    public static bool TryMoveDiagonal(ref Position position, int columnOffset, int rowOffset)
     {
-        if (position.Column == Column.A) return false;
+        var newColumn = (int)position.Column + columnOffset;
+        var newRow = position.Row + rowOffset;
 
-        position = Create(position.Column - 1, position.Row);
+        if (newColumn is < 0 or > 7 || newRow is < 0 or > 7) return false;
+
+        position = Create((Column)newColumn, newRow);
         return true;
     }
+    
+    public static bool TryMoveUp(ref Position position) => TryMoveVertical(ref position, 1);
+    public static bool TryMoveDown(ref Position position) => TryMoveVertical(ref position, -1);
+    public static bool TryMoveLeft(ref Position position) => TryMoveHorizontal(ref position, -1);
+    public static bool TryMoveRight(ref Position position) => TryMoveHorizontal(ref position, 1);
 
-    public static bool TryMoveRight(ref Position position)
-    {
-        if (position.Column == Column.H) return false;
-
-        position = Create(position.Column + 1, position.Row);
-        return true;
-    }
-
-    public static bool TryMoveLeftUp(ref Position position)
-    {
-        if (position.Column == Column.A || position.Row == 7) return false;
-
-        position = Create(position.Column - 1, position.Row + 1);
-        return true;
-    }
-
-    public static bool TryMoveLeftDown(ref Position position)
-    {
-        if (position.Column == Column.A || position.Row == 0) return false;
-
-        position = Create(position.Column - 1, position.Row - 1);
-        return true;
-    }
-
-    public static bool TryMoveRightUp(ref Position position)
-    {
-        if (position.Column == Column.H || position.Row == 7) return false;
-
-        position = Create(position.Column + 1, position.Row + 1);
-        return true;
-    }
-
-    public static bool TryMoveRightDown(ref Position position)
-    {
-        if (position.Column == Column.H || position.Row == 0) return false;
-        
-        position = Create(position.Column + 1, position.Row - 1);
-        return true;
-    }
+    public static bool TryMoveLeftUp(ref Position position) => TryMoveDiagonal(ref position, -1, 1);
+    public static bool TryMoveLeftDown(ref Position position) => TryMoveDiagonal(ref position, -1, -1);
+    public static bool TryMoveRightUp(ref Position position) => TryMoveDiagonal(ref position, 1, 1);
+    public static bool TryMoveRightDown(ref Position position) => TryMoveDiagonal(ref position, 1, -1);
 }
