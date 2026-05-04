@@ -4,7 +4,8 @@ namespace Chess.Core.Pieces.Interfaces;
 
 public interface IPiece
 {
-    int Id { get; }
     Color Color { get; }
     Position Position { get; set; }
+
+    void GetAvailableMoves(ChessBoard chessBoard, out List<Square> possibleMoves, out List<Square> possibleAttacks);
 }

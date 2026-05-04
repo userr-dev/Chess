@@ -48,25 +48,7 @@ public readonly partial record struct Position
         return new Position(column, row - 1);
     }
 
-    private static bool TryMoveVertical(ref Position position, int direction)
-    {
-        var newRow = position.Row + direction;
-        if (newRow is < 0 or > 7) return false;
-
-        position = Create(position.Column, newRow);
-        return true;
-    }
-
-    private static bool TryMoveHorizontal(ref Position position, int direction)
-    {
-        var newColumn = (int)position.Column + direction;
-        if (newColumn is < 0 or > 7) return false;
-
-        position = Create((Column)newColumn, position.Row);
-        return true;
-    }
-    
-    public static bool TryMoveDiagonal(ref Position position, int columnOffset, int rowOffset)
+    public static bool TryMove(ref Position position, int columnOffset, int rowOffset)
     {
         var newColumn = (int)position.Column + columnOffset;
         var newRow = position.Row + rowOffset;
@@ -77,13 +59,13 @@ public readonly partial record struct Position
         return true;
     }
     
-    public static bool TryMoveUp(ref Position position) => TryMoveVertical(ref position, 1);
-    public static bool TryMoveDown(ref Position position) => TryMoveVertical(ref position, -1);
-    public static bool TryMoveLeft(ref Position position) => TryMoveHorizontal(ref position, -1);
-    public static bool TryMoveRight(ref Position position) => TryMoveHorizontal(ref position, 1);
+    public static bool TryMoveUp(ref Position position) => TryMove(ref position, 0, 1);
+    public static bool TryMoveDown(ref Position position) => TryMove(ref position, 0, -1);
+    public static bool TryMoveLeft(ref Position position) => TryMove(ref position, 0, -1);
+    public static bool TryMoveRight(ref Position position) => TryMove(ref position, 0, 1);
 
-    public static bool TryMoveLeftUp(ref Position position) => TryMoveDiagonal(ref position, -1, 1);
-    public static bool TryMoveLeftDown(ref Position position) => TryMoveDiagonal(ref position, -1, -1);
-    public static bool TryMoveRightUp(ref Position position) => TryMoveDiagonal(ref position, 1, 1);
-    public static bool TryMoveRightDown(ref Position position) => TryMoveDiagonal(ref position, 1, -1);
+    public static bool TryMoveLeftUp(ref Position position) => TryMove(ref position, -1, 1);
+    public static bool TryMoveLeftDown(ref Position position) => TryMove(ref position, -1, -1);
+    public static bool TryMoveRightUp(ref Position position) => TryMove(ref position, 1, 1);
+    public static bool TryMoveRightDown(ref Position position) => TryMove(ref position, 1, -1);
 }

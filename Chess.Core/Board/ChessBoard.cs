@@ -26,10 +26,7 @@ public class ChessBoard
     {
         for (int row = 0; row < Rows; row++)
         {
-            _squares[row, (int)column] = new Square(startSquareColor, column, row)
-            {
-                IsPawnPromotion = row is 0 or Rows - 1
-            };
+            _squares[row, (int)column] = new Square(startSquareColor, Position.Create(column, row));
             startSquareColor = startSquareColor == Color.Dark ? Color.Light : Color.Dark;
         }
     }
