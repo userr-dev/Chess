@@ -61,8 +61,8 @@ public readonly partial record struct Position
     
     public static bool TryMoveUp(ref Position position) => TryMove(ref position, 0, 1);
     public static bool TryMoveDown(ref Position position) => TryMove(ref position, 0, -1);
-    public static bool TryMoveLeft(ref Position position) => TryMove(ref position, 0, -1);
-    public static bool TryMoveRight(ref Position position) => TryMove(ref position, 0, 1);
+    public static bool TryMoveLeft(ref Position position) => TryMove(ref position, -1, 0);
+    public static bool TryMoveRight(ref Position position) => TryMove(ref position, 1, 0);
 
     public static bool TryMoveLeftUp(ref Position position) => TryMove(ref position, -1, 1);
     public static bool TryMoveLeftDown(ref Position position) => TryMove(ref position, -1, -1);
