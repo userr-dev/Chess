@@ -7,5 +7,6 @@ public interface IPiece
     Color Color { get; }
     Position Position { get; set; }
 
-    void GetAvailableMoves(ChessBoard chessBoard, out List<Square> possibleMoves, out List<Square> possibleAttacks);
+    MoveResult GetAvailableMoves(ChessBoard chessBoard);
+    IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard);
 }

@@ -1,27 +1,19 @@
 using Chess.Core.Board;
-using Chess.Core.Pieces.Interfaces;
 
 namespace Chess.Core.Pieces;
 
-public class Bishop : IPiece
+public sealed class Bishop : SlidingPiece
 {
-    public Color Color { get; }
-    public Position Position { get; set; }
+    private static readonly MoveDirection[] Directions =
+        [Position.TryMoveLeftUp, Position.TryMoveLeftDown, Position.TryMoveRightUp, Position.TryMoveRightDown];
 
-    public Bishop(Color color, Position position)
+    public Bishop(Color color, Position position) : base(color, position)
     {
-        Color = color;
-        Position = position;
     }
-    
-    public void GetAvailableMoves(ChessBoard chessBoard, out List<Square> possibleMoves,
-        out List<Square> possibleAttacks)
-    {
-        possibleMoves = [];
-        possibleAttacks = [];
-        this.FindMovesAndAttacksInLine(chessBoard, Position.TryMoveLeftUp, possibleMoves, possibleAttacks);
-        this.FindMovesAndAttacksInLine(chessBoard, Position.TryMoveLeftDown, possibleMoves, possibleAttacks);
-        this.FindMovesAndAttacksInLine(chessBoard, Position.TryMoveRightUp, possibleMoves, possibleAttacks);
-        this.FindMovesAndAttacksInLine(chessBoard, Position.TryMoveRightDown, possibleMoves, possibleAttacks);
-    }
+
+    public override MoveResult GetAvailableMoves(ChessBoard chessBoard) =>
+        GetMovesAlongDirections(chessBoard, Directions);
+
+    public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
+        GetAttackedPositionsAlongDirections(chessBoard, Directions);
 }

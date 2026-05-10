@@ -3,28 +3,20 @@ using Chess.Core.Pieces.Interfaces;
 
 namespace Chess.Core.Pieces;
 
-public class Rook : IPiece
+public sealed class Rook : SlidingPiece, ICastlingPiece
 {
-    public Color Color { get; }
-    public Position Position { get; set; }
+    private static readonly MoveDirection[] Directions =
+        [Position.TryMoveUp, Position.TryMoveDown, Position.TryMoveLeft, Position.TryMoveRight];
     
-    public bool IsMoveable { get; set; }
-
-    public Rook(Color color, Position position)
+    public bool CanCastle { get; set; }
+    
+    public Rook(Color color, Position position) : base(color, position)
     {
-        Color = color;
-        Position = position;
     }
 
-    public void GetAvailableMoves(ChessBoard chessBoard, out List<Square> possibleMoves,
-        out List<Square> possibleAttacks)
-    {
-        possibleMoves = [];
-        possibleAttacks = [];
-        
-        this.FindMovesAndAttacksInLine(chessBoard, Position.TryMoveUp, possibleMoves, possibleAttacks);
-        this.FindMovesAndAttacksInLine(chessBoard, Position.TryMoveDown, possibleMoves, possibleAttacks);
-        this.FindMovesAndAttacksInLine(chessBoard, Position.TryMoveLeft, possibleMoves, possibleAttacks);
-        this.FindMovesAndAttacksInLine(chessBoard, Position.TryMoveRight, possibleMoves, possibleAttacks);
-    }
+    public override MoveResult GetAvailableMoves(ChessBoard chessBoard) =>
+        GetMovesAlongDirections(chessBoard, Directions);
+
+    public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
+        GetAttackedPositionsAlongDirections(chessBoard, Directions);
 }

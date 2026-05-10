@@ -1,40 +1,46 @@
 using Chess.Core.Board;
-using Chess.Core.Pieces.Interfaces;
 using KnightMoveOffset = (int Column, int Row);
 
 namespace Chess.Core.Pieces;
 
-public class Knight : IPiece
+public sealed class Knight : Piece
 {
-    private static readonly KnightMoveOffset[] MovesOffsets = [(-1,2),(1,2),(-1,-2),(1,-2),(-2,1),(-2,-1),(2,1),(2,-1)];
+    private static readonly KnightMoveOffset[] MoveOffsets =
+        [(-1, 2), (1, 2), (-1, -2), (1, -2), (-2, 1), (-2, -1), (2, 1), (2, -1)];
     
-    public Color Color { get; }
-    public Position Position { get; set; }
-
-    public Knight(Color color, Position position)
+    public Knight(Color color, Position position) : base(color, position)
     {
-        Color = color;
-        Position = position;
     }
     
-    public void GetAvailableMoves(ChessBoard chessBoard, out List<Square> possibleMoves,
-        out List<Square> possibleAttacks)
+    public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
     {
-        possibleMoves = [];
-        possibleAttacks = [];
-        FindMovesAndAttacks(chessBoard, possibleMoves, possibleAttacks);
+        List<Position> moves = [];
+        List<Position> attacks = [];
+        
+        foreach (var position in GetAttackedPositions(chessBoard))
+        {
+            if (!chessBoard[position].HasPiece)
+            {
+                moves.Add(position);
+            }
+            else if (!chessBoard[position].HasPieceOfColor(Color))
+            {
+                attacks.Add(position);
+            }
+        }
+
+        return new MoveResult(moves, attacks);
     }
 
-    private void FindMovesAndAttacks(ChessBoard chessBoard, List<Square> moves, List<Square> attacks)
+    public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard)
     {
-        foreach (var offset in MovesOffsets)
+        foreach (var offset in MoveOffsets)
         {
             var position = Position;
-            if (Position.TryMove(ref position, offset.Column, offset.Row) && !chessBoard[position].HasPiece) 
-                moves.Add(chessBoard[position]);
-            
-            if (position != Position && chessBoard[position].HasPiece && !chessBoard[position].HasPieceOfColor(Color))
-                attacks.Add(chessBoard[position]);
+            if (Position.TryMove(ref position, offset.Column, offset.Row))
+            {
+                yield return position;
+            }
         }
     }
 }

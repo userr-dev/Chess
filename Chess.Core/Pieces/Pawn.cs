@@ -3,52 +3,69 @@ using Chess.Core.Pieces.Interfaces;
 
 namespace Chess.Core.Pieces;
 
-public class Pawn : IPiece
+public sealed class Pawn : Piece, IPawn
 {
-    public Color Color { get; }
-    public Position Position { get; set; }
-
+    private static readonly MoveDirection[][] AttackDirections =
+    [
+        [Position.TryMoveLeftUp, Position.TryMoveRightUp],
+        [Position.TryMoveLeftDown, Position.TryMoveRightDown],
+    ];
+    
+    private static readonly MoveDirection[] ForwardDirections = [Position.TryMoveUp, Position.TryMoveDown];
+    
     public bool IsFirstMove { get; set; } = true; // private set
 
-    public Pawn(Color color, Position position)
+    public Pawn(Color color, Position position) : base(color, position)
     {
-        Color = color;
-        Position = position;
     }
     
-    public void GetAvailableMoves(ChessBoard chessBoard, out List<Square> possibleMoves, out List<Square> possibleAttacks)
+    public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
     {
-        possibleMoves = [..FindMoves(chessBoard)];
-        possibleAttacks = [..FindAttacks(chessBoard)];
+        return new MoveResult(
+            FindMoves(chessBoard), 
+            FindAttacks(chessBoard));
     }
-    
-    private IEnumerable<Square> FindMoves(ChessBoard chessBoard)
+
+    public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard)
     {
-        PositionMoveDelegate directionMove = Color == Color.Light ? Position.TryMoveUp : Position.TryMoveDown;
-        var position = Position;
-        
-        if (directionMove(ref position) && !chessBoard[position].HasPiece)
+        foreach (var moveDirection in AttackDirections[(int)Color])
         {
-            yield return chessBoard[position];
-            if (IsFirstMove && directionMove(ref position) && !chessBoard[position].HasPiece)
-                yield return chessBoard[position];
+            var position = Position;
+            if (moveDirection(ref position))
+            {
+                yield return position;
+            }
         }
     }
 
-    private IEnumerable<Square> FindAttacks(ChessBoard chessBoard)
+    private List<Position> FindMoves(ChessBoard chessBoard)
     {
-        var direction = Color == Color.Light ? 1 : -1;
-        int[] columnOffsets = [-1, 1];
+        var moves = new List<Position>(2);
+        var directionMove = ForwardDirections[(int)Color];
+        var position = Position;
+
+        if (!directionMove(ref position) || chessBoard[position].HasPiece) return moves;
         
-        foreach (var columnOffset in columnOffsets)
+        moves.Add(position);
+        if (IsFirstMove && directionMove(ref position) && !chessBoard[position].HasPiece)
+            moves.Add(position);
+
+        return moves;
+    }
+
+    private List<Position> FindAttacks(ChessBoard chessBoard)
+    {
+        var attacks = new List<Position>(2);
+
+        foreach (var position in GetAttackedPositions(chessBoard))
         {
-            var position = Position;
-            if (Position.TryMove(ref position, columnOffset, direction) 
-                && chessBoard[position].HasPiece 
+            if (chessBoard[position].HasPiece
                 && !chessBoard[position].HasPieceOfColor(Color))
             {
-                yield return chessBoard[position];
+                attacks.Add(position);
             }
         }
+
+        return attacks;
     }
 }
