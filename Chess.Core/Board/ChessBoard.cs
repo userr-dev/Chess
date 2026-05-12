@@ -1,3 +1,5 @@
+using Chess.Core.Pieces;
+
 namespace Chess.Core.Board;
 
 public class ChessBoard
@@ -6,30 +8,48 @@ public class ChessBoard
     
     private readonly Square[,] _squares;
 
-    private ChessBoard()
+    private readonly PiecesCollection _lightPieces;
+    private readonly PiecesCollection _darkPieces;
+
+    private ChessBoard(PiecesCollection lightPieces, PiecesCollection darkPieces)
     {
         _squares = new Square[Rows, Columns];
-        for (int col = 0; col < Columns; col++)
-        {
-            var startColor = col % 2 == 0 ? Color.Dark : Color.Light;
-            GenerateSquares((Column)col, startColor);
-        }
-    }
-
-    public Square this[Position position]
-    {
-        get => _squares[position.Row, (int)position.Column];
-        set => _squares[position.Row, (int)position.Column] = value;
+        GenerateSquares();
+        
+        _lightPieces = lightPieces;
+        _darkPieces = darkPieces;
+        
+        SetupPieces(_lightPieces);
+        SetupPieces(_darkPieces);
     }
     
-    private void GenerateSquares(Column column, Color startSquareColor)
+    public Square this[Position position] => _squares[position.Row, (int)position.Column];
+
+    private void SetupPieces(PiecesCollection piecesCollection)
     {
-        for (int row = 0; row < Rows; row++)
+        foreach (var piece in piecesCollection)
         {
-            _squares[row, (int)column] = new Square(startSquareColor, Position.Create(column, row));
-            startSquareColor = startSquareColor == Color.Dark ? Color.Light : Color.Dark;
+            this[piece.Position].Piece = piece;
         }
     }
 
-    public static ChessBoard Create() => new();
+    private void GenerateSquares()
+    {
+        for (int column = 0; column < Columns; column++)
+        {
+            for (int row = 0; row < Rows; row++)
+            {
+                var color = (column + row) % 2 == 0 ? Color.Dark : Color.Light;
+                _squares[row, column] = new Square(color, Position.Create((Column)column, row));
+            }
+        }
+    }
+
+    public IEnumerable<Piece> GetPieces(Color color)
+    {
+        return color == Color.Light ? _lightPieces : _darkPieces;
+    }
+    
+    public static ChessBoard Create(PiecesCollection lightPieces, PiecesCollection darkPieces) =>
+        new(lightPieces, darkPieces);
 }
