@@ -18,6 +18,8 @@ public readonly partial record struct Position
         Row = row;
     }
     
+    public bool IsPromotionRow(Color pawnColor) => pawnColor == Color.Light ? Row == 7 : Row == 0;
+    
     public override string ToString()
     {
         return $"{Column}{Row + 1}";

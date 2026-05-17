@@ -10,10 +10,18 @@ public class King : Piece, ICastlingPiece
         Position.TryMoveLeftUp, Position.TryMoveLeftDown, Position.TryMoveRightUp, Position.TryMoveRightDown,
         Position.TryMoveUp, Position.TryMoveDown, Position.TryMoveLeft, Position.TryMoveRight
     ];
-    public bool CanCastle { get; set; }
+
+    public bool CanCastle { get; private set; } = true;
     
     public King(Color color, Position position) : base(color, position)
     {
+    }
+
+    public override void Move(ChessBoard chessBoard, Position to)
+    {
+        CanCastle = false;
+        
+        base.Move(chessBoard, to);
     }
 
     public override MoveResult GetAvailableMoves(ChessBoard chessBoard)

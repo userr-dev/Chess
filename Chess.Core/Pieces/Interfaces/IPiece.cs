@@ -9,4 +9,6 @@ public interface IPiece
 
     MoveResult GetAvailableMoves(ChessBoard chessBoard);
     IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard);
+
+    void Move(ChessBoard chessBoard, Position to);
 }

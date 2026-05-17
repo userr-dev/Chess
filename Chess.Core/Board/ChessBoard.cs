@@ -2,7 +2,7 @@ using Chess.Core.Pieces;
 
 namespace Chess.Core.Board;
 
-public class ChessBoard
+public sealed class ChessBoard
 {
     private const int Rows = 8, Columns = 8;
     
@@ -48,6 +48,16 @@ public class ChessBoard
     public IEnumerable<Piece> GetPieces(Color color)
     {
         return color == Color.Light ? _lightPieces : _darkPieces;
+    }
+
+    public void PromotePawn(Pawn pawn, Piece piece)
+    {
+        var square = this[pawn.Position];
+        square.Piece = piece;
+
+        var collection = (PiecesCollection)GetPieces(pawn.Color);
+        collection.Remove(pawn);
+        collection.Add(piece);
     }
     
     public static ChessBoard Create(PiecesCollection lightPieces, PiecesCollection darkPieces) =>

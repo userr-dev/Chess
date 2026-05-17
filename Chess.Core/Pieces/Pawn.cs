@@ -13,12 +13,27 @@ public sealed class Pawn : Piece, IPawn
     
     private static readonly MoveDirection[] ForwardDirections = [Position.TryMoveUp, Position.TryMoveDown];
     
-    public bool IsFirstMove { get; set; } = true; // private set
+    public bool IsFirstMove { get; private set; } = true;
 
+    public event Action<PromotionEventArgs>? Promotion;
+    
     public Pawn(Color color, Position position) : base(color, position)
     {
     }
-    
+
+    public override void Move(ChessBoard chessBoard, Position to)
+    {
+        IsFirstMove = false;
+        
+        base.Move(chessBoard, to);
+
+        if (!to.IsPromotionRow(Color)) return;
+        
+        var args = new PromotionEventArgs(Color, to);
+        Promotion?.Invoke(args);
+        chessBoard.PromotePawn(this, args.PromotedPiece ?? new Queen(Color, to));
+    }
+
     public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
     {
         return new MoveResult(
@@ -67,5 +82,13 @@ public sealed class Pawn : Piece, IPawn
         }
 
         return attacks;
+    }
+    
+    public sealed class PromotionEventArgs(Color color, Position position) : EventArgs
+    {
+        public Color Color { get; } = color;
+        public Position Position { get; } = position;
+    
+        public Piece? PromotedPiece { get; set; }
     }
 }

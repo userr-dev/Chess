@@ -10,8 +10,6 @@ public class Square(Color color, Position position)
     public IPiece? Piece { get; set; }
     public bool HasPiece => Piece is not null;
 
-    public bool IsPromotionSquare => Position.Row is 0 or 7;
-
     public bool HasPieceOfColor(Color color)
     {
         return HasPiece && Piece!.Color == color;
@@ -19,6 +17,6 @@ public class Square(Color color, Position position)
 
     public override string ToString()
     {
-        return $"{Position} {Color} {IsPromotionSquare}";
+        return $"{Position} {Color}";
     }
 }

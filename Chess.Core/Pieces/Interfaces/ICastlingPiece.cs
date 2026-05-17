@@ -2,5 +2,5 @@ namespace Chess.Core.Pieces.Interfaces;
 
 public interface ICastlingPiece
 {
-    bool CanCastle { get; set; }
+    bool CanCastle { get; }
 }
