@@ -17,6 +17,6 @@ public class Square(Color color, Position position)
 
     public override string ToString()
     {
-        return $"{Position} {Color}";
+        return $"{Piece}";
     }
 }

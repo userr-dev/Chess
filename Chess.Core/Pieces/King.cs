@@ -20,8 +20,19 @@ public class King : Piece, ICastlingPiece
     public override void Move(ChessBoard chessBoard, Position to)
     {
         CanCastle = false;
+        var position = Position;
         
         base.Move(chessBoard, to);
+
+        var columnOffset = Math.Abs((int)to.Column - (int)position.Column);
+        if (columnOffset != 2) return;
+         
+        var rook = chessBoard.GetPieces(Color).OfType<Rook>().First(r =>
+            r.CanCastle && (to.Column < position.Column
+                ? r.Position.Column < to.Column
+                : r.Position.Column > to.Column));
+        
+        chessBoard.Castling(this, rook);
     }
 
     public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
@@ -47,6 +58,12 @@ public class King : Piece, ICastlingPiece
             }
         }
 
+        if (CanCastle && !enemyAttacks.Contains(Position))
+        {
+            var castlingMoves = GetCastlingMove(chessBoard, enemyAttacks);
+            moves.AddRange(castlingMoves);
+        }
+        
         return new MoveResult(moves, attacks);
     }
 
@@ -58,5 +75,34 @@ public class King : Piece, ICastlingPiece
             if (!direction(ref position)) continue;
             yield return position;
         }
+    }
+
+    private IEnumerable<Position> GetCastlingMove(ChessBoard chessBoard, HashSet<Position> enemyAttackedPositions)
+    {
+        var rooks = chessBoard.GetPieces(Color).OfType<Rook>().Where(r => r.CanCastle);
+        
+        foreach (var rook in rooks)
+        {
+            MoveDirection direction = rook.Position.Column > Position.Column ? Position.TryMoveRight : Position.TryMoveLeft;
+            if (!CheckPossibleCastling(chessBoard, rook.Position, enemyAttackedPositions, direction)) continue;
+            
+            var columnOffset = rook.Position.Column > Position.Column ? 2 : -2;
+            yield return Position.Create(Position.Column + columnOffset, Position.Row);
+        }
+    }
+
+    private bool CheckPossibleCastling(ChessBoard chessBoard, Position rookPosition,
+        HashSet<Position> enemyAttackedPositions, MoveDirection direction)
+    {
+        var position = Position;
+        while (direction(ref position) && position != rookPosition)
+        {
+            if (chessBoard[position].HasPiece || enemyAttackedPositions.Contains(position))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

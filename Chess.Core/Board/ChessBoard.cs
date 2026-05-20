@@ -59,6 +59,15 @@ public sealed class ChessBoard
         collection.Remove(pawn);
         collection.Add(piece);
     }
+
+    public void Castling(King king, Rook rook)
+    {
+        var rookToPosition = king.Position.Column > rook.Position.Column
+            ? Position.Create(king.Position.Column + 1, king.Position.Row)
+            : Position.Create(king.Position.Column - 1, king.Position.Row);
+        
+        rook.Move(this, rookToPosition);
+    }
     
     public static ChessBoard Create(PiecesCollection lightPieces, PiecesCollection darkPieces) =>
         new(lightPieces, darkPieces);
