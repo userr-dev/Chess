@@ -1,4 +1,5 @@
 using Chess.Core.Board;
+using Chess.Core.Pieces.Interfaces;
 
 namespace Chess.Core.Pieces;
 
@@ -9,7 +10,7 @@ public abstract class SlidingPiece : Piece
     }
 
     protected IEnumerable<Position> GetAttackedPositionsAlongDirections(ChessBoard chessBoard,
-        MoveDirection[] directions)
+        IEnumerable<MoveDirection> directions)
     {
         foreach (var direction in directions)
         {
@@ -27,7 +28,9 @@ public abstract class SlidingPiece : Piece
         List<Position> moves = [];
         List<Position> attacks = [];
 
-        foreach (var position in GetAttackedPositionsAlongDirections(chessBoard, directions))
+        var allowedDirections = IsPinned ? directions.Intersect(AllowedDirections!) : directions;
+        
+        foreach (var position in GetAttackedPositionsAlongDirections(chessBoard, allowedDirections))
         {
             if (!chessBoard[position].HasPiece)
             {
@@ -41,4 +44,29 @@ public abstract class SlidingPiece : Piece
 
         return new MoveResult(moves, attacks);
     }
+
+    protected void FindPinnedPieceAlongDirections(ChessBoard chessBoard, MoveDirection[] directions, King enemyKing)
+    {
+        foreach (var direction in directions)
+        {
+            IPiece? candidate = null;
+            var position = Position;
+            while (direction(ref position))
+            {
+                var square = chessBoard[position];
+
+                if (square.Piece == enemyKing)
+                {
+                    candidate?.AllowedDirections = MoveDirection.GetAxisDirections(direction);
+                    break;
+                }
+
+                if (square.HasPieceOfColor(Color)) break;
+                if (square.HasPiece && candidate is not null) break;
+                candidate ??= square.Piece;
+            }
+        }
+    }
+
+    public abstract void FindPinnedPiece(ChessBoard chessBoard, King enemyKing);
 }

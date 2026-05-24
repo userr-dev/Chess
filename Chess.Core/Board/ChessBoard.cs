@@ -50,6 +50,14 @@ public sealed class ChessBoard
         return color == Color.Light ? _lightPieces : _darkPieces;
     }
 
+    public void MovePiece(Piece piece, Position to)
+    {
+        this[piece.Position].Piece = null;
+        this[to].Piece = piece;
+        RecalculatePins(piece.Color);
+        RecalculatePins(piece.Color.Opposite());
+    }
+    
     public void PromotePawn(Pawn pawn, Piece piece)
     {
         var square = this[pawn.Position];
@@ -67,6 +75,20 @@ public sealed class ChessBoard
             : Position.Create(king.Position.Column - 1, king.Position.Row);
         
         rook.Move(this, rookToPosition);
+    }
+
+    private void RecalculatePins(Color color)
+    {
+        foreach (var piece in GetPieces(color))
+            piece.AllowedDirections = null;
+
+        var king = GetPieces(color).OfType<King>().FirstOrDefault();
+        if (king is null) return;
+        
+        var enemyColor = color.Opposite();
+
+        foreach (var slider in GetPieces(enemyColor).OfType<SlidingPiece>())
+            slider.FindPinnedPiece(this, king);
     }
     
     public static ChessBoard Create(PiecesCollection lightPieces, PiecesCollection darkPieces) =>

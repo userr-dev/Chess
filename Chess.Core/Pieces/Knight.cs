@@ -16,6 +16,8 @@ public sealed class Knight : Piece
     {
         List<Position> moves = [];
         List<Position> attacks = [];
+
+        if (IsPinned) return new MoveResult(moves, attacks);
         
         foreach (var position in GetAttackedPositions(chessBoard))
         {

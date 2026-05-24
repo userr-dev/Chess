@@ -41,9 +41,12 @@ public sealed class Pawn : Piece, IPawn
             FindAttacks(chessBoard));
     }
 
-    public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard)
+    public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
+        GetAttackedPositions(AttackDirections[(int)Color]);
+
+    private IEnumerable<Position> GetAttackedPositions(IEnumerable<MoveDirection> directions)
     {
-        foreach (var moveDirection in AttackDirections[(int)Color])
+        foreach (var moveDirection in directions)
         {
             var position = Position;
             if (moveDirection(ref position))
@@ -59,6 +62,8 @@ public sealed class Pawn : Piece, IPawn
         var directionMove = ForwardDirections[(int)Color];
         var position = Position;
 
+        if (IsPinned && !AllowedDirections!.Contains(directionMove)) return moves;
+        
         if (!directionMove(ref position) || chessBoard[position].HasPiece) return moves;
         
         moves.Add(position);
@@ -72,7 +77,11 @@ public sealed class Pawn : Piece, IPawn
     {
         var attacks = new List<Position>(2);
 
-        foreach (var position in GetAttackedPositions(chessBoard))
+        var attackDirections = IsPinned
+            ? AttackDirections[(int)Color].Intersect(AllowedDirections!)
+            : AttackDirections[(int)Color];
+        
+        foreach (var position in GetAttackedPositions(attackDirections))
         {
             if (chessBoard[position].HasPiece
                 && !chessBoard[position].HasPieceOfColor(Color))

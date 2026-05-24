@@ -40,7 +40,7 @@ public class King : Piece, ICastlingPiece
         List<Position> moves = [];
         List<Position> attacks = [];
         
-        var enemyAttacks = chessBoard.GetPieces(Color == Color.Light ? Color.Dark : Color.Light)
+        var enemyAttacks = chessBoard.GetPieces(Color.Opposite())
             .SelectMany(p => p.GetAttackedPositions(chessBoard))
             .ToHashSet();
 

@@ -26,4 +26,7 @@ public sealed class Rook : SlidingPiece, ICastlingPiece
 
     public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
         GetAttackedPositionsAlongDirections(chessBoard, Directions);
+
+    public override void FindPinnedPiece(ChessBoard chessBoard, King enemyKing) =>
+        FindPinnedPieceAlongDirections(chessBoard, Directions, enemyKing);
 }
