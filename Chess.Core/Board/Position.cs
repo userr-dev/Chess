@@ -52,12 +52,12 @@ public readonly partial record struct Position
 
     public static bool TryMove(ref Position position, int columnOffset, int rowOffset)
     {
-        var newColumn = (int)position.Column + columnOffset;
+        var isColumnShifted = Column.TryShift(position.Column, columnOffset, out var newColumn);
         var newRow = position.Row + rowOffset;
 
-        if (newColumn is < 0 or > 7 || newRow is < 0 or > 7) return false;
+        if (!isColumnShifted || newRow is < 0 or > 7) return false;
 
-        position = Create((Column)newColumn, newRow);
+        position = Create(newColumn, newRow);
         return true;
     }
     

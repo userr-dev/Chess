@@ -3,7 +3,7 @@ using Chess.Core.Pieces.Interfaces;
 
 namespace Chess.Core.Pieces;
 
-public class King : Piece, ICastlingPiece
+public sealed class King : Piece, ICastlingPiece
 {
     private static readonly MoveDirection[] Directions =
     [
@@ -24,13 +24,13 @@ public class King : Piece, ICastlingPiece
         
         base.Move(chessBoard, to);
 
-        var columnOffset = Math.Abs((int)to.Column - (int)position.Column);
+        var columnOffset = to.Column.DistanceTo(position.Column);
         if (columnOffset != 2) return;
          
         var rook = chessBoard.GetPieces(Color).OfType<Rook>().First(r =>
             r.CanCastle && (to.Column < position.Column
-                ? r.Position.Column < to.Column
-                : r.Position.Column > to.Column));
+                ? r.Position.Column < position.Column
+                : r.Position.Column > position.Column));
         
         chessBoard.Castling(this, rook);
     }
@@ -87,7 +87,7 @@ public class King : Piece, ICastlingPiece
             if (!CheckPossibleCastling(chessBoard, rook.Position, enemyAttackedPositions, direction)) continue;
             
             var columnOffset = rook.Position.Column > Position.Column ? 2 : -2;
-            yield return Position.Create(Position.Column + columnOffset, Position.Row);
+            yield return Position.Create(Position.Column.Shift(columnOffset), Position.Row);
         }
     }
 

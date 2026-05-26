@@ -5,7 +5,7 @@ namespace Chess.Core.Pieces.Interfaces;
 public interface IPiece
 {
     Color Color { get; }
-    Position Position { get; set; }
+    Position Position { get; }
     
     MoveDirection[]?  AllowedDirections { get; set; }
     bool IsPinned { get; }

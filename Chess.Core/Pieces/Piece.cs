@@ -6,7 +6,7 @@ namespace Chess.Core.Pieces;
 public abstract class Piece : IPiece
 {
     public Color Color { get; }
-    public Position Position { get; set; }
+    public Position Position { get; private set; }
     public MoveDirection[]? AllowedDirections { get; set; }
     public bool IsPinned => AllowedDirections is not null;
 
