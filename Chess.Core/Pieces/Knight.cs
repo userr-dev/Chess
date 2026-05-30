@@ -25,7 +25,7 @@ public sealed class Knight : Piece
             {
                 moves.Add(position);
             }
-            else if (!chessBoard[position].HasPieceOfColor(Color))
+            else if (chessBoard[position].HasEnemyPiece(Color))
             {
                 attacks.Add(position);
             }

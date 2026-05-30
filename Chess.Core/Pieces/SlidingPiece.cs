@@ -36,7 +36,7 @@ public abstract class SlidingPiece : Piece
             {
                 moves.Add(position);
             }
-            else if (!chessBoard[position].HasPieceOfColor(Color))
+            else if (chessBoard[position].HasEnemyPiece(Color))
             {
                 attacks.Add(position);
             }
@@ -61,7 +61,7 @@ public abstract class SlidingPiece : Piece
                     break;
                 }
 
-                if (square.HasPieceOfColor(Color)) break;
+                if (square.HasFriendlyPiece(Color)) break;
                 if (square.HasPiece && candidate is not null) break;
                 candidate ??= square.Piece;
             }

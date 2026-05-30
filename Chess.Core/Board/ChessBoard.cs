@@ -11,6 +11,9 @@ public sealed class ChessBoard
     private readonly PiecesCollection _lightPieces;
     private readonly PiecesCollection _darkPieces;
 
+    private readonly CheckState _lightCheckState = new();
+    private readonly CheckState _darkCheckState = new();
+    
     private ChessBoard(PiecesCollection lightPieces, PiecesCollection darkPieces)
     {
         _squares = new Square[Rows, Columns];
@@ -50,12 +53,19 @@ public sealed class ChessBoard
         return color == Color.Light ? _lightPieces : _darkPieces;
     }
 
+    public CheckState GetCheckState(Color color)
+    {
+        return color == Color.Light ? _lightCheckState : _darkCheckState;
+    }
+    
     public void MovePiece(Piece piece, Position to)
     {
         this[piece.Position].Piece = null;
         this[to].Piece = piece;
         RecalculatePins(piece.Color);
         RecalculatePins(piece.Color.Opposite());
+        
+        GetCheckState(piece.Color.Opposite()).Update(this, piece.Color);
     }
     
     public void PromotePawn(Pawn pawn, Piece piece)
@@ -70,13 +80,15 @@ public sealed class ChessBoard
 
     public void Castling(King king, Rook rook)
     {
-        var rookToPosition = king.Position.Column > rook.Position.Column
-            ? Position.Create(king.Position.Column + 1, king.Position.Row)
-            : Position.Create(king.Position.Column - 1, king.Position.Row);
-        
+        var rookNewColumn = king.Position.Column > rook.Position.Column
+            ? king.Position.Column.Shift(1)
+            : king.Position.Column.Shift(-1);
+
+        var rookToPosition = Position.Create(rookNewColumn, king.Position.Row);
+
         rook.Move(this, rookToPosition);
     }
-
+    
     private void RecalculatePins(Color color)
     {
         foreach (var piece in GetPieces(color))

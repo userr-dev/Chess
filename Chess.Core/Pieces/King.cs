@@ -52,7 +52,7 @@ public sealed class King : Piece, ICastlingPiece
             {
                 moves.Add(position);
             }
-            else if (!chessBoard[position].HasPieceOfColor(Color) && canMoved)
+            else if (chessBoard[position].HasEnemyPiece(Color) && canMoved)
             {
                 attacks.Add(position);
             }

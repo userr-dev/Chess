@@ -83,8 +83,7 @@ public sealed class Pawn : Piece, IPawn
         
         foreach (var position in GetAttackedPositions(attackDirections))
         {
-            if (chessBoard[position].HasPiece
-                && !chessBoard[position].HasPieceOfColor(Color))
+            if (chessBoard[position].HasEnemyPiece(Color))
             {
                 attacks.Add(position);
             }

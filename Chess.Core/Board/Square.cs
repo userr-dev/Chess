@@ -10,11 +10,21 @@ public class Square(Color color, Position position)
     public IPiece? Piece { get; set; }
     public bool HasPiece => Piece is not null;
 
-    public bool HasPieceOfColor(Color color)
+    private bool HasPieceOfColor(Color color)
     {
         return HasPiece && Piece!.Color == color;
     }
 
+    public bool HasFriendlyPiece(Color color)
+    {
+        return HasPieceOfColor(color);
+    }
+
+    public bool HasEnemyPiece(Color color)
+    {
+        return !HasPieceOfColor(color);
+    }
+    
     public override string ToString()
     {
         return $"{Piece}";

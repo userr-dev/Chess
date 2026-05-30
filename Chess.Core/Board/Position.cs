@@ -50,6 +50,17 @@ public readonly partial record struct Position
         return new Position(column, row - 1);
     }
 
+    public static bool IsInDirection(Position from, Position to, Position candidate)
+    {
+        var columnDelta = Math.Sign((int)to.Column - (int)from.Column);
+        var rowDelta = Math.Sign(to.Row - from.Row);
+        
+        var posColumnDelta = Math.Sign((int)candidate.Column - (int)from.Column);
+        var posRowDelta = Math.Sign(candidate.Row - from.Row);
+
+        return posColumnDelta == columnDelta && posRowDelta == rowDelta;
+    }
+    
     public static bool TryMove(ref Position position, int columnOffset, int rowOffset)
     {
         var isColumnShifted = Column.TryShift(position.Column, columnOffset, out var newColumn);
