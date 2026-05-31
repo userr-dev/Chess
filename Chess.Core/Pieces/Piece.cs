@@ -24,6 +24,7 @@ public abstract class Piece : IPiece
     {
         chessBoard.MovePiece(this, to);
         Position = to;
+        chessBoard.PieceMoved(this);
     }
 
     public override string ToString()

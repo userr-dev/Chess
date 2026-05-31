@@ -62,6 +62,10 @@ public sealed class ChessBoard
     {
         this[piece.Position].Piece = null;
         this[to].Piece = piece;
+    }
+
+    public void PieceMoved(Piece piece)
+    {
         RecalculatePins(piece.Color);
         RecalculatePins(piece.Color.Opposite());
         

@@ -50,15 +50,22 @@ public readonly partial record struct Position
         return new Position(column, row - 1);
     }
 
-    public static bool IsInDirection(Position from, Position to, Position candidate)
+    public static bool IsBetween(Position from, Position to, Position target)
     {
-        var columnDelta = Math.Sign((int)to.Column - (int)from.Column);
-        var rowDelta = Math.Sign(to.Row - from.Row);
-        
-        var posColumnDelta = Math.Sign((int)candidate.Column - (int)from.Column);
-        var posRowDelta = Math.Sign(candidate.Row - from.Row);
+        if (target == from || target == to) return true;
 
-        return posColumnDelta == columnDelta && posRowDelta == rowDelta;
+        var toFromColumnDelta = (int)to.Column - (int)from.Column;
+        var toFromRowDelta = to.Row - from.Row;
+        
+        var targetFromColumnDelta = (int)target.Column - (int)from.Column;
+        var targetFromRowDelta = target.Row - from.Row;
+
+        if (toFromColumnDelta * targetFromRowDelta != toFromRowDelta * targetFromColumnDelta) return false; // Collinear
+        
+        var dot = toFromColumnDelta * targetFromColumnDelta + toFromRowDelta * targetFromRowDelta; // Scalar Product
+        var lengthSqr = toFromColumnDelta * toFromColumnDelta + toFromRowDelta * toFromRowDelta;
+        
+        return dot >= 0 && dot <= lengthSqr;
     }
     
     public static bool TryMove(ref Position position, int columnOffset, int rowOffset)

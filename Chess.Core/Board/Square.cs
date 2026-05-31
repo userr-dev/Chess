@@ -22,7 +22,7 @@ public class Square(Color color, Position position)
 
     public bool HasEnemyPiece(Color color)
     {
-        return !HasPieceOfColor(color);
+        return HasPieceOfColor(color.Opposite());
     }
     
     public override string ToString()
