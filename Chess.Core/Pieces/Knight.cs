@@ -17,7 +17,9 @@ public sealed class Knight : Piece
         List<Position> moves = [];
         List<Position> attacks = [];
 
-        if (IsPinned) return new MoveResult(moves, attacks);
+        var checkState = chessBoard.GetCheckState(Color);
+        
+        if (IsPinned || checkState.IsDoubleChecked) return new MoveResult(moves, attacks);
         
         foreach (var position in GetAttackedPositions(chessBoard))
         {
@@ -31,7 +33,7 @@ public sealed class Knight : Piece
             }
         }
 
-        return new MoveResult(moves, attacks);
+        return ApplyCheckFilter(checkState, moves, attacks);
     }
 
     public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard)

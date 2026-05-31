@@ -28,6 +28,10 @@ public abstract class SlidingPiece : Piece
         List<Position> moves = [];
         List<Position> attacks = [];
 
+        var checkState = chessBoard.GetCheckState(Color);
+
+        if (checkState.IsDoubleChecked) return new MoveResult(moves, attacks);
+        
         var allowedDirections = IsPinned ? directions.Intersect(AllowedDirections!) : directions;
         
         foreach (var position in GetAttackedPositionsAlongDirections(chessBoard, allowedDirections))
@@ -42,7 +46,7 @@ public abstract class SlidingPiece : Piece
             }
         }
 
-        return new MoveResult(moves, attacks);
+        return ApplyCheckFilter(checkState, moves, attacks);
     }
 
     protected void FindPinnedPieceAlongDirections(ChessBoard chessBoard, MoveDirection[] directions, King enemyKing)

@@ -16,6 +16,18 @@ public abstract class Piece : IPiece
         Position = position;
     }
 
+    protected static MoveResult ApplyCheckFilter(CheckState checkState, List<Position> moves, List<Position> attacks)
+    {
+        if (!checkState.IsChecked)
+            return new MoveResult(moves, attacks);
+
+        var a = moves.Intersect(checkState.BlockingPositions).ToList();
+        
+        return new MoveResult(
+            a,
+            attacks.Where(p => p == checkState.Attackers[0].Position).ToList());
+    }
+    
     public abstract MoveResult GetAvailableMoves(ChessBoard chessBoard);
 
     public abstract IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard);

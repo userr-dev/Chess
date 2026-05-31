@@ -36,9 +36,14 @@ public sealed class Pawn : Piece, IPawn
 
     public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
     {
-        return new MoveResult(
-            FindMoves(chessBoard), 
-            FindAttacks(chessBoard));
+        var checkState = chessBoard.GetCheckState(Color);
+
+        if (checkState.IsDoubleChecked) return new MoveResult([], []);
+        
+        var moves = FindMoves(chessBoard);
+        var attacks = FindAttacks(chessBoard);
+
+        return ApplyCheckFilter(checkState, moves, attacks);
     }
 
     public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
