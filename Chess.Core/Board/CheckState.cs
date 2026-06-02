@@ -41,6 +41,6 @@ public class CheckState
         if (attacker is not SlidingPiece) return [];
 
         return attacker.GetAvailableMoves(chessBoard).Moves
-            .Where(p => Position.IsBetween(attacker.Position, enemyKing.Position, p));
+            .Where(p => Position.IsInDirection(attacker.Position, enemyKing.Position, p));
     }
 }

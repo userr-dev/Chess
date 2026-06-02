@@ -39,6 +39,9 @@ public sealed class King : Piece, ICastlingPiece
     {
         List<Position> moves = [];
         List<Position> attacks = [];
+
+        var checkState = chessBoard.GetCheckState(Color);
+        var isKingChecked = checkState.IsChecked || checkState.IsDoubleChecked;
         
         var enemyAttacks = chessBoard.GetPieces(Color.Opposite())
             .SelectMany(p => p.GetAttackedPositions(chessBoard))
@@ -58,7 +61,7 @@ public sealed class King : Piece, ICastlingPiece
             }
         }
 
-        if (CanCastle && !enemyAttacks.Contains(Position))
+        if (!isKingChecked && CanCastle && !enemyAttacks.Contains(Position))
         {
             var castlingMoves = GetCastlingMove(chessBoard, enemyAttacks);
             moves.AddRange(castlingMoves);

@@ -12,12 +12,15 @@ public abstract class SlidingPiece : Piece
     protected IEnumerable<Position> GetAttackedPositionsAlongDirections(ChessBoard chessBoard,
         IEnumerable<MoveDirection> directions)
     {
+        var enemyKing = chessBoard.GetPieces(Color.Opposite()).OfType<King>().First();
+        
         foreach (var direction in directions)
         {
             var position = Position;
             while (direction(ref position))
             {
                 yield return position;
+                if (chessBoard[position].HasPiece && chessBoard[position].Piece == enemyKing) continue;
                 if (chessBoard[position].HasPiece) break;
             }
         }

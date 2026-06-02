@@ -50,7 +50,7 @@ public readonly partial record struct Position
         return new Position(column, row - 1);
     }
 
-    public static bool IsBetween(Position from, Position to, Position target)
+    public static bool IsInDirection(Position from, Position to, Position target)
     {
         if (target == from || target == to) return true;
 
