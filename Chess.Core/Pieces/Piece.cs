@@ -1,9 +1,8 @@
 using Chess.Core.Board;
-using Chess.Core.Pieces.Interfaces;
 
 namespace Chess.Core.Pieces;
 
-public abstract class Piece : IPiece
+public abstract class Piece
 {
     public Color Color { get; }
     public Position Position { get; private set; }
@@ -20,11 +19,9 @@ public abstract class Piece : IPiece
     {
         if (!checkState.IsChecked)
             return new MoveResult(moves, attacks);
-
-        var a = moves.Intersect(checkState.BlockingPositions).ToList();
         
         return new MoveResult(
-            a,
+            moves.Intersect(checkState.BlockingPositions).ToList(),
             attacks.Where(p => p == checkState.Attackers[0].Position).ToList());
     }
     
@@ -35,10 +32,15 @@ public abstract class Piece : IPiece
     public virtual void Move(ChessBoard chessBoard, Position to)
     {
         chessBoard.MovePiece(this, to);
-        Position = to;
-        chessBoard.PieceMoved(this);
+        ChangePosition(to);
+        chessBoard.UpdateBoardState(Color);
     }
 
+    protected void ChangePosition(Position to)
+    {
+        Position = to;
+    }
+    
     public override string ToString()
     {
         return $"{GetType().Name} {Position}";

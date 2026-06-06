@@ -1,8 +1,3 @@
-using Chess.Core;
-using Chess.Core.Board;
-using Chess.Core.Pieces;
-using static Chess.Tests.Positions;
-
 namespace Chess.Tests.Pieces;
 
 public class QueenTests
@@ -298,170 +293,6 @@ public class QueenTests
         Assert.Empty(attacks);
     }
     
-    // GetAvailableMoves when friendly king checked
-    [Fact]
-    public void GetAvailableMoves_KingIsCheck_CanBlockWithQueen()
-    {
-        var lightKing = new King(Color.Light, E1);
-        var lightQueen = new Queen(Color.Light, D5);
-        var darkKing = new King(Color.Dark, A8);
-        var darkRook = new Rook(Color.Dark, E8);
-
-        var board = ChessBoard.Create([lightKing, lightQueen], [darkKing, darkRook]);
-        var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
-
-        var moves = lightQueen.GetAvailableMoves(board).Moves;
-        
-        Assert.Equal(3, moves.Count);
-    }
-
-    [Fact]
-    public void GetAvailableMoves_CanCaptureAttacker()
-    {
-        var lightKing = new King(Color.Light, E1);
-        var lightQueen = new Queen(Color.Light, B5);
-        var darkKing = new King(Color.Dark, A8);
-        var darkRook = new Rook(Color.Dark, E8);
-
-        var board = ChessBoard.Create([lightKing, lightQueen], [darkKing, darkRook]);
-        var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
-
-        var attacks = lightQueen.GetAvailableMoves(board).Attacks;
-
-        Assert.Single(attacks);
-        Assert.Contains(attacks, p => p == checkState.Attackers[0].Position);
-    }
-
-    [Fact]
-    public void GetAvailableMoves_WhenPinned_CannotBlockWithQueen()
-    {
-        var lightKing = new King(Color.Light, E4);
-        var lightQueen = new Queen(Color.Light, D5);
-        var darkKing = new King(Color.Dark, A8);
-        var darkRook = new Rook(Color.Dark, E8);
-        var darkBishop = new Bishop(Color.Dark, B7);
-        
-        var board = ChessBoard.Create([lightKing, lightQueen], [darkKing, darkRook, darkBishop]);
-        
-        darkBishop.FindPinnedPiece(board, lightKing);
-        
-        var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
-
-        var moves = lightQueen.GetAvailableMoves(board).Moves;
-        
-        Assert.True(lightQueen.IsPinned);
-        Assert.Empty(moves);
-    }
-
-    [Fact]
-    public void GetAvailableMoves_WhenPinned_CannotCaptureAttacker()
-    {
-        var lightKing = new King(Color.Light, E4);
-        var lightQueen = new Queen(Color.Light, D5);
-        var darkKing = new King(Color.Dark, A8);
-        var darkRook = new Rook(Color.Dark, E8);
-        var darkBishop = new Bishop(Color.Dark, B7);
-        
-        var board = ChessBoard.Create([lightKing, lightQueen], [darkKing, darkRook, darkBishop]);
-        
-        darkBishop.FindPinnedPiece(board, lightKing);
-        
-        var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
-
-        var attacks = lightQueen.GetAvailableMoves(board).Attacks;
-        
-        Assert.True(lightQueen.IsPinned);
-        Assert.Empty(attacks);
-    }
-
-    [Fact]
-    public void GetAvailableMoves_WhenFriendlyKingIsDoubleChecked_CannotMove()
-    {
-        var lightKing = new King(Color.Light, E4);
-        var lightQueen = new Queen(Color.Light, H5);
-        var darkKing = new King(Color.Dark, A8);
-        var darkRook = new Rook(Color.Dark, E8);
-        var darkBishop = new Bishop(Color.Dark, B7);
-        
-        var board = ChessBoard.Create([lightKing, lightQueen], [darkKing, darkRook, darkBishop]);
-        
-        darkBishop.FindPinnedPiece(board, lightKing);
-        
-        var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
-
-        var (moves, attacks) = lightQueen.GetAvailableMoves(board);
-        
-        Assert.True(checkState.IsDoubleChecked);
-        Assert.Empty(moves);
-        Assert.Empty(attacks);
-    }
-    
-    // FindPinnedPiece
-    [Fact]
-    public void FindPinnedPiece_PieceOnDiagonalLineToKing_IsPinned()
-    {
-        var lightKing = new King(Color.Light, H1);
-        var lightRook = new Rook(Color.Light, D5);
-        var darkQueen = new Queen(Color.Dark, A8);
-
-        var board = ChessBoard.Create([lightKing, lightRook], [darkQueen]);
-        
-        darkQueen.FindPinnedPiece(board, lightKing);
-        
-        Assert.True(lightRook.IsPinned);
-    }
-    
-    [Fact]
-    public void FindPinnedPiece_PieceOnVerticalLineToKing_IsPinned()
-    {
-        var lightKing = new King(Color.Light, E1);
-        var lightBishop = new Bishop(Color.Light, E4);
-        var darkQueen = new Queen(Color.Dark, E8);
-
-        var board = ChessBoard.Create([lightKing, lightBishop], [darkQueen]);
-        
-        darkQueen.FindPinnedPiece(board, lightKing);
-        
-        Assert.True(lightBishop.IsPinned);
-    }
-    
-    [Fact]
-    public void FindPinnedPiece_FriendlyPieceBlocksRayOnDiagonal_NothingIsPinned()
-    {
-        var lightKing = new King(Color.Light, H1);
-        var lightBishop = new Bishop(Color.Light, F3);
-        var lightRook = new Rook(Color.Light, E4);
-        var darkQueen = new Queen(Color.Dark, A8);
-
-        var board = ChessBoard.Create([lightKing, lightBishop, lightRook], [darkQueen]);
-        
-        darkQueen.FindPinnedPiece(board, lightKing);
-        
-        Assert.False(lightBishop.IsPinned);
-        Assert.False(lightRook.IsPinned);
-    }
-    
-    [Fact]
-    public void FindPinnedPiece_FriendlyPieceBlocksRayOnVertical_NothingIsPinned()
-    {
-        var lightKing = new King(Color.Light, E1);
-        var lightBishop = new Bishop(Color.Light, E4);
-        var lightRook = new Rook(Color.Light, E3);
-        var darkQueen = new Queen(Color.Dark, E8);
-
-        var board = ChessBoard.Create([lightKing, lightBishop, lightRook], [darkQueen]);
-        
-        darkQueen.FindPinnedPiece(board, lightKing);
-        
-        Assert.False(lightBishop.IsPinned);
-        Assert.False(lightRook.IsPinned);
-    }
-    
     [Fact]
     public void GetAvailableMoves_PinnedAlongSameDiagonal_CanMoveAndAttackAlongIt()
     {
@@ -471,8 +302,7 @@ public class QueenTests
         var darkQueen = new Queen(Color.Dark, F6);
 
         var board = ChessBoard.Create([lightKing, lightQueen], [darkKing, darkQueen]);
-        
-        darkQueen.FindPinnedPiece(board, lightKing);
+        board.UpdateBoardState(darkQueen.Color);
         
         var (moves, attacks) = lightQueen.GetAvailableMoves(board);
 
@@ -491,8 +321,7 @@ public class QueenTests
         var darkQueen = new Queen(Color.Dark, C6);
 
         var board = ChessBoard.Create([lightKing, lightQueen], [darkKing, darkQueen]);
-        
-        darkQueen.FindPinnedPiece(board, lightKing);
+        board.UpdateBoardState(darkQueen.Color);
         
         var (moves, attacks) = lightQueen.GetAvailableMoves(board);
 
@@ -500,5 +329,180 @@ public class QueenTests
         Assert.NotEmpty(attacks);
         Assert.Equal(3, moves.Count);
         Assert.Single(attacks);
+    }
+    
+    // GetAvailableMoves when friendly king checked
+    [Fact]
+    public void GetAvailableMoves_KingIsCheck_CanBlockWithQueen()
+    {
+        var lightKing = new King(Color.Light, E1);
+        var lightQueen = new Queen(Color.Light, D5);
+        var darkKing = new King(Color.Dark, A8);
+        var darkRook = new Rook(Color.Dark, E8);
+
+        var board = ChessBoard.Create([lightKing, lightQueen], [darkKing, darkRook]);
+        board.UpdateBoardState(darkRook.Color);
+
+        var moves = lightQueen.GetAvailableMoves(board).Moves;
+        
+        Assert.Equal(3, moves.Count);
+    }
+
+    [Fact]
+    public void GetAvailableMoves_CanCaptureAttacker()
+    {
+        var lightKing = new King(Color.Light, E1);
+        var lightQueen = new Queen(Color.Light, B5);
+        var darkKing = new King(Color.Dark, A8);
+        var darkRook = new Rook(Color.Dark, E8);
+
+        var board = ChessBoard.Create([lightKing, lightQueen], [darkKing, darkRook]);
+        board.UpdateBoardState(darkRook.Color);
+        var checkState = board.GetCheckState(lightKing.Color);
+
+        var attacks = lightQueen.GetAvailableMoves(board).Attacks;
+
+        Assert.Single(attacks);
+        Assert.Contains(attacks, p => p == checkState.Attackers[0].Position);
+    }
+
+    [Fact]
+    public void GetAvailableMoves_WhenPinned_CannotBlockWithQueen()
+    {
+        var lightKing = new King(Color.Light, E4);
+        var lightQueen = new Queen(Color.Light, D5);
+        var darkKing = new King(Color.Dark, A8);
+        var darkRook = new Rook(Color.Dark, E8);
+        var darkBishop = new Bishop(Color.Dark, B7);
+        
+        var board = ChessBoard.Create([lightKing, lightQueen], [darkKing, darkRook, darkBishop]);
+        board.UpdateBoardState(darkRook.Color);
+
+        var moves = lightQueen.GetAvailableMoves(board).Moves;
+        
+        Assert.True(lightQueen.IsPinned);
+        Assert.Empty(moves);
+    }
+
+    [Fact]
+    public void GetAvailableMoves_WhenPinned_CannotCaptureAttacker()
+    {
+        var lightKing = new King(Color.Light, E4);
+        var lightQueen = new Queen(Color.Light, D5);
+        var darkKing = new King(Color.Dark, A8);
+        var darkRook = new Rook(Color.Dark, E8);
+        var darkBishop = new Bishop(Color.Dark, B7);
+        
+        var board = ChessBoard.Create([lightKing, lightQueen], [darkKing, darkRook, darkBishop]);
+        board.UpdateBoardState(darkRook.Color);
+
+        var attacks = lightQueen.GetAvailableMoves(board).Attacks;
+        
+        Assert.True(lightQueen.IsPinned);
+        Assert.Empty(attacks);
+    }
+
+    [Fact]
+    public void GetAvailableMoves_WhenFriendlyKingIsDoubleChecked_CannotMove()
+    {
+        var lightKing = new King(Color.Light, E4);
+        var lightQueen = new Queen(Color.Light, H5);
+        var darkKing = new King(Color.Dark, A8);
+        var darkRook = new Rook(Color.Dark, E8);
+        var darkBishop = new Bishop(Color.Dark, B7);
+        
+        var board = ChessBoard.Create([lightKing, lightQueen], [darkKing, darkRook, darkBishop]);
+        board.UpdateBoardState(darkRook.Color);
+        
+        var checkState = board.GetCheckState(lightKing.Color);
+
+        var (moves, attacks) = lightQueen.GetAvailableMoves(board);
+        
+        Assert.True(checkState.IsDoubleChecked);
+        Assert.Empty(moves);
+        Assert.Empty(attacks);
+    }
+    
+    // FindPinnedPiece
+    [Fact]
+    public void FindPinnedPiece_PieceOnDiagonalLineToKing_IsPinned()
+    {
+        var lightKing = new King(Color.Light, H1);
+        var lightRook = new Rook(Color.Light, D5);
+        var darkQueen = new Queen(Color.Dark, A8);
+
+        var board = ChessBoard.Create([lightKing, lightRook], [darkQueen]);
+        board.UpdateBoardState(darkQueen.Color);
+        
+        Assert.True(lightRook.IsPinned);
+    }
+    
+    [Fact]
+    public void FindPinnedPiece_PieceOnVerticalLineToKing_IsPinned()
+    {
+        var lightKing = new King(Color.Light, E1);
+        var lightBishop = new Bishop(Color.Light, E4);
+        var darkQueen = new Queen(Color.Dark, E8);
+
+        var board = ChessBoard.Create([lightKing, lightBishop], [darkQueen]);
+        board.UpdateBoardState(darkQueen.Color);
+        
+        Assert.True(lightBishop.IsPinned);
+    }
+    
+    [Fact]
+    public void FindPinnedPiece_FriendlyPieceBlocksRayOnDiagonal_NothingIsPinned()
+    {
+        var lightKing = new King(Color.Light, H1);
+        var lightBishop = new Bishop(Color.Light, F3);
+        var lightRook = new Rook(Color.Light, E4);
+        var darkQueen = new Queen(Color.Dark, A8);
+
+        var board = ChessBoard.Create([lightKing, lightBishop, lightRook], [darkQueen]);
+        board.UpdateBoardState(darkQueen.Color);
+        
+        Assert.False(lightBishop.IsPinned);
+        Assert.False(lightRook.IsPinned);
+    }
+    
+    [Fact]
+    public void FindPinnedPiece_FriendlyPieceBlocksRayOnVertical_NothingIsPinned()
+    {
+        var lightKing = new King(Color.Light, E1);
+        var lightBishop = new Bishop(Color.Light, E4);
+        var lightRook = new Rook(Color.Light, E3);
+        var darkQueen = new Queen(Color.Dark, E8);
+
+        var board = ChessBoard.Create([lightKing, lightBishop, lightRook], [darkQueen]);
+        board.UpdateBoardState(darkQueen.Color);
+        
+        Assert.False(lightBishop.IsPinned);
+        Assert.False(lightRook.IsPinned);
+    }
+    
+    // Move
+    [Theory]
+    [InlineData("E1")]
+    [InlineData("E6")]
+    [InlineData("B4")]
+    [InlineData("G3")]
+    [InlineData("C2")]
+    [InlineData("B7")]
+    [InlineData("G6")]
+    [InlineData("H1")]
+    public void Move(string positionTo)
+    {
+        var positionToMove = Position.Parse(positionTo);
+        
+        var lightQueen = new Queen(Color.Light, E4);
+        var darkKing = new King(Color.Dark, D8);
+        
+        var board = ChessBoard.Create([lightQueen], [darkKing]);
+        
+        lightQueen.Move(board, positionToMove);
+        
+        Assert.Null(board[E4].Piece);
+        Assert.Equal(positionToMove, lightQueen.Position);
+        Assert.Equal(lightQueen, board[positionToMove].Piece);
     }
 }

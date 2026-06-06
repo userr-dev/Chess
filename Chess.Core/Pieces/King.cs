@@ -1,9 +1,8 @@
 using Chess.Core.Board;
-using Chess.Core.Pieces.Interfaces;
 
 namespace Chess.Core.Pieces;
 
-public sealed class King : Piece, ICastlingPiece
+public sealed class King : Piece
 {
     private static readonly MoveDirection[] Directions =
     [
@@ -11,28 +10,29 @@ public sealed class King : Piece, ICastlingPiece
         Position.TryMoveUp, Position.TryMoveDown, Position.TryMoveLeft, Position.TryMoveRight
     ];
 
-    public bool CanCastle { get; private set; } = true;
+    public bool CanCastle { get; private set; }
     
     public King(Color color, Position position) : base(color, position)
     {
+        var startingRow = Color == Color.Light ? 0 : 7;
+        CanCastle = startingRow == position.Row && position.Column is Column.E;
     }
 
     public override void Move(ChessBoard chessBoard, Position to)
     {
         CanCastle = false;
-        var position = Position;
+        var from = Position;
         
-        base.Move(chessBoard, to);
-
-        var columnOffset = to.Column.DistanceTo(position.Column);
-        if (columnOffset != 2) return;
-         
-        var rook = chessBoard.GetPieces(Color).OfType<Rook>().First(r =>
-            r.CanCastle && (to.Column < position.Column
-                ? r.Position.Column < position.Column
-                : r.Position.Column > position.Column));
+        chessBoard.MovePiece(this, to);
+        ChangePosition(to);
         
-        chessBoard.Castling(this, rook);
+        if (!IsCastlingMove(from, to))
+        {
+            chessBoard.UpdateBoardState(Color);
+            return;
+        }
+        
+        chessBoard.Castle(this, from, to);
     }
 
     public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
@@ -107,5 +107,11 @@ public sealed class King : Piece, ICastlingPiece
         }
 
         return true;
+    }
+
+    private static bool IsCastlingMove(Position from, Position to)
+    {
+        var columnOffset = to.Column.DistanceTo(from.Column);
+        return columnOffset == 2;
     }
 }

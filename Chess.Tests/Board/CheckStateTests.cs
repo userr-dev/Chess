@@ -1,8 +1,3 @@
-using Chess.Core;
-using Chess.Core.Board;
-using Chess.Core.Pieces;
-using static Chess.Tests.Positions;
-
 namespace Chess.Tests.Board;
 
 public class CheckStateTests
@@ -14,8 +9,9 @@ public class CheckStateTests
         var darkRook = new Rook(Color.Dark, E8);
 
         var board = ChessBoard.Create([lightKing], [darkRook]);
+        board.UpdateBoardState(darkRook.Color);
+        
         var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
         
         Assert.True(checkState.IsChecked);
     }
@@ -27,8 +23,9 @@ public class CheckStateTests
         var darkBishop = new Bishop(Color.Dark, A5);
 
         var board = ChessBoard.Create([lightKing], [darkBishop]);
+        board.UpdateBoardState(darkBishop.Color);
+        
         var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkBishop.Color);
         
         Assert.True(checkState.IsChecked);
     }
@@ -41,8 +38,9 @@ public class CheckStateTests
         var darkRook = new Rook(Color.Dark, E8);
         
         var board = ChessBoard.Create([lightKing], [darkBishop, darkRook]);
+        board.UpdateBoardState(darkBishop.Color);
+        
         var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkBishop.Color);
         
         Assert.True(checkState.IsDoubleChecked);
     }
@@ -54,8 +52,9 @@ public class CheckStateTests
         var darkRook = new Rook(Color.Dark, E8);
 
         var board = ChessBoard.Create([lightKing], [darkRook]);
+        board.UpdateBoardState(darkRook.Color);
+        
         var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
 
         Assert.Single(checkState.Attackers);
     }
@@ -68,8 +67,9 @@ public class CheckStateTests
         var darkRook = new Rook(Color.Dark, E8);
         
         var board = ChessBoard.Create([lightKing], [darkBishop, darkRook]);
+        board.UpdateBoardState(darkBishop.Color);
+        
         var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkBishop.Color);
         
         Assert.Equal(2, checkState.Attackers.Count);
     }
@@ -81,8 +81,9 @@ public class CheckStateTests
         var darkRook = new Rook(Color.Dark, E8);
 
         var board = ChessBoard.Create([lightKing], [darkRook]);
+        board.UpdateBoardState(darkRook.Color);
+        
         var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
         
         Assert.Equal(6, checkState.BlockingPositions.Count);
     }

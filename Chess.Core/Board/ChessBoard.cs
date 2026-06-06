@@ -50,6 +50,11 @@ public sealed class ChessBoard
 
     public IEnumerable<Piece> GetPieces(Color color)
     {
+        return GetPieceCollection(color);
+    }
+
+    private PiecesCollection GetPieceCollection(Color color)
+    {
         return color == Color.Light ? _lightPieces : _darkPieces;
     }
 
@@ -58,35 +63,43 @@ public sealed class ChessBoard
         return color == Color.Light ? _lightCheckState : _darkCheckState;
     }
     
-    public void MovePiece(Piece piece, Position to)
+    internal void MovePiece(Piece movedPiece, Position to)
     {
-        this[piece.Position].Piece = null;
-        this[to].Piece = piece;
+        this[movedPiece.Position].Piece = null;
+        this[to].Piece = movedPiece;
     }
 
-    public void PieceMoved(Piece piece)
+    public void UpdateBoardState(Color movedPieceColor)
     {
-        RecalculatePins(piece.Color);
-        RecalculatePins(piece.Color.Opposite());
+        var enemyColor = movedPieceColor.Opposite();
         
-        GetCheckState(piece.Color.Opposite()).Update(this, piece.Color);
+        RecalculatePins(movedPieceColor);
+        RecalculatePins(enemyColor);
+        
+        GetCheckState(enemyColor).Update(this, movedPieceColor);
     }
     
-    public void PromotePawn(Pawn pawn, Piece piece)
+    internal void PromotePawn(Pawn pawn, Piece piece)
     {
         var square = this[pawn.Position];
         square.Piece = piece;
 
-        var collection = (PiecesCollection)GetPieces(pawn.Color);
+        var collection = GetPieceCollection(pawn.Color);
         collection.Remove(pawn);
         collection.Add(piece);
+        
+        UpdateBoardState(pawn.Color);
     }
 
-    public void Castling(King king, Rook rook)
+    internal void Castle(King king, Position from, Position to)
     {
-        var rookNewColumn = king.Position.Column > rook.Position.Column
-            ? king.Position.Column.Shift(1)
-            : king.Position.Column.Shift(-1);
+        var isKingSideRook = to.Column > from.Column;
+        
+        var rook = GetPieces(king.Color).OfType<Rook>().First(r =>
+            r.CanCastle && (isKingSideRook
+                ? r.Position.Column > from.Column
+                : r.Position.Column < from.Column));
+        var rookNewColumn = king.Position.Column.Shift(isKingSideRook ? -1 : 1);
 
         var rookToPosition = Position.Create(rookNewColumn, king.Position.Row);
 

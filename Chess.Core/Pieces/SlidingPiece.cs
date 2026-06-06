@@ -1,5 +1,4 @@
 using Chess.Core.Board;
-using Chess.Core.Pieces.Interfaces;
 
 namespace Chess.Core.Pieces;
 
@@ -56,7 +55,7 @@ public abstract class SlidingPiece : Piece
     {
         foreach (var direction in directions)
         {
-            IPiece? candidate = null;
+            Piece? candidate = null;
             var position = Position;
             while (direction(ref position))
             {

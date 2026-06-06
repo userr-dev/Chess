@@ -1,13 +1,9 @@
-using Chess.Core;
-using Chess.Core.Board;
-using static Chess.Tests.Positions;
-
 namespace Chess.Tests.Board;
 
 public class PositionTests
 {
-        // --- Create ---
- 
+    // --- Create ---
+
     [Theory]
     [InlineData(Column.A, 0)]
     [InlineData(Column.H, 7)]
@@ -18,7 +14,7 @@ public class PositionTests
         Assert.Equal(column, pos.Column);
         Assert.Equal(row, pos.Row);
     }
- 
+
     [Theory]
     [InlineData(-1)]
     [InlineData(8)]
@@ -26,9 +22,9 @@ public class PositionTests
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => Position.Create(Column.A, row));
     }
- 
+
     // --- Parse ---
- 
+
     [Theory]
     [InlineData("A1", Column.A, 0)]
     [InlineData("h8", Column.H, 7)]
@@ -39,7 +35,7 @@ public class PositionTests
         Assert.Equal(expectedColumn, pos.Column);
         Assert.Equal(expectedRow, pos.Row);
     }
- 
+
     [Theory]
     [InlineData("Z1")]
     [InlineData("A9")]
@@ -50,7 +46,7 @@ public class PositionTests
     {
         Assert.Throws<FormatException>(() => Position.Parse(s));
     }
- 
+
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
@@ -58,9 +54,9 @@ public class PositionTests
     {
         Assert.Throws<ArgumentException>(() => Position.Parse(s!));
     }
- 
+
     // --- ToString ---
- 
+
     [Theory]
     [InlineData(Column.A, 0, "A1")]
     [InlineData(Column.H, 7, "H8")]
@@ -70,68 +66,68 @@ public class PositionTests
         var pos = Position.Create(column, row);
         Assert.Equal(expected, pos.ToString());
     }
- 
+
     // --- IsPromotionRow ---
- 
+
     [Theory]
     [InlineData(Column.A, 7, Color.Light, true)]
-    [InlineData(Column.A, 0, Color.Dark,  true)]
+    [InlineData(Column.A, 0, Color.Dark, true)]
     [InlineData(Column.A, 0, Color.Light, false)]
-    [InlineData(Column.A, 7, Color.Dark,  false)]
+    [InlineData(Column.A, 7, Color.Dark, false)]
     [InlineData(Column.A, 4, Color.Light, false)]
     public void IsPromotionRow_ReturnsExpected(Column column, int row, Color color, bool expected)
     {
         var pos = Position.Create(column, row);
         Assert.Equal(expected, pos.IsPromotionRow(color));
     }
- 
+
     // --- IsInDirection ---
- 
+
     [Fact]
     public void IsInDirection_TargetEqualsFrom_ReturnsTrue()
     {
-        var from   = D4;
-        var to     = D6;
+        var from = D4;
+        var to = D6;
         Assert.True(Position.IsInDirection(from, to, from));
     }
- 
+
     [Fact]
     public void IsInDirection_TargetEqualsTo_ReturnsTrue()
     {
-        var from   = D4;
-        var to     = D6;
+        var from = D4;
+        var to = D6;
         Assert.True(Position.IsInDirection(from, to, to));
     }
- 
+
     [Fact]
     public void IsInDirection_TargetBetweenFromAndTo_ReturnsTrue()
     {
-        var from   = D4;
-        var to     = D6;
+        var from = D4;
+        var to = D6;
         var target = D5;
         Assert.True(Position.IsInDirection(from, to, target));
     }
- 
+
     [Fact]
     public void IsInDirection_TargetBeyondTo_ReturnsFalse()
     {
-        var from   = D4;
-        var to     = D6;
+        var from = D4;
+        var to = D6;
         var target = D7;
         Assert.False(Position.IsInDirection(from, to, target));
     }
- 
+
     [Fact]
     public void IsInDirection_TargetNotCollinear_ReturnsFalse()
     {
-        var from   = D4;
-        var to     = D6;
+        var from = D4;
+        var to = D6;
         var target = E5;
         Assert.False(Position.IsInDirection(from, to, target));
     }
- 
+
     // --- TryMove / directional helpers ---
- 
+
     [Fact]
     public void TryMoveUp_FromMiddle_MovesUpAndReturnsTrue()
     {
@@ -140,7 +136,7 @@ public class PositionTests
         Assert.True(result);
         Assert.Equal(D5, pos);
     }
- 
+
     [Fact]
     public void TryMoveUp_FromLastRow_ReturnsFalse()
     {
@@ -149,7 +145,7 @@ public class PositionTests
         Assert.False(result);
         Assert.Equal(D8, pos); // unchanged
     }
- 
+
     [Fact]
     public void TryMoveLeft_FromColumnA_ReturnsFalse()
     {
@@ -158,7 +154,7 @@ public class PositionTests
         Assert.False(result);
         Assert.Equal(A4, pos);
     }
- 
+
     [Fact]
     public void TryMoveRightDown_DiagonalMove_Succeeds()
     {
@@ -167,7 +163,7 @@ public class PositionTests
         Assert.True(result);
         Assert.Equal(D4, pos);
     }
- 
+
     [Fact]
     public void TryMove_LargeOffset_ReturnsFalse()
     {
@@ -175,5 +171,4 @@ public class PositionTests
         var result = Position.TryMove(ref pos, 0, -1);
         Assert.False(result);
     }
-
 }

@@ -1,17 +1,18 @@
 using Chess.Core.Board;
-using Chess.Core.Pieces.Interfaces;
 
 namespace Chess.Core.Pieces;
 
-public sealed class Rook : SlidingPiece, ICastlingPiece
+public sealed class Rook : SlidingPiece
 {
     private static readonly MoveDirection[] Directions =
         [Position.TryMoveUp, Position.TryMoveDown, Position.TryMoveLeft, Position.TryMoveRight];
 
-    public bool CanCastle { get; private set; } = true;
+    public bool CanCastle { get; private set; }
     
     public Rook(Color color, Position position) : base(color, position)
     {
+        var startingRow = Color == Color.Light ? 0 : 7;
+        CanCastle = startingRow == position.Row && position.Column is Column.A or Column.H;
     }
 
     public override void Move(ChessBoard chessBoard, Position to)

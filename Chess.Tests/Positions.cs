@@ -1,5 +1,3 @@
-using Chess.Core.Board;
-
 namespace Chess.Tests;
 
 public static class Positions

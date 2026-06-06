@@ -1,8 +1,3 @@
-using Chess.Core;
-using Chess.Core.Board;
-using Chess.Core.Pieces;
-using static Chess.Tests.Positions;
-
 namespace Chess.Tests.Pieces;
 
 public class KnightTests
@@ -132,8 +127,7 @@ public class KnightTests
         var darkRook = new Rook(Color.Dark, E8);
 
         var board = ChessBoard.Create([lightKing, lightKnight], [darkRook]);
-        var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
+        board.UpdateBoardState(darkRook.Color);
 
         var moves = lightKnight.GetAvailableMoves(board).Moves;
         
@@ -148,8 +142,8 @@ public class KnightTests
         var darkRook = new Rook(Color.Dark, E8);
 
         var board = ChessBoard.Create([lightKing, lightKnight], [darkRook]);
+        board.UpdateBoardState(darkRook.Color);
         var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
 
         var attacks = lightKnight.GetAvailableMoves(board).Attacks;
 
@@ -166,11 +160,7 @@ public class KnightTests
         var darkBishop = new Bishop(Color.Dark, A5);
         
         var board = ChessBoard.Create([lightKing, lightKnight], [darkRook, darkBishop]);
-        
-        darkBishop.FindPinnedPiece(board, lightKing);
-        
-        var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
+        board.UpdateBoardState(darkRook.Color);
 
         var moves = lightKnight.GetAvailableMoves(board).Moves;
         
@@ -187,11 +177,7 @@ public class KnightTests
         var darkBishop = new Bishop(Color.Dark, A5);
         
         var board = ChessBoard.Create([lightKing, lightKnight], [darkRook, darkBishop]);
-        
-        darkBishop.FindPinnedPiece(board, lightKing);
-        
-        var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
+        board.UpdateBoardState(darkRook.Color);
 
         var attacks = lightKnight.GetAvailableMoves(board).Attacks;
         
@@ -208,11 +194,9 @@ public class KnightTests
         var darkBishop = new Bishop(Color.Dark, H4);
         
         var board = ChessBoard.Create([lightKing, lightKnight], [darkRook, darkBishop]);
-        
-        darkBishop.FindPinnedPiece(board, lightKing);
+        board.UpdateBoardState(darkRook.Color);
         
         var checkState = board.GetCheckState(lightKing.Color);
-        checkState.Update(board, darkRook.Color);
 
         var (moves, attacks) = lightKnight.GetAvailableMoves(board);
         
@@ -229,12 +213,36 @@ public class KnightTests
         var darkRook = new Rook(Color.Dark, E8);
         
         var board = ChessBoard.Create([lightKing, lightKnight], [darkRook]);
-        
-        darkRook.FindPinnedPiece(board, lightKing);
+        board.UpdateBoardState(darkRook.Color);
 
         var moves = lightKnight.GetAvailableMoves(board).Moves;
         
         Assert.True(lightKnight.IsPinned);
         Assert.Empty(moves);
+    }
+    
+    // Move
+    [Theory]
+    [InlineData("D2")]
+    [InlineData("F2")]
+    [InlineData("C3")]
+    [InlineData("G3")]
+    [InlineData("C5")]
+    [InlineData("G5")]
+    [InlineData("D6")]
+    [InlineData("F6")]
+    public void Move(string positionTo)
+    {
+        var positionToMove = Position.Parse(positionTo);
+        
+        var lightKnight = new Knight(Color.Light, E4);
+
+        var board = ChessBoard.Create([lightKnight], []);
+        
+        lightKnight.Move(board, positionToMove);
+        
+        Assert.Null(board[E4].Piece);
+        Assert.Equal(positionToMove, lightKnight.Position);
+        Assert.Equal(lightKnight, board[positionToMove].Piece);
     }
 }

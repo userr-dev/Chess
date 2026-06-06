@@ -13,7 +13,7 @@ public class CheckState
     public IReadOnlyList<Piece> Attackers => _attackers;
     public IReadOnlyList<Position> BlockingPositions => _blockingPositions;
     
-    public void Update(ChessBoard chessBoard, Color attackingColor)
+    internal void Update(ChessBoard chessBoard, Color attackingColor)
     {
         _attackers.Clear();
         _blockingPositions.Clear();

@@ -1,9 +1,8 @@
 using Chess.Core.Board;
-using Chess.Core.Pieces.Interfaces;
 
 namespace Chess.Core.Pieces;
 
-public sealed class Pawn : Piece, IPawn
+public sealed class Pawn : Piece
 {
     private static readonly MoveDirection[][] AttackDirections =
     [
@@ -13,25 +12,30 @@ public sealed class Pawn : Piece, IPawn
     
     private static readonly MoveDirection[] ForwardDirections = [Position.TryMoveUp, Position.TryMoveDown];
     
-    public bool IsFirstMove { get; private set; } = true;
+    public bool CanDoubleAdvance { get; private set; }
 
-    public event Action<PromotionEventArgs>? Promotion;
+    public event EventHandler<PromotionEventArgs>? Promoted;
     
     public Pawn(Color color, Position position) : base(color, position)
     {
+        CanDoubleAdvance = (color == Color.Light && position.Row == 1) 
+                      || (color == Color.Dark && position.Row == 6);
     }
 
     public override void Move(ChessBoard chessBoard, Position to)
     {
-        IsFirstMove = false;
+        CanDoubleAdvance = false;
         
-        base.Move(chessBoard, to);
+        chessBoard.MovePiece(this, to);
+        ChangePosition(to);
 
-        if (!to.IsPromotionRow(Color)) return;
+        if (!to.IsPromotionRow(Color))
+        {
+            chessBoard.UpdateBoardState(Color);
+            return;
+        }
         
-        var args = new PromotionEventArgs(Color, to);
-        Promotion?.Invoke(args);
-        chessBoard.PromotePawn(this, args.PromotedPiece ?? new Queen(Color, to));
+        RaisePromotion(chessBoard, to);
     }
 
     public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
@@ -72,7 +76,7 @@ public sealed class Pawn : Piece, IPawn
         if (!directionMove(ref position) || chessBoard[position].HasPiece) return moves;
         
         moves.Add(position);
-        if (IsFirstMove && directionMove(ref position) && !chessBoard[position].HasPiece)
+        if (CanDoubleAdvance && directionMove(ref position) && !chessBoard[position].HasPiece)
             moves.Add(position);
 
         return moves;
@@ -96,12 +100,30 @@ public sealed class Pawn : Piece, IPawn
 
         return attacks;
     }
+
+    private void RaisePromotion(ChessBoard chessBoard, Position to)
+    {
+        var args = new PromotionEventArgs(Color, to);
+        Promoted?.Invoke(this, args);
+        chessBoard.PromotePawn(this, args.PromotedPiece ?? new Queen(Color, to));
+    }
     
     public sealed class PromotionEventArgs(Color color, Position position) : EventArgs
     {
         public Color Color { get; } = color;
         public Position Position { get; } = position;
     
-        public Piece? PromotedPiece { get; set; }
+        public Piece? PromotedPiece 
+        { 
+            get;
+            set
+            {
+                if (value is King or Pawn)
+                    throw new ArgumentException("Cannot promote to King or Pawn.");
+                if (value?.Color != Color)
+                    throw new ArgumentException("Cannot promote to enemy color");
+                field = value;
+            }
+        }
     }
 }
