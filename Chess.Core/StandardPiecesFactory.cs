@@ -5,9 +5,9 @@ namespace Chess.Core;
 
 public class StandardPiecesFactory
 {
-    public static PiecesCollection CreateCollection(Color color)
+    public static PieceSet CreateCollection(Color color)
     {
-        var collection = new PiecesCollection();
+        var collection = PieceSet.Create(color);
 
         var mainRow = color == Color.Light ? 0 : 7;
         var pawnRow = color == Color.Light ? 1 : 6;
@@ -21,26 +21,26 @@ public class StandardPiecesFactory
         return collection;
     }
 
-    private static void AddPawns(PiecesCollection piecesCollection, Color color, int row)
+    private static void AddPawns(PieceSet pieceSet, Color color, int row)
     {
         foreach (var column in Enum.GetValues<Column>())
         {
-            piecesCollection.Add(new Pawn(color, Position.Create(column, row)));
+            pieceSet.Add(new Pawn(color, Position.Create(column, row)));
         }
     }
 
-    private static void AddPair(PiecesCollection piecesCollection, Color color, Column[] columns, int row,
+    private static void AddPair(PieceSet pieceSet, Color color, Column[] columns, int row,
         Func<Color, Position, Piece> factory)
     {
         foreach (var column in columns)
         {
-            piecesCollection.Add(factory(color, Position.Create(column, row)));
+            pieceSet.Add(factory(color, Position.Create(column, row)));
         }
     }
 
-    private static void AddRoyals(PiecesCollection piecesCollection, Color color, int row)
+    private static void AddRoyals(PieceSet pieceSet, Color color, int row)
     {
-        piecesCollection.Add(new Queen(color, Position.Create(Column.D, row)));
-        piecesCollection.Add(new King(color, Position.Create(Column.E, row)));
+        pieceSet.Add(new Queen(color, Position.Create(Column.D, row)));
+        pieceSet.Add(new King(color, Position.Create(Column.E, row)));
     }
 }

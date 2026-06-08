@@ -8,7 +8,7 @@ public class KnightTests
     {
         var lightKnight = new Knight(Color.Light, D4);
 
-        var board = ChessBoard.Create([lightKnight], []);
+        var board = Utils.CreateChessBoard([lightKnight], []);
 
         var attackedPositions = lightKnight.GetAttackedPositions(board);
         Assert.Equal(8, attackedPositions.Count());
@@ -19,7 +19,7 @@ public class KnightTests
     {
         var lightKnight = new Knight(Color.Light, A1);
 
-        var board = ChessBoard.Create([lightKnight], []);
+        var board = Utils.CreateChessBoard([lightKnight], []);
 
         var attackedPositions = lightKnight.GetAttackedPositions(board);
         Assert.Equal(2, attackedPositions.Count());
@@ -30,7 +30,7 @@ public class KnightTests
     {
         var lightKnight = new Knight(Color.Light, A5);
 
-        var board = ChessBoard.Create([lightKnight], []);
+        var board = Utils.CreateChessBoard([lightKnight], []);
 
         var attackedPositions = lightKnight.GetAttackedPositions(board);
         Assert.Equal(4, attackedPositions.Count());
@@ -42,7 +42,7 @@ public class KnightTests
         var lightKnight = new Knight(Color.Light, D4);
         var lightBishop = new Bishop(Color.Light, F5);
         
-        var board = ChessBoard.Create([lightKnight, lightBishop], []);
+        var board = Utils.CreateChessBoard([lightKnight, lightBishop], []);
 
         var attackedPositions = lightKnight.GetAttackedPositions(board);
         Assert.Equal(8, attackedPositions.Count());
@@ -54,7 +54,7 @@ public class KnightTests
         var lightKnight = new Knight(Color.Light, D4);
         var darkBishop = new Bishop(Color.Dark, F5);
         
-        var board = ChessBoard.Create([lightKnight], [darkBishop]);
+        var board = Utils.CreateChessBoard([lightKnight], [darkBishop]);
 
         var attackedPositions = lightKnight.GetAttackedPositions(board);
         Assert.Equal(8, attackedPositions.Count());
@@ -66,7 +66,7 @@ public class KnightTests
     {
         var lightKnight = new Knight(Color.Light, D4);
 
-        var board = ChessBoard.Create([lightKnight], []);
+        var board = Utils.CreateChessBoard([lightKnight], []);
 
         var moves = lightKnight.GetAvailableMoves(board).Moves;
         Assert.Equal(8, moves.Count);
@@ -77,7 +77,7 @@ public class KnightTests
     {
         var lightKnight = new Knight(Color.Light, A1);
 
-        var board = ChessBoard.Create([lightKnight], []);
+        var board = Utils.CreateChessBoard([lightKnight], []);
 
         var moves = lightKnight.GetAvailableMoves(board).Moves;
         Assert.Equal(2, moves.Count);
@@ -88,7 +88,7 @@ public class KnightTests
     {
         var lightKnight = new Knight(Color.Light, A5);
 
-        var board = ChessBoard.Create([lightKnight], []);
+        var board = Utils.CreateChessBoard([lightKnight], []);
 
         var moves = lightKnight.GetAvailableMoves(board).Moves;
         Assert.Equal(4, moves.Count);
@@ -100,7 +100,7 @@ public class KnightTests
         var lightKnight = new Knight(Color.Light, D4);
         var lightPawn = new Pawn(Color.Light, F5);
         
-        var board = ChessBoard.Create([lightKnight, lightPawn], []);
+        var board = Utils.CreateChessBoard([lightKnight, lightPawn], []);
 
         var moves = lightKnight.GetAvailableMoves(board).Moves;
         Assert.DoesNotContain(moves, p => p.Equals(lightPawn.Position));
@@ -112,7 +112,7 @@ public class KnightTests
         var lightKnight = new Knight(Color.Light, D4);
         var darkPawn = new Pawn(Color.Dark, F5);
         
-        var board = ChessBoard.Create([lightKnight], [darkPawn]);
+        var board = Utils.CreateChessBoard([lightKnight], [darkPawn]);
 
         var attacks = lightKnight.GetAvailableMoves(board).Attacks;
         Assert.Contains(attacks, p => p.Equals(darkPawn.Position));
@@ -126,7 +126,7 @@ public class KnightTests
         var lightKnight = new Knight(Color.Light, D4);
         var darkRook = new Rook(Color.Dark, E8);
 
-        var board = ChessBoard.Create([lightKing, lightKnight], [darkRook]);
+        var board = Utils.CreateChessBoard([lightKing, lightKnight], [darkRook]);
         board.UpdateBoardState(darkRook.Color);
 
         var moves = lightKnight.GetAvailableMoves(board).Moves;
@@ -141,7 +141,7 @@ public class KnightTests
         var lightKnight = new Knight(Color.Light, D6);
         var darkRook = new Rook(Color.Dark, E8);
 
-        var board = ChessBoard.Create([lightKing, lightKnight], [darkRook]);
+        var board = Utils.CreateChessBoard([lightKing, lightKnight], [darkRook]);
         board.UpdateBoardState(darkRook.Color);
         var checkState = board.GetCheckState(lightKing.Color);
 
@@ -159,7 +159,7 @@ public class KnightTests
         var darkRook = new Rook(Color.Dark, E8);
         var darkBishop = new Bishop(Color.Dark, A5);
         
-        var board = ChessBoard.Create([lightKing, lightKnight], [darkRook, darkBishop]);
+        var board = Utils.CreateChessBoard([lightKing, lightKnight], [darkRook, darkBishop]);
         board.UpdateBoardState(darkRook.Color);
 
         var moves = lightKnight.GetAvailableMoves(board).Moves;
@@ -176,7 +176,7 @@ public class KnightTests
         var darkRook = new Rook(Color.Dark, E4);
         var darkBishop = new Bishop(Color.Dark, A5);
         
-        var board = ChessBoard.Create([lightKing, lightKnight], [darkRook, darkBishop]);
+        var board = Utils.CreateChessBoard([lightKing, lightKnight], [darkRook, darkBishop]);
         board.UpdateBoardState(darkRook.Color);
 
         var attacks = lightKnight.GetAvailableMoves(board).Attacks;
@@ -193,7 +193,7 @@ public class KnightTests
         var darkRook = new Rook(Color.Dark, E4);
         var darkBishop = new Bishop(Color.Dark, H4);
         
-        var board = ChessBoard.Create([lightKing, lightKnight], [darkRook, darkBishop]);
+        var board = Utils.CreateChessBoard([lightKing, lightKnight], [darkRook, darkBishop]);
         board.UpdateBoardState(darkRook.Color);
         
         var checkState = board.GetCheckState(lightKing.Color);
@@ -212,7 +212,7 @@ public class KnightTests
         var lightKnight = new Knight(Color.Light, E4);
         var darkRook = new Rook(Color.Dark, E8);
         
-        var board = ChessBoard.Create([lightKing, lightKnight], [darkRook]);
+        var board = Utils.CreateChessBoard([lightKing, lightKnight], [darkRook]);
         board.UpdateBoardState(darkRook.Color);
 
         var moves = lightKnight.GetAvailableMoves(board).Moves;
@@ -237,7 +237,7 @@ public class KnightTests
         
         var lightKnight = new Knight(Color.Light, E4);
 
-        var board = ChessBoard.Create([lightKnight], []);
+        var board = Utils.CreateChessBoard([lightKnight], []);
         
         lightKnight.Move(board, positionToMove);
         

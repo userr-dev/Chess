@@ -8,13 +8,13 @@ public sealed class ChessBoard
     
     private readonly Square[,] _squares;
 
-    private readonly PiecesCollection _lightPieces;
-    private readonly PiecesCollection _darkPieces;
+    private readonly PieceSet _lightPieces;
+    private readonly PieceSet _darkPieces;
 
     private readonly CheckState _lightCheckState = new();
     private readonly CheckState _darkCheckState = new();
     
-    private ChessBoard(PiecesCollection lightPieces, PiecesCollection darkPieces)
+    private ChessBoard(PieceSet lightPieces, PieceSet darkPieces)
     {
         _squares = new Square[Rows, Columns];
         GenerateSquares();
@@ -28,9 +28,9 @@ public sealed class ChessBoard
     
     public Square this[Position position] => _squares[position.Row, (int)position.Column];
 
-    private void SetupPieces(PiecesCollection piecesCollection)
+    private void SetupPieces(PieceSet pieceSet)
     {
-        foreach (var piece in piecesCollection)
+        foreach (var piece in pieceSet)
         {
             this[piece.Position].Piece = piece;
         }
@@ -48,12 +48,16 @@ public sealed class ChessBoard
         }
     }
 
+    internal King? GetKing(Color color) => GetPieceSet(color).King;
+
+    internal IEnumerable<Rook> GetCastlingRooks(Color color) => GetPieceSet(color).CastlingRooks;
+    
     public IEnumerable<Piece> GetPieces(Color color)
     {
-        return GetPieceCollection(color);
+        return GetPieceSet(color);
     }
 
-    private PiecesCollection GetPieceCollection(Color color)
+    private PieceSet GetPieceSet(Color color)
     {
         return color == Color.Light ? _lightPieces : _darkPieces;
     }
@@ -84,9 +88,9 @@ public sealed class ChessBoard
         var square = this[pawn.Position];
         square.Piece = piece;
 
-        var collection = GetPieceCollection(pawn.Color);
-        collection.Remove(pawn);
-        collection.Add(piece);
+        var pieceSet = GetPieceSet(pawn.Color);
+        pieceSet.Remove(pawn);
+        pieceSet.Add(piece);
         
         UpdateBoardState(pawn.Color);
     }
@@ -95,10 +99,10 @@ public sealed class ChessBoard
     {
         var isKingSideRook = to.Column > from.Column;
         
-        var rook = GetPieces(king.Color).OfType<Rook>().First(r =>
-            r.CanCastle && (isKingSideRook
+        var rook = GetCastlingRooks(king.Color).First(r =>
+            isKingSideRook
                 ? r.Position.Column > from.Column
-                : r.Position.Column < from.Column));
+                : r.Position.Column < from.Column);
         var rookNewColumn = king.Position.Column.Shift(isKingSideRook ? -1 : 1);
 
         var rookToPosition = Position.Create(rookNewColumn, king.Position.Row);
@@ -111,15 +115,15 @@ public sealed class ChessBoard
         foreach (var piece in GetPieces(color))
             piece.AllowedDirections = null;
 
-        var king = GetPieces(color).OfType<King>().FirstOrDefault();
+        var king = GetKing(color);
         if (king is null) return;
         
         var enemyColor = color.Opposite();
 
-        foreach (var slider in GetPieces(enemyColor).OfType<SlidingPiece>())
+        foreach (var slider in GetPieceSet(enemyColor).SlidingPieces)
             slider.FindPinnedPiece(this, king);
     }
     
-    public static ChessBoard Create(PiecesCollection lightPieces, PiecesCollection darkPieces) =>
+    public static ChessBoard Create(PieceSet lightPieces, PieceSet darkPieces) =>
         new(lightPieces, darkPieces);
 }

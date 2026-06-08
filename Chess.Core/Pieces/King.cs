@@ -82,7 +82,7 @@ public sealed class King : Piece
 
     private IEnumerable<Position> GetCastlingMove(ChessBoard chessBoard, HashSet<Position> enemyAttackedPositions)
     {
-        var rooks = chessBoard.GetPieces(Color).OfType<Rook>().Where(r => r.CanCastle);
+        var rooks = chessBoard.GetCastlingRooks(Color);
         
         foreach (var rook in rooks)
         {
