@@ -18,7 +18,7 @@ public class CheckState
         _attackers.Clear();
         _blockingPositions.Clear();
         
-        var enemyKing = chessBoard.GetPieces(attackingColor.Opposite()).OfType<King>().FirstOrDefault();
+        var enemyKing = chessBoard.GetKing(attackingColor.Opposite());
         if (enemyKing is null) return;
         
         _attackers.AddRange(GetAttackers(chessBoard, attackingColor, enemyKing));
