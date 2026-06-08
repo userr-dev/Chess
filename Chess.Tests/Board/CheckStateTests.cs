@@ -8,7 +8,7 @@ public class CheckStateTests
         var lightKing = new King(Color.Light, E1);
         var darkRook = new Rook(Color.Dark, E8);
 
-        var board = ChessBoard.Create([lightKing], [darkRook]);
+        var board = Utils.CreateChessBoard([lightKing], [darkRook]);
         board.UpdateBoardState(darkRook.Color);
         
         var checkState = board.GetCheckState(lightKing.Color);
@@ -22,7 +22,7 @@ public class CheckStateTests
         var lightKing = new King(Color.Light, E1);
         var darkBishop = new Bishop(Color.Dark, A5);
 
-        var board = ChessBoard.Create([lightKing], [darkBishop]);
+        var board = Utils.CreateChessBoard([lightKing], [darkBishop]);
         board.UpdateBoardState(darkBishop.Color);
         
         var checkState = board.GetCheckState(lightKing.Color);
@@ -37,7 +37,7 @@ public class CheckStateTests
         var darkBishop = new Bishop(Color.Dark, A5);
         var darkRook = new Rook(Color.Dark, E8);
         
-        var board = ChessBoard.Create([lightKing], [darkBishop, darkRook]);
+        var board = Utils.CreateChessBoard([lightKing], [darkBishop, darkRook]);
         board.UpdateBoardState(darkBishop.Color);
         
         var checkState = board.GetCheckState(lightKing.Color);
@@ -51,7 +51,7 @@ public class CheckStateTests
         var lightKing = new King(Color.Light, E1);
         var darkRook = new Rook(Color.Dark, E8);
 
-        var board = ChessBoard.Create([lightKing], [darkRook]);
+        var board = Utils.CreateChessBoard([lightKing], [darkRook]);
         board.UpdateBoardState(darkRook.Color);
         
         var checkState = board.GetCheckState(lightKing.Color);
@@ -66,7 +66,7 @@ public class CheckStateTests
         var darkBishop = new Bishop(Color.Dark, A5);
         var darkRook = new Rook(Color.Dark, E8);
         
-        var board = ChessBoard.Create([lightKing], [darkBishop, darkRook]);
+        var board = Utils.CreateChessBoard([lightKing], [darkBishop, darkRook]);
         board.UpdateBoardState(darkBishop.Color);
         
         var checkState = board.GetCheckState(lightKing.Color);
@@ -80,7 +80,7 @@ public class CheckStateTests
         var lightKing = new King(Color.Light, E1);
         var darkRook = new Rook(Color.Dark, E8);
 
-        var board = ChessBoard.Create([lightKing], [darkRook]);
+        var board = Utils.CreateChessBoard([lightKing], [darkRook]);
         board.UpdateBoardState(darkRook.Color);
         
         var checkState = board.GetCheckState(lightKing.Color);
