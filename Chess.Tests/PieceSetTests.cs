@@ -38,10 +38,10 @@ public class PieceSetTests
         var pawn = new Pawn(Color.Light, A7);
         var pieceSet = PieceSet.Create(Color.Light, [pawn]);
 
-        var board = ChessBoard.Create(pieceSet, PieceSet.Create(Color.Dark));
+        var board = ChessBoard.Create([pawn], []);
         
         pawn.Move(board, A8);
-        Assert.DoesNotContain(pawn, pieceSet);
+        Assert.DoesNotContain(pawn, board.GetPieces(pawn.Color));
     }
 
     // King

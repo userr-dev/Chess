@@ -24,6 +24,8 @@ public sealed class ChessBoard
         
         SetupPieces(_lightPieces);
         SetupPieces(_darkPieces);
+        
+        InitializeBoardState();
     }
     
     public Square this[Position position] => _squares[position.Row, (int)position.Column];
@@ -48,6 +50,15 @@ public sealed class ChessBoard
         }
     }
 
+    private void InitializeBoardState()
+    {
+        RecalculatePins(Color.Light);
+        RecalculatePins(Color.Dark);
+    
+        _lightCheckState.Update(this, Color.Dark);
+        _darkCheckState.Update(this, Color.Light);
+    }
+    
     internal King? GetKing(Color color) => GetPieceSet(color).King;
 
     internal IEnumerable<Rook> GetCastlingRooks(Color color) => GetPieceSet(color).CastlingRooks;
@@ -67,13 +78,21 @@ public sealed class ChessBoard
         return color == Color.Light ? _lightCheckState : _darkCheckState;
     }
     
-    internal void MovePiece(Piece movedPiece, Position to)
+    private void RecalculatePins(Color color)
     {
-        this[movedPiece.Position].Piece = null;
-        this[to].Piece = movedPiece;
-    }
+        foreach (var piece in GetPieces(color))
+            piece.AllowedDirections = null;
 
-    public void UpdateBoardState(Color movedPieceColor)
+        var king = GetKing(color);
+        if (king is null) return;
+        
+        var enemyColor = color.Opposite();
+
+        foreach (var slider in GetPieceSet(enemyColor).SlidingPieces)
+            slider.FindPinnedPiece(this, king);
+    }
+    
+    internal void UpdateBoardState(Color movedPieceColor)
     {
         var enemyColor = movedPieceColor.Opposite();
         
@@ -81,6 +100,13 @@ public sealed class ChessBoard
         RecalculatePins(enemyColor);
         
         GetCheckState(enemyColor).Update(this, movedPieceColor);
+    }
+    
+    // Moves
+    internal void MovePiece(Piece movedPiece, Position to)
+    {
+        this[movedPiece.Position].Piece = null;
+        this[to].Piece = movedPiece;
     }
     
     internal void PromotePawn(Pawn pawn, Piece piece)
@@ -110,20 +136,11 @@ public sealed class ChessBoard
         rook.Move(this, rookToPosition);
     }
     
-    private void RecalculatePins(Color color)
+    public static ChessBoard Create(IEnumerable<Piece> lightPieces, IEnumerable<Piece> darkPieces)
     {
-        foreach (var piece in GetPieces(color))
-            piece.AllowedDirections = null;
+        var lightSet = PieceSet.Create(Color.Light, lightPieces);
+        var darkSet = PieceSet.Create(Color.Dark, darkPieces);
 
-        var king = GetKing(color);
-        if (king is null) return;
-        
-        var enemyColor = color.Opposite();
-
-        foreach (var slider in GetPieceSet(enemyColor).SlidingPieces)
-            slider.FindPinnedPiece(this, king);
+        return new ChessBoard(lightSet, darkSet);
     }
-    
-    public static ChessBoard Create(PieceSet lightPieces, PieceSet darkPieces) =>
-        new(lightPieces, darkPieces);
 }

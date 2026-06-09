@@ -8,7 +8,7 @@ public class KingTests
     {
         var lightKing = new King(Color.Light, E4);
 
-        var board = Utils.CreateChessBoard([lightKing], []);
+        var board = ChessBoard.Create([lightKing], []);
 
         var attackedPosition = lightKing.GetAttackedPositions(board);
         
@@ -20,7 +20,7 @@ public class KingTests
     {
         var lightKing = new King(Color.Light, A1);
 
-        var board = Utils.CreateChessBoard([lightKing], []);
+        var board = ChessBoard.Create([lightKing], []);
 
         var attackedPosition = lightKing.GetAttackedPositions(board);
         
@@ -32,7 +32,7 @@ public class KingTests
     {
         var lightKing = new King(Color.Light, E1);
 
-        var board = Utils.CreateChessBoard([lightKing], []);
+        var board = ChessBoard.Create([lightKing], []);
 
         var attackedPosition = lightKing.GetAttackedPositions(board);
         
@@ -45,7 +45,7 @@ public class KingTests
         var lightKing = new King(Color.Light, E4);
         var lightPawn = new Pawn(Color.Light, E5);
         
-        var board = Utils.CreateChessBoard([lightKing, lightPawn], []);
+        var board = ChessBoard.Create([lightKing, lightPawn], []);
 
         var attackedPosition = lightKing.GetAttackedPositions(board);
 
@@ -58,7 +58,7 @@ public class KingTests
         var lightKing = new King(Color.Light, E4);
         var darkPawn = new Pawn(Color.Dark, E5);
         
-        var board = Utils.CreateChessBoard([lightKing], [darkPawn]);
+        var board = ChessBoard.Create([lightKing], [darkPawn]);
 
         var attackedPosition = lightKing.GetAttackedPositions(board);
 
@@ -71,7 +71,7 @@ public class KingTests
     {
         var lightKing = new King(Color.Light, E4);
 
-        var board = Utils.CreateChessBoard([lightKing], []);
+        var board = ChessBoard.Create([lightKing], []);
 
         var moves = lightKing.GetAvailableMoves(board).Moves;
         
@@ -83,7 +83,7 @@ public class KingTests
     {
         var lightKing = new King(Color.Light, A1);
 
-        var board = Utils.CreateChessBoard([lightKing], []);
+        var board = ChessBoard.Create([lightKing], []);
 
         var moves = lightKing.GetAvailableMoves(board).Moves;
         
@@ -95,7 +95,7 @@ public class KingTests
     {
         var lightKing = new King(Color.Light, E1);
 
-        var board = Utils.CreateChessBoard([lightKing], []);
+        var board = ChessBoard.Create([lightKing], []);
 
         var moves = lightKing.GetAvailableMoves(board).Moves;
         
@@ -108,7 +108,7 @@ public class KingTests
         var lightKing = new King(Color.Light, E4);
         var lightPawn = new Pawn(Color.Light, E5);
         
-        var board = Utils.CreateChessBoard([lightKing, lightPawn], []);
+        var board = ChessBoard.Create([lightKing, lightPawn], []);
 
         var moves = lightKing.GetAvailableMoves(board).Moves;
 
@@ -121,7 +121,7 @@ public class KingTests
         var lightKing = new King(Color.Light, E4);
         var darkPawn = new Pawn(Color.Dark, E5);
         
-        var board = Utils.CreateChessBoard([lightKing], [darkPawn]);
+        var board = ChessBoard.Create([lightKing], [darkPawn]);
 
         var moves = lightKing.GetAvailableMoves(board).Moves;
 
@@ -134,7 +134,7 @@ public class KingTests
         var lightKing = new King(Color.Light, E4);
         var lightPawn = new Pawn(Color.Light, E5);
         
-        var board = Utils.CreateChessBoard([lightKing, lightPawn], []);
+        var board = ChessBoard.Create([lightKing, lightPawn], []);
 
         var attacks = lightKing.GetAvailableMoves(board).Attacks;
 
@@ -147,7 +147,7 @@ public class KingTests
         var lightKing = new King(Color.Light, E4);
         var darkPawn = new Pawn(Color.Dark, E5);
         
-        var board = Utils.CreateChessBoard([lightKing], [darkPawn]);
+        var board = ChessBoard.Create([lightKing], [darkPawn]);
 
         var attacks = lightKing.GetAvailableMoves(board).Attacks;
 
@@ -160,7 +160,7 @@ public class KingTests
         var lightKing = new King(Color.Light, E4);
         var darkPawn = new Pawn(Color.Dark, E5);
         
-        var board = Utils.CreateChessBoard([lightKing], [darkPawn]);
+        var board = ChessBoard.Create([lightKing], [darkPawn]);
 
         var attacks = lightKing.GetAvailableMoves(board).Attacks;
 
@@ -173,7 +173,7 @@ public class KingTests
         var lightKing = new King(Color.Light, E4);
         var darkRook = new Rook(Color.Dark, F8);
         
-        var board = Utils.CreateChessBoard([lightKing], [darkRook]);
+        var board = ChessBoard.Create([lightKing], [darkRook]);
 
         var moves = lightKing.GetAvailableMoves(board).Moves;
         
@@ -188,7 +188,7 @@ public class KingTests
         var lightKing = new King(Color.Light, E4);
         var darkKing = new King(Color.Dark, E6);
         
-        var board = Utils.CreateChessBoard([lightKing], [darkKing]);
+        var board = ChessBoard.Create([lightKing], [darkKing]);
 
         var moves = lightKing.GetAvailableMoves(board).Moves;
         
@@ -204,7 +204,7 @@ public class KingTests
         var darkRook = new Rook(Color.Dark, F8);
         var darkPawn = new Pawn(Color.Dark, F4);
         
-        var board = Utils.CreateChessBoard([lightKing], [darkRook, darkPawn]);
+        var board = ChessBoard.Create([lightKing], [darkRook, darkPawn]);
 
         var attacks = lightKing.GetAvailableMoves(board).Attacks;
         
@@ -222,8 +222,7 @@ public class KingTests
 
         var darkRook = new Rook(Color.Dark, E8);
 
-        var board = Utils.CreateChessBoard([lightKing, leftLightRook, rightLightRook], [darkRook]);
-        board.UpdateBoardState(darkRook.Color);
+        var board = ChessBoard.Create([lightKing, leftLightRook, rightLightRook], [darkRook]);
         
         var kingMoves = lightKing.GetAvailableMoves(board).Moves;
 
@@ -240,8 +239,7 @@ public class KingTests
         var darkRook = new Rook(Color.Dark, E8);
         var darkBishop = new Bishop(Color.Dark, B4);
         
-        var board = Utils.CreateChessBoard([lightKing, leftLightRook, rightLightRook], [darkRook, darkBishop]);
-        board.UpdateBoardState(darkRook.Color);
+        var board = ChessBoard.Create([lightKing, leftLightRook, rightLightRook], [darkRook, darkBishop]);
         
         var kingMoves = lightKing.GetAvailableMoves(board).Moves;
 
@@ -255,7 +253,7 @@ public class KingTests
         var lightLeftRook = new Rook(Color.Light, A1);
         var lightRightRook = new Rook(Color.Light, H1);
 
-        var board = Utils.CreateChessBoard([lightKing, lightLeftRook, lightRightRook], []);
+        var board = ChessBoard.Create([lightKing, lightLeftRook, lightRightRook], []);
 
         var moves = lightKing.GetAvailableMoves(board).Moves;
         
@@ -279,7 +277,7 @@ public class KingTests
         var positionToMove = Position.Parse(positionTo);
         var lightKing = new King(Color.Light, D4);
 
-        var board = Utils.CreateChessBoard([lightKing], []);
+        var board = ChessBoard.Create([lightKing], []);
         
         lightKing.Move(board, positionToMove);
         
@@ -295,7 +293,7 @@ public class KingTests
         var lightQueenSideRook = new Rook(Color.Light, A1);
         var lightKingSideRook = new Rook(Color.Light, H1);
 
-        var board = Utils.CreateChessBoard([lightKing, lightQueenSideRook, lightKingSideRook], []);
+        var board = ChessBoard.Create([lightKing, lightQueenSideRook, lightKingSideRook], []);
         
         lightKing.Move(board, G1);
         
@@ -310,7 +308,7 @@ public class KingTests
         var lightQueenSideRook = new Rook(Color.Light, A1);
         var lightKingSideRook = new Rook(Color.Light, H8);
 
-        var board = Utils.CreateChessBoard([lightKing, lightQueenSideRook, lightKingSideRook], []);
+        var board = ChessBoard.Create([lightKing, lightQueenSideRook, lightKingSideRook], []);
         
         lightKing.Move(board, C1);
         

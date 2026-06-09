@@ -9,7 +9,7 @@ public class BishopTests
         var lightBishop = new Bishop(Color.Light, D4);
         var darkKing = new King(Color.Dark, A8);
         
-        var board = Utils.CreateChessBoard([lightBishop], [darkKing]);
+        var board = ChessBoard.Create([lightBishop], [darkKing]);
 
         var attackedPositions = lightBishop.GetAttackedPositions(board);
         Assert.Equal(13, attackedPositions.Count());
@@ -21,7 +21,7 @@ public class BishopTests
         var lightBishop = new Bishop(Color.Light, A1);
         var darkKing = new King(Color.Dark, A8);
         
-        var board = Utils.CreateChessBoard([lightBishop], [darkKing]);
+        var board = ChessBoard.Create([lightBishop], [darkKing]);
 
         var attackedPositions = lightBishop.GetAttackedPositions(board);
 
@@ -35,7 +35,7 @@ public class BishopTests
         var lightBishop2 = new Bishop(Color.Light, F6);
         var darkKing = new King(Color.Dark, A8);
         
-        var board = Utils.CreateChessBoard([lightBishop1, lightBishop2], [darkKing]);
+        var board = ChessBoard.Create([lightBishop1, lightBishop2], [darkKing]);
 
         var attackedPositions = lightBishop1.GetAttackedPositions(board);
 
@@ -49,7 +49,7 @@ public class BishopTests
         var darkBishop = new Bishop(Color.Dark, F6);
         var darkKing = new King(Color.Dark, A8);
         
-        var board = Utils.CreateChessBoard([lightBishop], [darkKing, darkBishop]);
+        var board = ChessBoard.Create([lightBishop], [darkKing, darkBishop]);
 
         var attackedPositions = lightBishop.GetAttackedPositions(board);
 
@@ -62,7 +62,7 @@ public class BishopTests
         var lightBishop = new Bishop(Color.Light, D4);
         var darkKing = new King(Color.Dark, F6);
         
-        var board = Utils.CreateChessBoard([lightBishop], [darkKing]);
+        var board = ChessBoard.Create([lightBishop], [darkKing]);
 
         var attackedPositions = lightBishop.GetAttackedPositions(board).ToList();
 
@@ -78,7 +78,7 @@ public class BishopTests
         var lightBishop = new Bishop(Color.Light, D4);
         var darkKing = new King(Color.Dark, A8);
         
-        var board = Utils.CreateChessBoard([lightBishop], [darkKing]);
+        var board = ChessBoard.Create([lightBishop], [darkKing]);
 
         var moves = lightBishop.GetAvailableMoves(board).Moves;
 
@@ -91,7 +91,7 @@ public class BishopTests
         var lightBishop = new Bishop(Color.Light, A1);
         var darkKing = new King(Color.Dark, A8);
         
-        var board = Utils.CreateChessBoard([lightBishop], [darkKing]);
+        var board = ChessBoard.Create([lightBishop], [darkKing]);
 
         var moves = lightBishop.GetAvailableMoves(board).Moves;
 
@@ -105,7 +105,7 @@ public class BishopTests
         var lightBishop2 = new Bishop(Color.Light, F6);
         var darkKing = new King(Color.Dark, A8);
         
-        var board = Utils.CreateChessBoard([lightBishop1, lightBishop2], [darkKing]);
+        var board = ChessBoard.Create([lightBishop1, lightBishop2], [darkKing]);
 
         var moves = lightBishop1.GetAvailableMoves(board).Moves;
 
@@ -119,7 +119,7 @@ public class BishopTests
         var lightBishop2 = new Bishop(Color.Light, F6);
         var darkKing = new King(Color.Dark, A8);
         
-        var board = Utils.CreateChessBoard([lightBishop1, lightBishop2], [darkKing]);
+        var board = ChessBoard.Create([lightBishop1, lightBishop2], [darkKing]);
 
         var moves = lightBishop1.GetAvailableMoves(board).Moves;
 
@@ -133,7 +133,7 @@ public class BishopTests
         var darkKing = new King(Color.Dark, A8);
         var darkBishop = new Bishop(Color.Dark, F6);
         
-        var board = Utils.CreateChessBoard([lightBishop], [darkBishop, darkKing]);
+        var board = ChessBoard.Create([lightBishop], [darkBishop, darkKing]);
 
         var attacks = lightBishop.GetAvailableMoves(board).Attacks;
 
@@ -148,7 +148,7 @@ public class BishopTests
         var darkKing = new King(Color.Dark, A8);
         var darkBishop = new Bishop(Color.Dark, F6);
         
-        var board = Utils.CreateChessBoard([lightBishop1, lightBishop2], [darkBishop, darkKing]);
+        var board = ChessBoard.Create([lightBishop1, lightBishop2], [darkBishop, darkKing]);
 
         var attacks = lightBishop1.GetAvailableMoves(board).Attacks;
 
@@ -162,7 +162,7 @@ public class BishopTests
         var lightBishop2 = new Bishop(Color.Light, F6);
         var darkKing = new King(Color.Dark, A8);
         
-        var board = Utils.CreateChessBoard([lightBishop1, lightBishop2], [darkKing]);
+        var board = ChessBoard.Create([lightBishop1, lightBishop2], [darkKing]);
 
         var attacks = lightBishop1.GetAvailableMoves(board).Attacks;
 
@@ -174,7 +174,7 @@ public class BishopTests
     {
         var lightBishop = new Bishop(Color.Light, D4);
         var darkKing = new King(Color.Dark, A8);
-        var board = Utils.CreateChessBoard([lightBishop], [darkKing]);
+        var board = ChessBoard.Create([lightBishop], [darkKing]);
 
         var attacks = lightBishop.GetAvailableMoves(board).Attacks;
 
@@ -189,8 +189,7 @@ public class BishopTests
         var darkKing = new King(Color.Dark, B8);
         var darkQueen = new Queen(Color.Dark, F6);
 
-        var board = Utils.CreateChessBoard([lightKing, lightBishop], [darkKing, darkQueen]);
-        board.UpdateBoardState(darkQueen.Color);
+        var board = ChessBoard.Create([lightKing, lightBishop], [darkKing, darkQueen]);
 
         var (moves, attacks) = lightBishop.GetAvailableMoves(board);
 
@@ -208,8 +207,7 @@ public class BishopTests
         var darkKing = new King(Color.Dark, A8);
         var darkRook = new Rook(Color.Dark, E8);
         
-        var board = Utils.CreateChessBoard([lightKing, lightBishop], [darkRook, darkKing]);
-        board.UpdateBoardState(darkRook.Color);
+        var board = ChessBoard.Create([lightKing, lightBishop], [darkRook, darkKing]);
 
         var moves = lightBishop.GetAvailableMoves(board);
 
@@ -227,8 +225,7 @@ public class BishopTests
         var darkKing = new King(Color.Dark, B8);
         var darkRook = new Rook(Color.Dark, E8);
 
-        var board = Utils.CreateChessBoard([lightKing, lightBishop], [darkKing, darkRook]);
-        board.UpdateBoardState(darkRook.Color);
+        var board = ChessBoard.Create([lightKing, lightBishop], [darkKing, darkRook]);
 
         var moves = lightBishop.GetAvailableMoves(board).Moves;
         
@@ -243,8 +240,7 @@ public class BishopTests
         var darkKing = new King(Color.Dark, B8);
         var darkRook = new Rook(Color.Dark, E8);
 
-        var board = Utils.CreateChessBoard([lightKing, lightBishop], [darkKing, darkRook]);
-        board.UpdateBoardState(darkRook.Color);
+        var board = ChessBoard.Create([lightKing, lightBishop], [darkKing, darkRook]);
         var checkState = board.GetCheckState(lightKing.Color);
 
         var attacks = lightBishop.GetAvailableMoves(board).Attacks;
@@ -262,8 +258,7 @@ public class BishopTests
         var darkRook = new Rook(Color.Dark, E8);
         var darkBishop = new Bishop(Color.Dark, A7);
         
-        var board = Utils.CreateChessBoard([lightKing, lightBishop], [darkKing, darkRook, darkBishop]);
-        board.UpdateBoardState(darkRook.Color);
+        var board = ChessBoard.Create([lightKing, lightBishop], [darkKing, darkRook, darkBishop]);
 
         var moves = lightBishop.GetAvailableMoves(board).Moves;
         
@@ -280,8 +275,7 @@ public class BishopTests
         var darkRook = new Rook(Color.Dark, E8);
         var darkBishop = new Bishop(Color.Dark, A6);
         
-        var board = Utils.CreateChessBoard([lightKing, lightBishop], [darkKing, darkRook, darkBishop]);
-        board.UpdateBoardState(darkRook.Color);
+        var board = ChessBoard.Create([lightKing, lightBishop], [darkKing, darkRook, darkBishop]);
 
         var attacks = lightBishop.GetAvailableMoves(board).Attacks;
         
@@ -298,8 +292,7 @@ public class BishopTests
         var darkRook = new Rook(Color.Dark, E8);
         var darkBishop = new Bishop(Color.Dark, A5);
         
-        var board = Utils.CreateChessBoard([lightKing, lightBishop], [darkKing, darkRook, darkBishop]);
-        board.UpdateBoardState(darkRook.Color);
+        var board = ChessBoard.Create([lightKing, lightBishop], [darkKing, darkRook, darkBishop]);
         var checkState = board.GetCheckState(lightKing.Color);
 
         var (moves, attacks) = lightBishop.GetAvailableMoves(board);
@@ -317,8 +310,7 @@ public class BishopTests
         var lightRook = new Rook(Color.Light, D5);
         var darkBishop = new Bishop(Color.Dark, A8);
 
-        var board = Utils.CreateChessBoard([lightKing, lightRook], [darkBishop]);
-        board.UpdateBoardState(darkBishop.Color);
+        var board = ChessBoard.Create([lightKing, lightRook], [darkBishop]);
         
         Assert.True(lightRook.IsPinned);
     }
@@ -331,8 +323,7 @@ public class BishopTests
         var lightBishop = new Bishop(Color.Light, E4);
         var darkBishop = new Bishop(Color.Dark, A8);
         
-        var board = Utils.CreateChessBoard([lightKing, lightRook, lightBishop], [darkBishop]);
-        board.UpdateBoardState(darkBishop.Color);
+        var board = ChessBoard.Create([lightKing, lightRook, lightBishop], [darkBishop]);
         
         Assert.False(lightRook.IsPinned);
         Assert.False(lightBishop.IsPinned);
@@ -350,11 +341,11 @@ public class BishopTests
         var lightBishop = new Bishop(Color.Light, D4);
         var darkKing = new King(Color.Dark, E8);
 
-        var board = Utils.CreateChessBoard([lightBishop], [darkKing]);
+        var board = ChessBoard.Create([lightBishop], [darkKing]);
         
         lightBishop.Move(board, positionToMove);
         
-        Assert.Null(board[E4].Piece);
+        Assert.Null(board[D4].Piece);
         Assert.Equal(positionToMove, lightBishop.Position);
         Assert.Equal(lightBishop, board[positionToMove].Piece);
     }
