@@ -31,6 +31,10 @@ public abstract class Piece
     
     public virtual void Move(ChessBoard chessBoard, Position to)
     {
+        if (chessBoard[to].HasEnemyPiece(Color))
+        {
+            chessBoard.CapturePiece(chessBoard[to].Piece!);
+        }
         chessBoard.MovePiece(this, to);
         ChangePosition(to);
         chessBoard.UpdateBoardState(Color);

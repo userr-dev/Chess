@@ -239,4 +239,18 @@ public class KnightTests
         Assert.Equal(positionToMove, lightKnight.Position);
         Assert.Equal(lightKnight, board[positionToMove].Piece);
     }
+
+    [Fact]
+    public void Move_CaptureEnemyPiece()
+    {
+        var lightKnight = new Knight(Color.Light, E4);
+        var darkBishop = new Bishop(Color.Dark, C5);
+        
+        var board = ChessBoard.Create([lightKnight], [darkBishop]);
+        var darkPieces = board.GetPieces(darkBishop.Color);
+        
+        lightKnight.Move(board, darkBishop.Position);
+        
+        Assert.DoesNotContain(darkBishop, darkPieces);
+    }
 }

@@ -22,7 +22,10 @@ public sealed class King : Piece
     {
         CanCastle = false;
         var from = Position;
-        
+        if (chessBoard[to].HasEnemyPiece(Color))
+        {
+            chessBoard.CapturePiece(chessBoard[to].Piece!);
+        }
         chessBoard.MovePiece(this, to);
         ChangePosition(to);
         

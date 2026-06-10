@@ -25,7 +25,11 @@ public sealed class Pawn : Piece
     public override void Move(ChessBoard chessBoard, Position to)
     {
         CanDoubleAdvance = false;
-        
+
+        if (chessBoard[to].HasEnemyPiece(Color))
+        {
+            chessBoard.CapturePiece(chessBoard[to].Piece!);
+        }
         chessBoard.MovePiece(this, to);
         ChangePosition(to);
 

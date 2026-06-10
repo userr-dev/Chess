@@ -108,6 +108,13 @@ public sealed class ChessBoard
         this[movedPiece.Position].Piece = null;
         this[to].Piece = movedPiece;
     }
+
+    internal void CapturePiece(Piece piece)
+    {
+        this[piece.Position].Piece = null;
+        var enemyPieceSet = GetPieceSet(piece.Color);
+        enemyPieceSet.Remove(piece);
+    }
     
     internal void PromotePawn(Pawn pawn, Piece piece)
     {

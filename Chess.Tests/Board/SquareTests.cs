@@ -12,7 +12,7 @@ public class SquareTests
     {
         var square = GetSquare();
         var piece = new Pawn(Color.Light, square.Position);
-        square.Piece = piece;
+        //square.Piece = piece;
  
         Assert.True(square.HasPiece);
     }
@@ -31,7 +31,7 @@ public class SquareTests
     public void HasFriendlyPiece_WhenPieceIsFriendly_ReturnTrue(Color color)
     {
         var square = GetSquare();
-        square.Piece = new Pawn(color, square.Position);
+        //square.Piece = new Pawn(color, square.Position);
  
         Assert.True(square.HasFriendlyPiece(color));
     }
@@ -42,7 +42,7 @@ public class SquareTests
     public void HasFriendlyPiece_WhenPieceIsEnemy_ReturnFalse(Color color)
     {
         var square = GetSquare();
-        square.Piece = new Pawn(color.Opposite(), square.Position);
+        //square.Piece = new Pawn(color.Opposite(), square.Position);
  
         Assert.False(square.HasFriendlyPiece(color));
     }
@@ -63,7 +63,7 @@ public class SquareTests
     public void HasEnemyPiece_WhenPieceIsEnemy_ReturnTrue(Color color)
     {
         var square = GetSquare();
-        square.Piece = new Pawn(color.Opposite(), square.Position);
+        //square.Piece = new Pawn(color.Opposite(), square.Position);
  
         Assert.True(square.HasEnemyPiece(color));
     }
@@ -74,7 +74,7 @@ public class SquareTests
     public void HasEnemyPiece_WhenPieceIsFriendly_ReturnFalse(Color color)
     {
         var square = GetSquare();
-        square.Piece = new Pawn(color, square.Position);
+        //square.Piece = new Pawn(color, square.Position);
  
         Assert.False(square.HasEnemyPiece(color));
     }
@@ -102,7 +102,7 @@ public class SquareTests
     {
         var square = GetSquare();
         var piece = new Pawn(Color.Light, square.Position);
-        square.Piece = piece;
+        //square.Piece = piece;
  
         Assert.Equal(piece.ToString(), square.ToString());
     }

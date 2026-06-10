@@ -7,7 +7,7 @@ public class Square(Color color, Position position)
     public Color Color { get; } = color;
     public Position Position { get; } = position;
 
-    public Piece? Piece { get; set; }
+    public Piece? Piece { get; internal set; }
     public bool HasPiece => Piece is not null;
 
     private bool HasPieceOfColor(Color color)

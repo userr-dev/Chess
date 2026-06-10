@@ -361,4 +361,19 @@ public class RookTests
         Assert.Equal(positionToMove, lightRook.Position);
         Assert.Equal(lightRook, board[positionToMove].Piece);
     }
+    
+    [Fact]
+    public void Move_CaptureEnemyPiece()
+    {
+        var lightRook = new Rook(Color.Light, E4);
+        var darkKing = new King(Color.Dark, D8);
+        var darkKnight = new Knight(Color.Dark, E7);
+        
+        var board = ChessBoard.Create([lightRook], [darkKing, darkKnight]);
+        var darkPieces = board.GetPieces(darkKnight.Color);
+        
+        lightRook.Move(board, darkKnight.Position);
+        
+        Assert.DoesNotContain(darkKnight, darkPieces);
+    }
 }

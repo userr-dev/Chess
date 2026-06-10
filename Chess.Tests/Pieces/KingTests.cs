@@ -315,4 +315,18 @@ public class KingTests
         Assert.Equal(C1, lightKing.Position);
         Assert.Equal(D1, lightQueenSideRook.Position);
     }
+
+    [Fact]
+    public void Move_CapturePiece()
+    {
+        var lightKing = new King(Color.Light, E1);
+        var darkQueen = new Queen(Color.Dark, E2);
+
+        var board = ChessBoard.Create([lightKing], [darkQueen]);
+        var darkPieces = board.GetPieces(darkQueen.Color);
+        
+        lightKing.Move(board, darkQueen.Position);
+        
+        Assert.DoesNotContain(darkQueen, darkPieces);
+    }
 }

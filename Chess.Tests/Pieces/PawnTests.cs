@@ -438,4 +438,36 @@ public class PawnTests
         var checkState = board.GetCheckState(darkKing.Color);
         Assert.True(checkState.IsChecked);
     }
+
+    [Fact]
+    public void Move_CapturePiece()
+    {
+        var lightPawn = new Pawn(Color.Light, A2);
+        var darkKnight = new Knight(Color.Dark, B3);
+        
+        var board = ChessBoard.Create([lightPawn], [darkKnight]);
+        var darkPieces = board.GetPieces(darkKnight.Color);
+        
+        lightPawn.Move(board, darkKnight.Position);
+        
+        Assert.DoesNotContain(darkKnight, darkPieces);
+    }
+    
+    [Fact]
+    public void Move_CapturePiece_AndPromoted()
+    {
+        var lightPawn = new Pawn(Color.Light, A7);
+        var darkKing = new King(Color.Dark, H7);
+        var darkKnight = new Knight(Color.Dark, B8);
+        
+        var board = ChessBoard.Create([lightPawn], [darkKing, darkKnight]);
+        var lightPieces = board.GetPieces(lightPawn.Color);
+        var darkPieces = board.GetPieces(darkKnight.Color);
+        
+        lightPawn.Move(board, darkKnight.Position);
+        
+        Assert.DoesNotContain(lightPawn, lightPieces);
+        Assert.DoesNotContain(darkKnight, darkPieces);
+        Assert.IsType<Queen>(board[darkKnight.Position].Piece);
+    }
 }
