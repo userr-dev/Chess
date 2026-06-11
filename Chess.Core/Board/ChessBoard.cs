@@ -101,6 +101,18 @@ public sealed class ChessBoard
         
         GetCheckState(enemyColor).Update(this, movedPieceColor);
     }
+
+    public bool IsCheckmate(Color color)
+    {
+        return GetCheckState(color).IsChecked 
+               && GetPieces(color).All(p => !p.GetAvailableMoves(this).HasMoves);
+    }
+    
+    public bool IsStalemate(Color color)
+    {
+        return !GetCheckState(color).IsChecked 
+               && GetPieces(color).All(p => !p.GetAvailableMoves(this).HasMoves);
+    }
     
     // Moves
     internal void MovePiece(Piece movedPiece, Position to)
