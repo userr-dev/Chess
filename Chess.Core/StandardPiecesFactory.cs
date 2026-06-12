@@ -1,10 +1,11 @@
-using Chess.Core.Board;
-using Chess.Core.Pieces;
-
 namespace Chess.Core;
 
 public class StandardPiecesFactory
 {
+    private static readonly Column[] RookColumns = [Column.A, Column.H];
+    private static readonly Column[] KnightColumns = [Column.B, Column.G];
+    private static readonly Column[] BishopColumns = [Column.C, Column.F];
+    
     public static PieceSet CreateCollection(Color color)
     {
         var collection = PieceSet.Create(color);
@@ -13,9 +14,9 @@ public class StandardPiecesFactory
         var pawnRow = color == Color.Light ? 1 : 6;
 
         AddPawns(collection, color, pawnRow);
-        AddPair(collection, color, [Column.A, Column.H], mainRow, (c, p) => new Rook(c, p));
-        AddPair(collection, color, [Column.B, Column.G], mainRow, (c, p) => new Knight(c, p));
-        AddPair(collection, color, [Column.C, Column.F], mainRow, (c, p) => new Bishop(c, p));
+        AddPair(collection, color, RookColumns, mainRow, (c, p) => new Rook(c, p));
+        AddPair(collection, color, KnightColumns, mainRow, (c, p) => new Knight(c, p));
+        AddPair(collection, color, BishopColumns, mainRow, (c, p) => new Bishop(c, p));
         AddRoyals(collection, color, mainRow);
         
         return collection;

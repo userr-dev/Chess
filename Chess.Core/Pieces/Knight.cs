@@ -1,4 +1,3 @@
-using Chess.Core.Board;
 using KnightMoveOffset = (int Column, int Row);
 
 namespace Chess.Core.Pieces;

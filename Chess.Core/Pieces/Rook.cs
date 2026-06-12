@@ -1,5 +1,3 @@
-using Chess.Core.Board;
-
 namespace Chess.Core.Pieces;
 
 public sealed class Rook : SlidingPiece
@@ -28,6 +26,6 @@ public sealed class Rook : SlidingPiece
     public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
         GetAttackedPositionsAlongDirections(chessBoard, Directions);
 
-    public override void FindPinnedPiece(ChessBoard chessBoard, King enemyKing) =>
+    internal override void FindPinnedPiece(ChessBoard chessBoard, King enemyKing) =>
         FindPinnedPieceAlongDirections(chessBoard, Directions, enemyKing);
 }

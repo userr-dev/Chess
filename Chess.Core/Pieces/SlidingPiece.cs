@@ -1,5 +1,3 @@
-using Chess.Core.Board;
-
 namespace Chess.Core.Pieces;
 
 public abstract class SlidingPiece : Piece
@@ -74,5 +72,5 @@ public abstract class SlidingPiece : Piece
         }
     }
 
-    public abstract void FindPinnedPiece(ChessBoard chessBoard, King enemyKing);
+    internal abstract void FindPinnedPiece(ChessBoard chessBoard, King enemyKing);
 }

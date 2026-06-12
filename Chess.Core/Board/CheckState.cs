@@ -1,5 +1,3 @@
-using Chess.Core.Pieces;
-
 namespace Chess.Core.Board;
 
 public class CheckState

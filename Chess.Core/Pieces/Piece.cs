@@ -1,12 +1,10 @@
-using Chess.Core.Board;
-
 namespace Chess.Core.Pieces;
 
 public abstract class Piece
 {
     public Color Color { get; }
     public Position Position { get; private set; }
-    public MoveDirection[]? AllowedDirections { get; set; }
+    public MoveDirection[]? AllowedDirections { get; internal set; }
     public bool IsPinned => AllowedDirections is not null;
 
     protected Piece(Color color, Position position)

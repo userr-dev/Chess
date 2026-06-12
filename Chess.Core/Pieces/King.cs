@@ -1,5 +1,3 @@
-using Chess.Core.Board;
-
 namespace Chess.Core.Pieces;
 
 public sealed class King : Piece

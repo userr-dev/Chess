@@ -1,14 +1,12 @@
-using Chess.Core.Board;
-
 namespace Chess.Core.Pieces;
 
 public sealed class Pawn : Piece
 {
-    private static readonly MoveDirection[][] AttackDirections =
-    [
-        [Position.TryMoveLeftUp, Position.TryMoveRightUp],
-        [Position.TryMoveLeftDown, Position.TryMoveRightDown],
-    ];
+    private static readonly Dictionary<Color, MoveDirection[]> AttackDirections = new()
+    {
+        { Color.Light, [Position.TryMoveLeftUp, Position.TryMoveRightUp] },
+        { Color.Dark, [Position.TryMoveLeftDown, Position.TryMoveRightDown] }
+    };
     
     private static readonly MoveDirection[] ForwardDirections = [Position.TryMoveUp, Position.TryMoveDown];
     
@@ -55,7 +53,7 @@ public sealed class Pawn : Piece
     }
 
     public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
-        GetAttackedPositions(AttackDirections[(int)Color]);
+        GetAttackedPositions(AttackDirections[Color]);
 
     private IEnumerable<Position> GetAttackedPositions(IEnumerable<MoveDirection> directions)
     {
@@ -91,8 +89,8 @@ public sealed class Pawn : Piece
         var attacks = new List<Position>(2);
 
         var attackDirections = IsPinned
-            ? AttackDirections[(int)Color].Intersect(AllowedDirections!)
-            : AttackDirections[(int)Color];
+            ? AttackDirections[Color].Intersect(AllowedDirections!)
+            : AttackDirections[Color];
         
         foreach (var position in GetAttackedPositions(attackDirections))
         {
