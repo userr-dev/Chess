@@ -35,7 +35,7 @@ public sealed class Knight : Piece
         return ApplyCheckFilter(checkState, moves, attacks);
     }
 
-    public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard)
+    internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard)
     {
         foreach (var offset in MoveOffsets)
         {

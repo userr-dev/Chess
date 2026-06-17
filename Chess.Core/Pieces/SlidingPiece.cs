@@ -9,7 +9,7 @@ public abstract class SlidingPiece : Piece
     protected IEnumerable<Position> GetAttackedPositionsAlongDirections(ChessBoard chessBoard,
         IEnumerable<MoveDirection> directions)
     {
-        var enemyKing = chessBoard.GetKing(Color.Opposite());
+        chessBoard.TryGetKing(Color.Opposite(), out var enemyKing);
         
         foreach (var direction in directions)
         {

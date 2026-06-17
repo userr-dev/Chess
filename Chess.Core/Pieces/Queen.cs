@@ -15,7 +15,7 @@ public sealed class Queen : SlidingPiece
     public override MoveResult GetAvailableMoves(ChessBoard chessBoard) =>
         GetMovesAlongDirections(chessBoard, Directions);
 
-    public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
+    internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
         GetAttackedPositionsAlongDirections(chessBoard, Directions);
 
     internal override void FindPinnedPiece(ChessBoard chessBoard, King enemyKing) =>

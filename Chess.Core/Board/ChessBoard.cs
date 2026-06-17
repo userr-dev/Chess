@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Chess.Core.Board;
 
 public sealed class ChessBoard
@@ -57,7 +59,12 @@ public sealed class ChessBoard
         _darkCheckState.Update(this, Color.Light);
     }
     
-    internal King? GetKing(Color color) => GetPieceSet(color).King;
+    internal bool TryGetKing(Color color, [MaybeNullWhen(false)] out King king)
+    {
+        var foundedKing = GetPieceSet(color).King;
+        king = foundedKing;
+        return foundedKing is not null;
+    }
 
     internal IEnumerable<Rook> GetCastlingRooks(Color color) => GetPieceSet(color).CastlingRooks;
     
@@ -81,8 +88,7 @@ public sealed class ChessBoard
         foreach (var piece in GetPieces(color))
             piece.AllowedDirections = null;
 
-        var king = GetKing(color);
-        if (king is null) return;
+        if (!TryGetKing(color, out var king)) return;
         
         var enemyColor = color.Opposite();
 
@@ -97,6 +103,7 @@ public sealed class ChessBoard
         RecalculatePins(movedPieceColor);
         RecalculatePins(enemyColor);
         
+        GetCheckState(movedPieceColor).Update(this, enemyColor);
         GetCheckState(enemyColor).Update(this, movedPieceColor);
     }
 

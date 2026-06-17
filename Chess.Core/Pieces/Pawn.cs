@@ -8,7 +8,11 @@ public sealed class Pawn : Piece
         { Color.Dark, [Position.TryMoveLeftDown, Position.TryMoveRightDown] }
     };
     
-    private static readonly MoveDirection[] ForwardDirections = [Position.TryMoveUp, Position.TryMoveDown];
+    private static readonly Dictionary<Color, MoveDirection> ForwardDirections = new()
+    {
+        { Color.Light, Position.TryMoveUp },
+        { Color.Dark, Position.TryMoveDown },
+    };
     
     public bool CanDoubleAdvance { get; private set; }
 
@@ -20,7 +24,7 @@ public sealed class Pawn : Piece
                       || (color == Color.Dark && position.Row == 6);
     }
 
-    public override void Move(ChessBoard chessBoard, Position to)
+    internal override void Move(ChessBoard chessBoard, Position to)
     {
         CanDoubleAdvance = false;
 
@@ -52,7 +56,7 @@ public sealed class Pawn : Piece
         return ApplyCheckFilter(checkState, moves, attacks);
     }
 
-    public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
+    internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
         GetAttackedPositions(AttackDirections[Color]);
 
     private IEnumerable<Position> GetAttackedPositions(IEnumerable<MoveDirection> directions)
@@ -70,7 +74,7 @@ public sealed class Pawn : Piece
     private List<Position> FindMoves(ChessBoard chessBoard)
     {
         var moves = new List<Position>(2);
-        var directionMove = ForwardDirections[(int)Color];
+        var directionMove = ForwardDirections[Color];
         var position = Position;
 
         if (IsPinned && !AllowedDirections!.Contains(directionMove)) return moves;

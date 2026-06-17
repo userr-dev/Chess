@@ -16,7 +16,7 @@ public sealed class King : Piece
         CanCastle = startingRow == position.Row && position.Column is Column.E;
     }
 
-    public override void Move(ChessBoard chessBoard, Position to)
+    internal override void Move(ChessBoard chessBoard, Position to)
     {
         CanCastle = false;
         var from = Position;
@@ -71,7 +71,7 @@ public sealed class King : Piece
         return new MoveResult(moves, attacks);
     }
 
-    public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard)
+    internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard)
     {
         foreach (var direction in Directions)
         {

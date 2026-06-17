@@ -13,7 +13,7 @@ public sealed class Rook : SlidingPiece
         CanCastle = startingRow == position.Row && position.Column is Column.A or Column.H;
     }
 
-    public override void Move(ChessBoard chessBoard, Position to)
+    internal override void Move(ChessBoard chessBoard, Position to)
     {
         CanCastle = false;
         
@@ -23,7 +23,7 @@ public sealed class Rook : SlidingPiece
     public override MoveResult GetAvailableMoves(ChessBoard chessBoard) =>
         GetMovesAlongDirections(chessBoard, Directions);
 
-    public override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
+    internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
         GetAttackedPositionsAlongDirections(chessBoard, Directions);
 
     internal override void FindPinnedPiece(ChessBoard chessBoard, King enemyKing) =>

@@ -25,9 +25,9 @@ public abstract class Piece
     
     public abstract MoveResult GetAvailableMoves(ChessBoard chessBoard);
 
-    public abstract IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard);
-    
-    public virtual void Move(ChessBoard chessBoard, Position to)
+    internal abstract IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard);
+
+    internal virtual void Move(ChessBoard chessBoard, Position to)
     {
         if (chessBoard[to].HasEnemyPiece(Color))
         {
