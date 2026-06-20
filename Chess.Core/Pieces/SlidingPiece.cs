@@ -31,6 +31,7 @@ public abstract class SlidingPiece : Piece
         var checkState = chessBoard.GetCheckState(Color);
 
         if (checkState.IsDoubleChecked) return new MoveResult(moves, attacks);
+        if (checkState.IsChecked) return GetCheckEvasionMoves(chessBoard, checkState, directions, moves, attacks);
         
         var allowedDirections = IsPinned ? directions.Intersect(AllowedDirections!) : directions;
         
@@ -46,9 +47,39 @@ public abstract class SlidingPiece : Piece
             }
         }
 
-        return ApplyCheckFilter(checkState, moves, attacks);
+        return new MoveResult(moves, attacks);
     }
 
+    private MoveResult GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState,
+        MoveDirection[] directions, List<Position> moves, List<Position> attacks)
+    {
+        Position[] targets = [.. checkState.BlockingPositions, checkState.Attackers[0].Position];
+    
+        foreach (var target in targets)
+        {
+            var (columnOffset, rowOffset) = (target.Column - Position.Column, target.Row - Position.Row);
+        
+            if (!MoveDirection.TryGetDirection(columnOffset, rowOffset, out var direction)) continue;
+            if (!directions.Contains(direction)) continue;
+            if (IsPinned && !AllowedDirections!.Contains(direction)) continue;
+        
+            var position = Position;
+            while (direction(ref position))
+            {
+                if (position != target && chessBoard[position].HasPiece) break;
+                if (position != target) continue;
+                
+                if (chessBoard[target].HasEnemyPiece(Color))
+                    attacks.Add(target);
+                else
+                    moves.Add(target);
+                break;
+            }
+        }
+
+        return new MoveResult(moves, attacks);
+    }
+    
     protected void FindPinnedPieceAlongDirections(ChessBoard chessBoard, MoveDirection[] directions, King enemyKing)
     {
         foreach (var direction in directions)
