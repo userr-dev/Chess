@@ -2,8 +2,8 @@ namespace Chess.Core.Pieces;
 
 public sealed class Bishop : SlidingPiece
 {
-    private static readonly MoveDirection[] Directions =
-        [Position.TryMoveLeftUp, Position.TryMoveLeftDown, Position.TryMoveRightUp, Position.TryMoveRightDown];
+    private static readonly Direction[] Directions =
+        [Direction.LeftUp, Direction.LeftDown, Direction.RightDown, Direction.RightUp];
 
     public Bishop(Color color, Position position) : base(color, position)
     {

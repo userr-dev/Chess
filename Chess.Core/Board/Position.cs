@@ -78,14 +78,9 @@ public readonly partial record struct Position
         position = Create(newColumn, newRow);
         return true;
     }
-    
-    public static bool TryMoveUp(ref Position position) => TryMove(ref position, 0, 1);
-    public static bool TryMoveDown(ref Position position) => TryMove(ref position, 0, -1);
-    public static bool TryMoveLeft(ref Position position) => TryMove(ref position, -1, 0);
-    public static bool TryMoveRight(ref Position position) => TryMove(ref position, 1, 0);
 
-    public static bool TryMoveLeftUp(ref Position position) => TryMove(ref position, -1, 1);
-    public static bool TryMoveLeftDown(ref Position position) => TryMove(ref position, -1, -1);
-    public static bool TryMoveRightUp(ref Position position) => TryMove(ref position, 1, 1);
-    public static bool TryMoveRightDown(ref Position position) => TryMove(ref position, 1, -1);
+    public static bool TryMove(ref Position position, Direction direction)
+    {
+        return TryMove(ref position, direction.ColumnOffset, direction.RowOffset);
+    }
 }

@@ -2,16 +2,16 @@ namespace Chess.Core.Pieces;
 
 public sealed class Pawn : Piece
 {
-    private static readonly Dictionary<Color, MoveDirection[]> AttackDirections = new()
+    private static readonly Dictionary<Color, Direction[]> AttackDirections = new()
     {
-        { Color.Light, [Position.TryMoveLeftUp, Position.TryMoveRightUp] },
-        { Color.Dark, [Position.TryMoveLeftDown, Position.TryMoveRightDown] }
+        { Color.Light, [Direction.LeftUp, Direction.RightUp] },
+        { Color.Dark, [Direction.LeftDown, Direction.RightDown] }
     };
     
-    private static readonly Dictionary<Color, MoveDirection> ForwardDirections = new()
+    private static readonly Dictionary<Color, Direction> ForwardDirections = new()
     {
-        { Color.Light, Position.TryMoveUp },
-        { Color.Dark, Position.TryMoveDown },
+        { Color.Light, Direction.Up },
+        { Color.Dark, Direction.Down },
     };
     
     public bool CanDoubleAdvance { get; private set; }
@@ -59,12 +59,12 @@ public sealed class Pawn : Piece
     internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
         GetAttackedPositions(AttackDirections[Color]);
 
-    private IEnumerable<Position> GetAttackedPositions(IEnumerable<MoveDirection> directions)
+    private IEnumerable<Position> GetAttackedPositions(IEnumerable<Direction> directions)
     {
-        foreach (var moveDirection in directions)
+        foreach (var direction in directions)
         {
             var position = Position;
-            if (moveDirection(ref position))
+            if (Position.TryMove(ref position, direction))
             {
                 yield return position;
             }
@@ -74,15 +74,15 @@ public sealed class Pawn : Piece
     private List<Position> FindMoves(ChessBoard chessBoard)
     {
         var moves = new List<Position>(2);
-        var directionMove = ForwardDirections[Color];
+        var direction = ForwardDirections[Color];
         var position = Position;
 
-        if (IsPinned && !AllowedDirections!.Contains(directionMove)) return moves;
+        if (IsPinned && !AllowedDirections!.Contains(direction)) return moves;
         
-        if (!directionMove(ref position) || chessBoard[position].HasPiece) return moves;
+        if (!Position.TryMove(ref position, direction) || chessBoard[position].HasPiece) return moves;
         
         moves.Add(position);
-        if (CanDoubleAdvance && directionMove(ref position) && !chessBoard[position].HasPiece)
+        if (CanDoubleAdvance && Position.TryMove(ref position, direction) && !chessBoard[position].HasPiece)
             moves.Add(position);
 
         return moves;
