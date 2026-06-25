@@ -12,16 +12,6 @@ public abstract class Piece
         Color = color;
         Position = position;
     }
-
-    protected static MoveResult ApplyCheckFilter(CheckState checkState, List<Position> moves, List<Position> attacks)
-    {
-        if (!checkState.IsChecked)
-            return new MoveResult(moves, attacks);
-        
-        return new MoveResult(
-            moves.Intersect(checkState.BlockingPositions).ToList(),
-            attacks.Where(p => p == checkState.Attackers[0].Position).ToList());
-    }
     
     public abstract MoveResult GetAvailableMoves(ChessBoard chessBoard);
 
