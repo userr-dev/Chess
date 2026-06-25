@@ -331,6 +331,27 @@ public class PawnTests
     }
 
     [Fact]
+    public void GetAvailableMoves_PinnedAlongDiagonal_AttackerInOppositeDirection_AttackNotIncluded()
+    {
+        var lightKing = new King(Color.Light, D2);
+        var lightPawn = new Pawn(Color.Light, E3);
+        var darkBishop = new Bishop(Color.Dark, F4);
+        var darkRook = new Rook(Color.Dark, D4);
+
+        var board = ChessBoard.Create([lightKing, lightPawn], [darkBishop, darkRook]);
+
+        Assert.True(lightPawn.IsPinned);
+
+        var checkState = board.GetCheckState(Color.Light);
+        Assert.True(checkState.IsChecked);
+        Assert.False(checkState.IsDoubleChecked);
+
+        var attacks = lightPawn.GetAvailableMoves(board).Attacks;
+
+        Assert.DoesNotContain(attacks, p => p.Equals(darkRook.Position));
+    }
+    
+    [Fact]
     public void GetAvailableMoves_WhenFriendlyKingIsDoubleChecked_CannotMove()
     {
         var lightKing = new King(Color.Light, E1);

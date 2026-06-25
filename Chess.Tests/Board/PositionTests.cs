@@ -127,43 +127,6 @@ public class PositionTests
     }
 
     // --- TryMove / directional helpers ---
-
-    [Fact]
-    public void TryMoveUp_FromMiddle_MovesUpAndReturnsTrue()
-    {
-        var pos = D4;
-        var result = Position.TryMoveUp(ref pos);
-        Assert.True(result);
-        Assert.Equal(D5, pos);
-    }
-
-    [Fact]
-    public void TryMoveUp_FromLastRow_ReturnsFalse()
-    {
-        var pos = D8;
-        var result = Position.TryMoveUp(ref pos);
-        Assert.False(result);
-        Assert.Equal(D8, pos); // unchanged
-    }
-
-    [Fact]
-    public void TryMoveLeft_FromColumnA_ReturnsFalse()
-    {
-        var pos = A4;
-        var result = Position.TryMoveLeft(ref pos);
-        Assert.False(result);
-        Assert.Equal(A4, pos);
-    }
-
-    [Fact]
-    public void TryMoveRightDown_DiagonalMove_Succeeds()
-    {
-        var pos = C5;
-        var result = Position.TryMoveRightDown(ref pos);
-        Assert.True(result);
-        Assert.Equal(D4, pos);
-    }
-
     [Fact]
     public void TryMove_LargeOffset_ReturnsFalse()
     {

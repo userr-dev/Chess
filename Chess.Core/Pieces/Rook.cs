@@ -2,8 +2,7 @@ namespace Chess.Core.Pieces;
 
 public sealed class Rook : SlidingPiece
 {
-    private static readonly MoveDirection[] Directions =
-        [Position.TryMoveUp, Position.TryMoveDown, Position.TryMoveLeft, Position.TryMoveRight];
+    private static readonly Direction[] Directions = [Direction.Up, Direction.Down, Direction.Left, Direction.Right];
 
     public bool CanCastle { get; private set; }
     

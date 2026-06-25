@@ -2,10 +2,10 @@ namespace Chess.Core.Pieces;
 
 public sealed class King : Piece
 {
-    private static readonly MoveDirection[] Directions =
+    private static readonly Direction[] Directions =
     [
-        Position.TryMoveLeftUp, Position.TryMoveLeftDown, Position.TryMoveRightUp, Position.TryMoveRightDown,
-        Position.TryMoveUp, Position.TryMoveDown, Position.TryMoveLeft, Position.TryMoveRight
+        Direction.Up, Direction.Down, Direction.Left, Direction.Right, Direction.LeftUp, Direction.LeftDown,
+        Direction.RightDown, Direction.RightUp
     ];
 
     public bool CanCastle { get; private set; }
@@ -76,7 +76,7 @@ public sealed class King : Piece
         foreach (var direction in Directions)
         {
             var position = Position;
-            if (!direction(ref position)) continue;
+            if (!Position.TryMove(ref position, direction)) continue;
             yield return position;
         }
     }
@@ -87,7 +87,7 @@ public sealed class King : Piece
         
         foreach (var rook in rooks)
         {
-            MoveDirection direction = rook.Position.Column > Position.Column ? Position.TryMoveRight : Position.TryMoveLeft;
+            var direction = rook.Position.Column > Position.Column ? Direction.Right : Direction.Left;
             if (!CheckPossibleCastling(chessBoard, rook.Position, enemyAttackedPositions, direction)) continue;
             
             var columnOffset = rook.Position.Column > Position.Column ? 2 : -2;
@@ -96,10 +96,10 @@ public sealed class King : Piece
     }
 
     private bool CheckPossibleCastling(ChessBoard chessBoard, Position rookPosition,
-        HashSet<Position> enemyAttackedPositions, MoveDirection direction)
+        HashSet<Position> enemyAttackedPositions, Direction direction)
     {
         var position = Position;
-        while (direction(ref position) && position != rookPosition)
+        while (Position.TryMove(ref position, direction) && position != rookPosition)
         {
             if (chessBoard[position].HasPiece || enemyAttackedPositions.Contains(position))
             {

@@ -2,16 +2,16 @@ namespace Chess.Core.Pieces;
 
 public sealed class Pawn : Piece
 {
-    private static readonly Dictionary<Color, MoveDirection[]> AttackDirections = new()
+    private static readonly Dictionary<Color, Direction[]> AttackDirections = new()
     {
-        { Color.Light, [Position.TryMoveLeftUp, Position.TryMoveRightUp] },
-        { Color.Dark, [Position.TryMoveLeftDown, Position.TryMoveRightDown] }
+        { Color.Light, [Direction.LeftUp, Direction.RightUp] },
+        { Color.Dark, [Direction.LeftDown, Direction.RightDown] }
     };
     
-    private static readonly Dictionary<Color, MoveDirection> ForwardDirections = new()
+    private static readonly Dictionary<Color, Direction> ForwardDirections = new()
     {
-        { Color.Light, Position.TryMoveUp },
-        { Color.Dark, Position.TryMoveDown },
+        { Color.Light, Direction.Up },
+        { Color.Dark, Direction.Down },
     };
     
     public bool CanDoubleAdvance { get; private set; }
@@ -49,42 +49,78 @@ public sealed class Pawn : Piece
         var checkState = chessBoard.GetCheckState(Color);
 
         if (checkState.IsDoubleChecked) return new MoveResult([], []);
+        if (checkState.IsChecked) return GetCheckEvasionMoves(chessBoard, checkState, [], []);
         
         var moves = FindMoves(chessBoard);
         var attacks = FindAttacks(chessBoard);
 
-        return ApplyCheckFilter(checkState, moves, attacks);
+        return new MoveResult(moves, attacks);
     }
 
     internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
         GetAttackedPositions(AttackDirections[Color]);
 
-    private IEnumerable<Position> GetAttackedPositions(IEnumerable<MoveDirection> directions)
+    private IEnumerable<Position> GetAttackedPositions(IEnumerable<Direction> directions)
     {
-        foreach (var moveDirection in directions)
+        foreach (var direction in directions)
         {
             var position = Position;
-            if (moveDirection(ref position))
+            if (Position.TryMove(ref position, direction))
             {
                 yield return position;
             }
         }
     }
 
+    private MoveResult GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState, List<Position> moves, List<Position> attacks)
+    {
+        var attackerPosition = checkState.Attackers[0].Position;
+        
+        if (Color == Color.Dark && Position.Row <= attackerPosition.Row) return new MoveResult(moves, attacks); // Dark
+        if (Color == Color.Light && Position.Row >= attackerPosition.Row) return new MoveResult(moves, attacks); // Light
+        
+        FindCheckEvasionAttacks(attackerPosition, attacks);
+        FindCheckBlockingMoves(chessBoard, checkState, attackerPosition, moves);
+        
+        return new MoveResult(moves, attacks);
+    }
+
+    private void FindCheckEvasionAttacks(Position attackerPosition,List<Position> attacks)
+    {
+        var attackDirection = new Direction((int)attackerPosition.Column - (int)Position.Column, attackerPosition.Row - Position.Row);
+        if (!AttackDirections[Color].Contains(attackDirection)) return;
+        if (IsPinned && !AllowedDirections!.Contains(attackDirection)) return;
+        attacks.Add(attackerPosition);
+    }
+
+    private void FindCheckBlockingMoves(ChessBoard chessBoard, CheckState checkState, Position attackerPosition, List<Position> moves)
+    {
+        if (!(checkState.BlockingPositions.Count > 0)) return;
+        chessBoard.TryGetKing(Color, out var king);
+
+        var direction = ForwardDirections[Color];
+        if (IsPinned && !AllowedDirections!.Contains(direction)) return;
+        var position = Position;
+        for (int i = 0; i < (CanDoubleAdvance ? 2 : 1); i++)
+        {
+            if (!Position.TryMove(ref position, direction) || chessBoard[position].HasPiece) break;
+            if (Position.IsInDirection(attackerPosition, king!.Position, position)) moves.Add(position);
+        }
+    }
+    
     private List<Position> FindMoves(ChessBoard chessBoard)
     {
         var moves = new List<Position>(2);
-        var directionMove = ForwardDirections[Color];
+        var direction = ForwardDirections[Color];
         var position = Position;
 
-        if (IsPinned && !AllowedDirections!.Contains(directionMove)) return moves;
+        if (IsPinned && !AllowedDirections!.Contains(direction)) return moves;
         
-        if (!directionMove(ref position) || chessBoard[position].HasPiece) return moves;
-        
-        moves.Add(position);
-        if (CanDoubleAdvance && directionMove(ref position) && !chessBoard[position].HasPiece)
-            moves.Add(position);
-
+        for (int i = 0; i < (CanDoubleAdvance ? 2 : 1); i++)
+        {
+            if (!Position.TryMove(ref position, direction) || chessBoard[position].HasPiece) break;
+            if (!chessBoard[position].HasPiece) moves.Add(position);
+        }
         return moves;
     }
 

@@ -2,10 +2,10 @@ namespace Chess.Core.Pieces;
 
 public sealed class Queen : SlidingPiece
 {
-    private static readonly MoveDirection[] Directions =
+    private static readonly Direction[] Directions =
     [
-        Position.TryMoveLeftUp, Position.TryMoveLeftDown, Position.TryMoveRightUp, Position.TryMoveRightDown,
-        Position.TryMoveUp, Position.TryMoveDown, Position.TryMoveLeft, Position.TryMoveRight
+        Direction.Up, Direction.Down, Direction.Left, Direction.Right, Direction.LeftUp, Direction.LeftDown,
+        Direction.RightDown, Direction.RightUp
     ];
     
     public Queen(Color color, Position position) : base(color, position)
