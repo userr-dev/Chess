@@ -7,17 +7,13 @@ public sealed class Queen : SlidingPiece
         Direction.Up, Direction.Down, Direction.Left, Direction.Right, Direction.LeftUp, Direction.LeftDown,
         Direction.RightDown, Direction.RightUp
     ];
+
+    protected override Direction[] OwnDirections => Directions;
     
     public Queen(Color color, Position position) : base(color, position)
     {
     }
 
-    public override MoveResult GetAvailableMoves(ChessBoard chessBoard) =>
-        GetMovesAlongDirections(chessBoard, Directions);
-
     internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
         GetAttackedPositionsAlongDirections(chessBoard, Directions);
-
-    internal override void FindPinnedPiece(ChessBoard chessBoard, King enemyKing) =>
-        FindPinnedPieceAlongDirections(chessBoard, Directions, enemyKing);
 }
