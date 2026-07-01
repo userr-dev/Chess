@@ -2,10 +2,16 @@ namespace Chess.Core.Pieces;
 
 public abstract class SlidingPiece : Piece
 {
+    protected abstract Direction[] OwnDirections { get; }
     protected SlidingPiece(Color color, Position position) : base(color, position)
     {
     }
 
+    private Direction[] GetDirections()
+    {
+        return IsPinned ? PinnedDirections! : OwnDirections;
+    }
+    
     protected IEnumerable<Position> GetAttackedPositionsAlongDirections(ChessBoard chessBoard,
         IEnumerable<Direction> directions)
     {
@@ -23,7 +29,7 @@ public abstract class SlidingPiece : Piece
         }
     }
 
-    protected MoveResult GetMovesAlongDirections(ChessBoard chessBoard, Direction[] directions)
+    public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
     {
         List<Position> moves = [];
         List<Position> attacks = [];
@@ -31,11 +37,9 @@ public abstract class SlidingPiece : Piece
         var checkState = chessBoard.GetCheckState(Color);
 
         if (checkState.IsDoubleChecked) return new MoveResult(moves, attacks);
-        if (checkState.IsChecked) return GetCheckEvasionMoves(chessBoard, checkState, directions, moves, attacks);
+        if (checkState.IsChecked) return GetCheckEvasionMoves(chessBoard, checkState, moves, attacks);
         
-        var allowedDirections = IsPinned ? directions.Intersect(AllowedDirections!) : directions;
-        
-        foreach (var position in GetAttackedPositionsAlongDirections(chessBoard, allowedDirections))
+        foreach (var position in GetAttackedPositionsAlongDirections(chessBoard, GetDirections()))
         {
             if (!chessBoard[position].HasPiece)
             {
@@ -50,8 +54,7 @@ public abstract class SlidingPiece : Piece
         return new MoveResult(moves, attacks);
     }
 
-    private MoveResult GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState,
-        Direction[] directions, List<Position> moves, List<Position> attacks)
+    private MoveResult GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState, List<Position> moves, List<Position> attacks)
     {
         Position[] targets = [checkState.Attackers[0].Position, ..checkState.BlockingPositions];
     
@@ -61,8 +64,7 @@ public abstract class SlidingPiece : Piece
             if (!(columnOffset == 0 || rowOffset == 0 || Math.Abs(columnOffset) == Math.Abs(rowOffset))) continue;
             var direction = new Direction(Math.Sign(columnOffset), Math.Sign(rowOffset));
 
-            if (!directions.Contains(direction)) continue;
-            if (IsPinned && !AllowedDirections!.Contains(direction)) continue;
+            if (!GetDirections().Contains(direction)) continue;
         
             var position = Position;
             while (Position.TryMove(ref position, direction))
@@ -81,28 +83,33 @@ public abstract class SlidingPiece : Piece
         return new MoveResult(moves, attacks);
     }
     
-    protected void FindPinnedPieceAlongDirections(ChessBoard chessBoard, Direction[] directions, King enemyKing)
+    internal void FindPinnedPiece(ChessBoard chessBoard , King enemyKing)
     {
-        foreach (var direction in directions)
+        var (columnOffset, rowOffset) = (enemyKing.Position.Column - Position.Column, enemyKing.Position.Row - Position.Row);
+        if (!(columnOffset == 0 || rowOffset == 0 || Math.Abs(columnOffset) == Math.Abs(rowOffset))) return;
+        var direction = new Direction(Math.Sign(columnOffset), Math.Sign(rowOffset));
+        if (!OwnDirections.Contains(direction)) return;
+        
+        Piece? candidate = null;
+        var position = Position;
+        while (Position.TryMove(ref position, direction))
         {
-            Piece? candidate = null;
-            var position = Position;
-            while (Position.TryMove(ref position, direction))
+            var square = chessBoard[position];
+
+            if (square.Piece == enemyKing)
             {
-                var square = chessBoard[position];
-
-                if (square.Piece == enemyKing)
-                {
-                    candidate?.AllowedDirections = direction.GetAxis();
-                    break;
-                }
-
-                if (square.HasFriendlyPiece(Color)) break;
-                if (square.HasPiece && candidate is not null) break;
-                candidate ??= square.Piece;
+                candidate?.Pin(direction.GetAxis());
+                break;
             }
+
+            if (square.HasFriendlyPiece(Color)) break;
+            if (square.HasPiece && candidate is not null) break;
+            candidate ??= square.Piece;
         }
     }
 
-    internal abstract void FindPinnedPiece(ChessBoard chessBoard, King enemyKing);
+    protected override void OnPin(Direction[] pinnedAxis)
+    {
+        PinnedDirections = OwnDirections.Intersect(pinnedAxis).ToArray();
+    }
 }

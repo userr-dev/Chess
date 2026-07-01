@@ -3,6 +3,8 @@ namespace Chess.Core.Pieces;
 public sealed class Rook : SlidingPiece
 {
     private static readonly Direction[] Directions = [Direction.Up, Direction.Down, Direction.Left, Direction.Right];
+    
+    protected override Direction[] OwnDirections => Directions;
 
     public bool CanCastle { get; private set; }
     
@@ -19,12 +21,6 @@ public sealed class Rook : SlidingPiece
         base.Move(chessBoard, to);
     }
 
-    public override MoveResult GetAvailableMoves(ChessBoard chessBoard) =>
-        GetMovesAlongDirections(chessBoard, Directions);
-
     internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
         GetAttackedPositionsAlongDirections(chessBoard, Directions);
-
-    internal override void FindPinnedPiece(ChessBoard chessBoard, King enemyKing) =>
-        FindPinnedPieceAlongDirections(chessBoard, Directions, enemyKing);
 }

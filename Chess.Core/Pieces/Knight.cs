@@ -2,7 +2,7 @@ namespace Chess.Core.Pieces;
 
 public sealed class Knight : Piece
 {
-    private static readonly HashSet<Direction> MoveOffsets =
+    private static readonly HashSet<Direction> Directions =
         [new(-1, 2), new(1, 2), new(-1, -2), new(1, -2), new(-2, 1), new(-2, -1), new(2, 1), new(2, -1)];
     
     public Knight(Color color, Position position) : base(color, position)
@@ -44,7 +44,7 @@ public sealed class Knight : Piece
                 (int)target.Column - (int)Position.Column,
                 target.Row - Position.Row);
 
-            if (!MoveOffsets.Contains(offset)) continue;
+            if (!Directions.Contains(offset)) continue;
 
             if (!chessBoard[target].HasPiece)
                 moves.Add(target);
@@ -57,7 +57,7 @@ public sealed class Knight : Piece
     
     internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard)
     {
-        foreach (var direction in MoveOffsets)
+        foreach (var direction in Directions)
         {
             var position = Position;
             if (Position.TryMove(ref position, direction))

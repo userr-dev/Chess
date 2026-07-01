@@ -86,7 +86,7 @@ public sealed class ChessBoard
     private void RecalculatePins(Color color)
     {
         foreach (var piece in GetPieces(color))
-            piece.AllowedDirections = null;
+            piece.Unpin();
 
         if (!TryGetKing(color, out var king)) return;
         

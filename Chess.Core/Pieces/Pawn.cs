@@ -89,7 +89,7 @@ public sealed class Pawn : Piece
     {
         var attackDirection = new Direction((int)attackerPosition.Column - (int)Position.Column, attackerPosition.Row - Position.Row);
         if (!AttackDirections[Color].Contains(attackDirection)) return;
-        if (IsPinned && !AllowedDirections!.Contains(attackDirection)) return;
+        if (IsPinned && !PinnedDirections!.Contains(attackDirection)) return;
         attacks.Add(attackerPosition);
     }
 
@@ -99,7 +99,7 @@ public sealed class Pawn : Piece
         chessBoard.TryGetKing(Color, out var king);
 
         var direction = ForwardDirections[Color];
-        if (IsPinned && !AllowedDirections!.Contains(direction)) return;
+        if (IsPinned && !PinnedDirections!.Contains(direction)) return;
         var position = Position;
         for (int i = 0; i < (CanDoubleAdvance ? 2 : 1); i++)
         {
@@ -114,7 +114,7 @@ public sealed class Pawn : Piece
         var direction = ForwardDirections[Color];
         var position = Position;
 
-        if (IsPinned && !AllowedDirections!.Contains(direction)) return moves;
+        if (IsPinned && !PinnedDirections!.Contains(direction)) return moves;
         
         for (int i = 0; i < (CanDoubleAdvance ? 2 : 1); i++)
         {
@@ -128,11 +128,7 @@ public sealed class Pawn : Piece
     {
         var attacks = new List<Position>(2);
 
-        var attackDirections = IsPinned
-            ? AttackDirections[Color].Intersect(AllowedDirections!)
-            : AttackDirections[Color];
-        
-        foreach (var position in GetAttackedPositions(attackDirections))
+        foreach (var position in GetAttackedPositions(GetAttackedDirections()))
         {
             if (chessBoard[position].HasEnemyPiece(Color))
             {
@@ -143,6 +139,25 @@ public sealed class Pawn : Piece
         return attacks;
     }
 
+    private IEnumerable<Direction> GetAttackedDirections()
+    {
+        foreach (var attackedDirection in AttackDirections[Color])
+        {
+            if (!IsPinned)
+            {
+                yield return attackedDirection;
+                continue;
+            }
+            foreach (var pinnedDirection in PinnedDirections!)
+            {
+                if (attackedDirection == pinnedDirection)
+                {
+                    yield return attackedDirection;
+                }
+            }
+        }
+    }
+    
     private void RaisePromotion(ChessBoard chessBoard, Position to)
     {
         var args = new PromotionEventArgs(Color, to);

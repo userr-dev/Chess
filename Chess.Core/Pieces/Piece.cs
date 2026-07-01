@@ -4,9 +4,8 @@ public abstract class Piece
 {
     public Color Color { get; }
     public Position Position { get; private set; }
-    public Direction[]? AllowedDirections { get; internal set; }
-    public bool IsPinned => AllowedDirections is not null;
-
+    protected Direction[]? PinnedDirections { get; set; }
+    public bool IsPinned => PinnedDirections is not null;
     protected Piece(Color color, Position position)
     {
         Color = color;
@@ -31,6 +30,18 @@ public abstract class Piece
     protected void ChangePosition(Position to)
     {
         Position = to;
+    }
+    
+    internal void Pin(Direction[] pinnedAxis) => OnPin(pinnedAxis);
+    
+    internal void Unpin()
+    {
+        PinnedDirections = null;
+    }
+
+    protected virtual void OnPin(Direction[] pinnedAxis)
+    {
+        PinnedDirections = pinnedAxis;
     }
     
     public override string ToString()
