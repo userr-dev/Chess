@@ -9,9 +9,14 @@ public static class ColumnExtensions
 {
     extension(Column column)
     {
+        public int Delta(Column other)
+        {
+            return (int)column - (int)other;
+        }
+        
         public int DistanceTo(Column other)
         {
-            return Math.Abs((int)column - (int)other);
+            return Math.Abs(column.Delta(other));
         }
         
         public Column Shift(int columnOffset)

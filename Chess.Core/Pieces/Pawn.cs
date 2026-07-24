@@ -44,17 +44,10 @@ public sealed class Pawn : Piece
         RaisePromotion(chessBoard, to);
     }
 
-    public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
+    internal override bool IsAttackedKing(ChessBoard chessBoard, King enemyKing)
     {
-        var checkState = chessBoard.GetCheckState(Color);
-
-        if (checkState.IsDoubleChecked) return new MoveResult([], []);
-        if (checkState.IsChecked) return GetCheckEvasionMoves(chessBoard, checkState, [], []);
-        
-        var moves = FindMoves(chessBoard);
-        var attacks = FindAttacks(chessBoard);
-
-        return new MoveResult(moves, attacks);
+        var direction = Position.GetDirectionFromTo(Position, enemyKing.Position);
+        return AttackDirections[Color].Contains(direction);
     }
 
     internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
@@ -72,63 +65,83 @@ public sealed class Pawn : Piece
         }
     }
 
-    private MoveResult GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState, List<Position> moves, List<Position> attacks)
+    public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
     {
-        var attackerPosition = checkState.Attackers[0].Position;
+        var checkState = chessBoard.GetCheckState(Color);
+
+        if (checkState.IsDoubleChecked) return MoveResult.Empty;
         
-        if (Color == Color.Dark && Position.Row <= attackerPosition.Row) return new MoveResult(moves, attacks); // Dark
-        if (Color == Color.Light && Position.Row >= attackerPosition.Row) return new MoveResult(moves, attacks); // Light
+        return checkState.IsChecked 
+            ? GetCheckEvasionMoves(chessBoard, checkState) 
+            : GetMovesAndAttacks(chessBoard);
+    }
+    
+    private MoveResult GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState)
+    {
+        var attackerPosition = checkState.Attacker!.Position;
         
-        FindCheckEvasionAttacks(attackerPosition, attacks);
-        FindCheckBlockingMoves(chessBoard, checkState, attackerPosition, moves);
+        var attacks = GetCheckEvasionAttacks(attackerPosition);
+        var moves = GetCheckBlockingMoves(chessBoard, checkState, attackerPosition);
         
         return new MoveResult(moves, attacks);
     }
 
-    private void FindCheckEvasionAttacks(Position attackerPosition,List<Position> attacks)
+    private List<Position> GetCheckEvasionAttacks(Position attackerPosition)
     {
-        var attackDirection = new Direction((int)attackerPosition.Column - (int)Position.Column, attackerPosition.Row - Position.Row);
-        if (!AttackDirections[Color].Contains(attackDirection)) return;
-        if (IsPinned && !PinnedDirections!.Contains(attackDirection)) return;
+        List<Position> attacks = [];
+        
+        var attackDirection = Position.GetDirectionFromTo(Position, attackerPosition);
+        if (!AttackDirections[Color].Contains(attackDirection)) return attacks;
+        if (IsPinned && !PinnedDirections!.Contains(attackDirection)) return attacks;
+        
         attacks.Add(attackerPosition);
+        return attacks;
     }
 
-    private void FindCheckBlockingMoves(ChessBoard chessBoard, CheckState checkState, Position attackerPosition, List<Position> moves)
+    private List<Position> GetCheckBlockingMoves(ChessBoard chessBoard, CheckState checkState, Position attackerPosition)
     {
-        if (!(checkState.BlockingPositions.Count > 0)) return;
+        if (checkState.BlockingPositions.Count == 0) return [];
         chessBoard.TryGetKing(Color, out var king);
 
-        var direction = ForwardDirections[Color];
-        if (IsPinned && !PinnedDirections!.Contains(direction)) return;
-        var position = Position;
-        for (int i = 0; i < (CanDoubleAdvance ? 2 : 1); i++)
-        {
-            if (!Position.TryMove(ref position, direction) || chessBoard[position].HasPiece) break;
-            if (Position.IsInDirection(attackerPosition, king!.Position, position)) moves.Add(position);
-        }
+        return GetMoves(chessBoard, position => Position.IsInDirection(attackerPosition, king!.Position, position));
+    }
+
+    private MoveResult GetMovesAndAttacks(ChessBoard chessBoard)
+    {
+        var moves = GetMoves(chessBoard);
+        var attacks = GetAttacks(chessBoard);
+
+        return new MoveResult(moves, attacks);
     }
     
-    private List<Position> FindMoves(ChessBoard chessBoard)
+    private List<Position> GetMoves(ChessBoard chessBoard)
+    {
+        return GetMoves(chessBoard, position => !chessBoard[position].HasPiece);
+    }
+
+    private List<Position> GetMoves(ChessBoard chessBoard, Predicate<Position> filter)
     {
         var moves = new List<Position>(2);
         var direction = ForwardDirections[Color];
-        var position = Position;
 
         if (IsPinned && !PinnedDirections!.Contains(direction)) return moves;
         
+        var position = Position;
         for (int i = 0; i < (CanDoubleAdvance ? 2 : 1); i++)
         {
             if (!Position.TryMove(ref position, direction) || chessBoard[position].HasPiece) break;
-            if (!chessBoard[position].HasPiece) moves.Add(position);
+            if (filter(position)) moves.Add(position);
         }
+
         return moves;
     }
-
-    private List<Position> FindAttacks(ChessBoard chessBoard)
+    
+    private List<Position> GetAttacks(ChessBoard chessBoard)
     {
         var attacks = new List<Position>(2);
 
-        foreach (var position in GetAttackedPositions(GetAttackedDirections()))
+        var attacksDirections = GetAttacksDirections();
+        foreach (var position in GetAttackedPositions(attacksDirections))
         {
             if (chessBoard[position].HasEnemyPiece(Color))
             {
@@ -139,23 +152,10 @@ public sealed class Pawn : Piece
         return attacks;
     }
 
-    private IEnumerable<Direction> GetAttackedDirections()
+    private IEnumerable<Direction> GetAttacksDirections()
     {
-        foreach (var attackedDirection in AttackDirections[Color])
-        {
-            if (!IsPinned)
-            {
-                yield return attackedDirection;
-                continue;
-            }
-            foreach (var pinnedDirection in PinnedDirections!)
-            {
-                if (attackedDirection == pinnedDirection)
-                {
-                    yield return attackedDirection;
-                }
-            }
-        }
+        var attackDirections = AttackDirections[Color];
+        return IsPinned ? attackDirections.Intersect(PinnedDirections!) : attackDirections;
     }
     
     private void RaisePromotion(ChessBoard chessBoard, Position to)

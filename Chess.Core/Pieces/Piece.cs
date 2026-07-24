@@ -14,6 +14,8 @@ public abstract class Piece
     
     public abstract MoveResult GetAvailableMoves(ChessBoard chessBoard);
 
+    internal abstract bool IsAttackedKing(ChessBoard chessBoard, King enemyKing);
+    
     internal abstract IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard);
 
     internal virtual void Move(ChessBoard chessBoard, Position to)
@@ -42,6 +44,18 @@ public abstract class Piece
     protected virtual void OnPin(Direction[] pinnedAxis)
     {
         PinnedDirections = pinnedAxis;
+    }
+
+    protected void ClassifyMoves(ChessBoard chessBoard, Position position, List<Position> moves, List<Position> attacks)
+    {
+        if (!chessBoard[position].HasPiece)
+        {
+            moves.Add(position);
+        }
+        else if (chessBoard[position].HasEnemyPiece(Color))
+        {
+            attacks.Add(position);
+        }
     }
     
     public override string ToString()

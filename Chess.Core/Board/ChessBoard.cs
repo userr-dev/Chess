@@ -11,8 +11,8 @@ public sealed class ChessBoard
     private readonly PieceSet _lightPieces;
     private readonly PieceSet _darkPieces;
 
-    private readonly CheckState _lightCheckState = new();
-    private readonly CheckState _darkCheckState = new();
+    private readonly CheckState _lightCheckState = new(Color.Light);
+    private readonly CheckState _darkCheckState = new(Color.Dark);
     
     private ChessBoard(PieceSet lightPieces, PieceSet darkPieces)
     {
@@ -55,8 +55,8 @@ public sealed class ChessBoard
         RecalculatePins(Color.Light);
         RecalculatePins(Color.Dark);
     
-        _lightCheckState.Update(this, Color.Dark);
-        _darkCheckState.Update(this, Color.Light);
+        _lightCheckState.Update(this);
+        _darkCheckState.Update(this);
     }
     
     internal bool TryGetKing(Color color, [MaybeNullWhen(false)] out King king)
@@ -82,6 +82,13 @@ public sealed class ChessBoard
     {
         return color == Color.Light ? _lightCheckState : _darkCheckState;
     }
+
+    internal HashSet<Position> GetAttackedPositions(Color color)
+    {
+        return GetPieces(color)
+                .SelectMany(p => p.GetAttackedPositions(this))
+                .ToHashSet();
+    }
     
     private void RecalculatePins(Color color)
     {
@@ -93,7 +100,7 @@ public sealed class ChessBoard
         var enemyColor = color.Opposite();
 
         foreach (var slider in GetPieceSet(enemyColor).SlidingPieces)
-            slider.FindPinnedPiece(this, king);
+            slider.DetectAndMarkPin(this, king);
     }
     
     internal void UpdateBoardState(Color movedPieceColor)
@@ -103,8 +110,8 @@ public sealed class ChessBoard
         RecalculatePins(movedPieceColor);
         RecalculatePins(enemyColor);
         
-        GetCheckState(movedPieceColor).Update(this, enemyColor);
-        GetCheckState(enemyColor).Update(this, movedPieceColor);
+        GetCheckState(movedPieceColor).Update(this);
+        GetCheckState(enemyColor).Update(this);
     }
 
     public bool IsCheckmate(Color color)

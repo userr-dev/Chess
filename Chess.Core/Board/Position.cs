@@ -19,6 +19,13 @@ public readonly partial record struct Position
     }
     
     public bool IsPromotionRow(Color pawnColor) => pawnColor == Color.Light ? Row == 7 : Row == 0;
+
+    public (int ColumnOffset, int RowOffset) OffsetFrom(Position to)
+    {
+        var columnDelta = Column.Delta(to.Column);
+        var rowDelta = Row - to.Row;
+        return (columnDelta, rowDelta);
+    }
     
     public override string ToString()
     {
@@ -54,11 +61,8 @@ public readonly partial record struct Position
     {
         if (target == from || target == to) return true;
 
-        var toFromColumnDelta = (int)to.Column - (int)from.Column;
-        var toFromRowDelta = to.Row - from.Row;
-        
-        var targetFromColumnDelta = (int)target.Column - (int)from.Column;
-        var targetFromRowDelta = target.Row - from.Row;
+        var (toFromColumnDelta, toFromRowDelta) = to.OffsetFrom(from);
+        var (targetFromColumnDelta, targetFromRowDelta) = target.OffsetFrom(from);
 
         if (toFromColumnDelta * targetFromRowDelta != toFromRowDelta * targetFromColumnDelta) return false; // Collinear
         
@@ -66,6 +70,12 @@ public readonly partial record struct Position
         var lengthSqr = toFromColumnDelta * toFromColumnDelta + toFromRowDelta * toFromRowDelta;
         
         return dot >= 0 && dot <= lengthSqr;
+    }
+
+    public static Direction GetDirectionFromTo(Position from, Position to)
+    {
+        var (columnDelta, rowDelta) = to.OffsetFrom(from);
+        return new Direction(columnDelta, rowDelta);
     }
     
     public static bool TryMove(ref Position position, int columnOffset, int rowOffset)

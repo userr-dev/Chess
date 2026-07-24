@@ -42,34 +42,29 @@ public sealed class King : Piece
         List<Position> attacks = [];
 
         var checkState = chessBoard.GetCheckState(Color);
-        var isKingChecked = checkState.IsChecked || checkState.IsDoubleChecked;
+        var isKingChecked = checkState.IsChecked;
         
-        var enemyAttacks = chessBoard.GetPieces(Color.Opposite())
-            .SelectMany(p => p.GetAttackedPositions(chessBoard))
-            .ToHashSet();
+        var enemyAttacks = chessBoard.GetAttackedPositions(Color.Opposite());
 
         foreach (var position in GetAttackedPositions(chessBoard))
         {
-            var canMoved = !enemyAttacks.Contains(position);
+            var canMove = !enemyAttacks.Contains(position);
             
-            if (!chessBoard[position].HasPiece && canMoved)
-            {
-                moves.Add(position);
-            }
-            else if (chessBoard[position].HasEnemyPiece(Color) && canMoved)
-            {
-                attacks.Add(position);
-            }
+            if (!canMove) continue;
+            
+            ClassifyMoves(chessBoard, position, moves, attacks);
         }
 
         if (!isKingChecked && CanCastle && !enemyAttacks.Contains(Position))
         {
-            var castlingMoves = GetCastlingMove(chessBoard, enemyAttacks);
+            var castlingMoves = GetCastlingMoves(chessBoard, enemyAttacks);
             moves.AddRange(castlingMoves);
         }
         
         return new MoveResult(moves, attacks);
     }
+
+    internal override bool IsAttackedKing(ChessBoard chessBoard, King enemyKing) => false;
 
     internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard)
     {
@@ -81,21 +76,22 @@ public sealed class King : Piece
         }
     }
 
-    private IEnumerable<Position> GetCastlingMove(ChessBoard chessBoard, HashSet<Position> enemyAttackedPositions)
+    private IEnumerable<Position> GetCastlingMoves(ChessBoard chessBoard, HashSet<Position> enemyAttackedPositions)
     {
         var rooks = chessBoard.GetCastlingRooks(Color);
         
         foreach (var rook in rooks)
         {
-            var direction = rook.Position.Column > Position.Column ? Direction.Right : Direction.Left;
-            if (!CheckPossibleCastling(chessBoard, rook.Position, enemyAttackedPositions, direction)) continue;
+            var isKingSide = rook.Position.Column > Position.Column;
+            var direction = isKingSide ? Direction.Right : Direction.Left;
+            if (!IsCastlingPathClear(chessBoard, rook.Position, enemyAttackedPositions, direction)) continue;
             
-            var columnOffset = rook.Position.Column > Position.Column ? 2 : -2;
+            var columnOffset = isKingSide ? 2 : -2;
             yield return Position.Create(Position.Column.Shift(columnOffset), Position.Row);
         }
     }
 
-    private bool CheckPossibleCastling(ChessBoard chessBoard, Position rookPosition,
+    private bool IsCastlingPathClear(ChessBoard chessBoard, Position rookPosition,
         HashSet<Position> enemyAttackedPositions, Direction direction)
     {
         var position = Position;

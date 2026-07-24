@@ -9,6 +9,12 @@ public sealed class Knight : Piece
     {
     }
     
+    internal override bool IsAttackedKing(ChessBoard chessBoard, King enemyKing)
+    {
+        var direction = Position.GetDirectionFromTo(Position, enemyKing.Position);
+        return Directions.Contains(direction);
+    }
+    
     public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
     {
         List<Position> moves = [];
@@ -16,19 +22,18 @@ public sealed class Knight : Piece
 
         var checkState = chessBoard.GetCheckState(Color);
         
-        if (IsPinned || checkState.IsDoubleChecked) return new MoveResult(moves, attacks);
-        if (checkState.IsChecked) return GetCheckEvasionMoves(chessBoard, checkState, moves, attacks);
+        if (IsPinned || checkState.IsDoubleChecked) return MoveResult.Empty;
         
+        return checkState.IsChecked
+            ? GetCheckEvasionMoves(chessBoard, checkState, moves, attacks)
+            : GetMovesAndAttacks(chessBoard, moves, attacks);
+    }
+
+    private MoveResult GetMovesAndAttacks(ChessBoard chessBoard, List<Position> moves, List<Position> attacks)
+    {
         foreach (var position in GetAttackedPositions(chessBoard))
         {
-            if (!chessBoard[position].HasPiece)
-            {
-                moves.Add(position);
-            }
-            else if (chessBoard[position].HasEnemyPiece(Color))
-            {
-                attacks.Add(position);
-            }
+            ClassifyMoves(chessBoard, position, moves, attacks);
         }
 
         return new MoveResult(moves, attacks);
@@ -36,20 +41,13 @@ public sealed class Knight : Piece
 
     private MoveResult GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState, List<Position> moves, List<Position> attacks)
     {
-        Position[] targets = [..checkState.BlockingPositions, checkState.Attackers[0].Position];
-
-        foreach (var target in targets)
+        foreach (var target in checkState.Targets)
         {
-            var offset = new Direction(
-                (int)target.Column - (int)Position.Column,
-                target.Row - Position.Row);
+            var offset = Position.GetDirectionFromTo(Position, target);
 
             if (!Directions.Contains(offset)) continue;
 
-            if (!chessBoard[target].HasPiece)
-                moves.Add(target);
-            else if (chessBoard[target].HasEnemyPiece(Color))
-                attacks.Add(target);
+            ClassifyMoves(chessBoard, target, moves, attacks);
         }
 
         return new MoveResult(moves, attacks);

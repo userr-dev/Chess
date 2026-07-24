@@ -8,6 +8,17 @@ public readonly record struct Direction(int ColumnOffset, int RowOffset)
         return [this, oppositeSide];
     }
 
+
+    public Direction NormalizedOrSelf()
+    {
+        if (ColumnOffset == 0 || RowOffset == 0 || Math.Abs(ColumnOffset) == Math.Abs(RowOffset))
+        {
+            return new Direction(Math.Sign(ColumnOffset), Math.Sign(RowOffset));
+        }
+
+        return this;
+    }
+    
     public static Direction Up => new(0, 1);
     public static Direction Down => new(0, -1);
     public static Direction Left => new(-1, 0);

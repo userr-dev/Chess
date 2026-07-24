@@ -52,7 +52,7 @@ public class CheckStateTests
         
         var checkState = board.GetCheckState(lightKing.Color);
 
-        Assert.Single(checkState.Attackers);
+        Assert.NotNull(checkState.Attacker);
     }
     
     [Fact]

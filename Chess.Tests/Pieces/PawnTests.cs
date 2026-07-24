@@ -295,7 +295,7 @@ public class PawnTests
         var attacks = lightPawn.GetAvailableMoves(board).Attacks;
         
         Assert.Single(attacks);
-        Assert.Contains(attacks, p => p == checkState.Attackers[0].Position);
+        Assert.Contains(attacks, p => p == checkState.Attacker?.Position);
     }
 
     [Fact]
