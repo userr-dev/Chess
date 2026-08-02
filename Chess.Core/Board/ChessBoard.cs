@@ -66,6 +66,11 @@ public sealed class ChessBoard
         return foundedKing is not null;
     }
 
+    public Position? GetKingPosition(Color color)
+    {
+        return TryGetKing(color, out var king) ? king.Position : null;
+    }
+    
     internal IEnumerable<Rook> GetCastlingRooks(Color color) => GetPieceSet(color).CastlingRooks;
     
     public IEnumerable<Piece> GetPieces(Color color)
@@ -171,6 +176,14 @@ public sealed class ChessBoard
     {
         var lightSet = PieceSet.Create(Color.Light, lightPieces);
         var darkSet = PieceSet.Create(Color.Dark, darkPieces);
+
+        return new ChessBoard(lightSet, darkSet);
+    }
+    
+    public static ChessBoard CreateStandard()
+    {
+        var lightSet = StandardPiecesFactory.CreateCollection(Color.Light);
+        var darkSet = StandardPiecesFactory.CreateCollection(Color.Dark);
 
         return new ChessBoard(lightSet, darkSet);
     }
