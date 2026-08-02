@@ -1,0 +1,15 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Add Resources Here -->
+    <Color x:Key="WindowBackground">#161A34</Color>
+    <Color x:Key="LightSquare">#EBF0F3</Color>
+    <Color x:Key="DarkSquare">#2B2E38</Color>
+    <Color x:Key="MovableSquare">#0757A1</Color>
+    <Color x:Key="AttackSquare">#992828</Color>
+
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{StaticResource WindowBackground}" />
+    <SolidColorBrush x:Key="LightSquareBrush" Color="{StaticResource LightSquare}" />
+    <SolidColorBrush x:Key="DarkSquareBrush" Color="{StaticResource DarkSquare}" />
+    <SolidColorBrush x:Key="MovableSquareBrush" Color="{StaticResource MovableSquare}" />
+    <SolidColorBrush x:Key="AttackSquareBrush" Color="{StaticResource AttackSquare}" />
+</ResourceDictionary>

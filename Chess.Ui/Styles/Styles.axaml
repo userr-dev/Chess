@@ -1,0 +1,27 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style Selector="Border.lightSquare">
+        <Setter Property="Background" Value="{StaticResource LightSquareBrush}" />
+    </Style>
+    <Style Selector="Border.darkSquare">
+        <Setter Property="Background" Value="{StaticResource DarkSquareBrush}" />
+    </Style>
+
+    <Style Selector="Border.canMove">
+        <Setter Property="BorderThickness" Value="4" />
+        <Setter Property="BorderBrush" Value="{StaticResource MovableSquareBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+    </Style>
+
+    <Style Selector="Border.canAttack">
+        <Setter Property="BorderThickness" Value="4" />
+        <Setter Property="BorderBrush" Value="{StaticResource AttackSquareBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+    </Style>
+    
+    <Style Selector="Border.kingChecked">
+        <Setter Property="Background" Value="{StaticResource AttackSquareBrush}"/>
+        <Setter Property="CornerRadius" Value="8" />
+    </Style>
+</Styles>
