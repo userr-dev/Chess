@@ -65,25 +65,25 @@ public sealed class Pawn : Piece
         }
     }
 
-    public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
+    public override AvailableMoves GetAvailableMoves(ChessBoard chessBoard)
     {
         var checkState = chessBoard.GetCheckState(Color);
 
-        if (checkState.IsDoubleChecked) return MoveResult.Empty;
+        if (checkState.IsDoubleChecked) return AvailableMoves.Empty;
         
         return checkState.IsChecked 
             ? GetCheckEvasionMoves(chessBoard, checkState) 
             : GetMovesAndAttacks(chessBoard);
     }
     
-    private MoveResult GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState)
+    private AvailableMoves GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState)
     {
         var attackerPosition = checkState.Attacker!.Position;
         
         var attacks = GetCheckEvasionAttacks(attackerPosition);
         var moves = GetCheckBlockingMoves(chessBoard, checkState, attackerPosition);
         
-        return new MoveResult(moves, attacks);
+        return new AvailableMoves(moves, attacks);
     }
 
     private List<Position> GetCheckEvasionAttacks(Position attackerPosition)
@@ -106,12 +106,12 @@ public sealed class Pawn : Piece
         return GetMoves(chessBoard, position => Position.IsInDirection(attackerPosition, king!.Position, position));
     }
 
-    private MoveResult GetMovesAndAttacks(ChessBoard chessBoard)
+    private AvailableMoves GetMovesAndAttacks(ChessBoard chessBoard)
     {
         var moves = GetMoves(chessBoard);
         var attacks = GetAttacks(chessBoard);
 
-        return new MoveResult(moves, attacks);
+        return new AvailableMoves(moves, attacks);
     }
     
     private List<Position> GetMoves(ChessBoard chessBoard)

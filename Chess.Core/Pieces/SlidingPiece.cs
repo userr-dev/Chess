@@ -43,17 +43,17 @@ public abstract class SlidingPiece : Piece
         return false;
     }
 
-    public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
+    public override AvailableMoves GetAvailableMoves(ChessBoard chessBoard)
     {
         var checkState = chessBoard.GetCheckState(Color);
-        if (checkState.IsDoubleChecked) return MoveResult.Empty;
+        if (checkState.IsDoubleChecked) return AvailableMoves.Empty;
         
         return checkState.IsChecked
             ? GetCheckEvasionMoves(chessBoard, checkState)
             : GetMovesAndAttacks(chessBoard);
     }
 
-    private MoveResult GetMovesAndAttacks(ChessBoard chessBoard)
+    private AvailableMoves GetMovesAndAttacks(ChessBoard chessBoard)
     {
         List<Position> moves = [];
         List<Position> attacks = [];
@@ -62,10 +62,10 @@ public abstract class SlidingPiece : Piece
             ClassifyMoves(chessBoard, position, moves, attacks);
         }
 
-        return new MoveResult(moves, attacks);
+        return new AvailableMoves(moves, attacks);
     }
 
-    private MoveResult GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState)
+    private AvailableMoves GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState)
     {
         List<Position> moves = [];
         List<Position> attacks = [];
@@ -86,7 +86,7 @@ public abstract class SlidingPiece : Piece
             }
         }
 
-        return new MoveResult(moves, attacks);
+        return new AvailableMoves(moves, attacks);
     }
     
     internal void DetectAndMarkPin(ChessBoard chessBoard , King enemyKing)

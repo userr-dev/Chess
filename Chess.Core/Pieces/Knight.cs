@@ -15,31 +15,31 @@ public sealed class Knight : Piece
         return Directions.Contains(direction);
     }
     
-    public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
+    public override AvailableMoves GetAvailableMoves(ChessBoard chessBoard)
     {
         List<Position> moves = [];
         List<Position> attacks = [];
 
         var checkState = chessBoard.GetCheckState(Color);
         
-        if (IsPinned || checkState.IsDoubleChecked) return MoveResult.Empty;
+        if (IsPinned || checkState.IsDoubleChecked) return AvailableMoves.Empty;
         
         return checkState.IsChecked
             ? GetCheckEvasionMoves(chessBoard, checkState, moves, attacks)
             : GetMovesAndAttacks(chessBoard, moves, attacks);
     }
 
-    private MoveResult GetMovesAndAttacks(ChessBoard chessBoard, List<Position> moves, List<Position> attacks)
+    private AvailableMoves GetMovesAndAttacks(ChessBoard chessBoard, List<Position> moves, List<Position> attacks)
     {
         foreach (var position in GetAttackedPositions(chessBoard))
         {
             ClassifyMoves(chessBoard, position, moves, attacks);
         }
 
-        return new MoveResult(moves, attacks);
+        return new AvailableMoves(moves, attacks);
     }
 
-    private MoveResult GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState, List<Position> moves, List<Position> attacks)
+    private AvailableMoves GetCheckEvasionMoves(ChessBoard chessBoard, CheckState checkState, List<Position> moves, List<Position> attacks)
     {
         foreach (var target in checkState.Targets)
         {
@@ -50,7 +50,7 @@ public sealed class Knight : Piece
             ClassifyMoves(chessBoard, target, moves, attacks);
         }
 
-        return new MoveResult(moves, attacks);
+        return new AvailableMoves(moves, attacks);
     }
     
     internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard)

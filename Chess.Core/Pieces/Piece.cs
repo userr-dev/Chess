@@ -12,7 +12,7 @@ public abstract class Piece
         Position = position;
     }
     
-    public abstract MoveResult GetAvailableMoves(ChessBoard chessBoard);
+    public abstract AvailableMoves GetAvailableMoves(ChessBoard chessBoard);
 
     internal abstract bool IsAttackedKing(ChessBoard chessBoard, King enemyKing);
     

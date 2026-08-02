@@ -36,7 +36,7 @@ public sealed class King : Piece
         chessBoard.Castle(this, from, to);
     }
 
-    public override MoveResult GetAvailableMoves(ChessBoard chessBoard)
+    public override AvailableMoves GetAvailableMoves(ChessBoard chessBoard)
     {
         List<Position> moves = [];
         List<Position> attacks = [];
@@ -61,7 +61,7 @@ public sealed class King : Piece
             moves.AddRange(castlingMoves);
         }
         
-        return new MoveResult(moves, attacks);
+        return new AvailableMoves(moves, attacks);
     }
 
     internal override bool IsAttackedKing(ChessBoard chessBoard, King enemyKing) => false;
