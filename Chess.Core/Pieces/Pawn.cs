@@ -15,8 +15,6 @@ public sealed class Pawn : Piece
     };
     
     public bool CanDoubleAdvance { get; private set; }
-
-    public event EventHandler<PromotionEventArgs>? Promoted;
     
     public Pawn(Color color, Position position) : base(color, position)
     {
@@ -41,7 +39,7 @@ public sealed class Pawn : Piece
             return;
         }
         
-        RaisePromotion(chessBoard, to);
+        chessBoard.PromotePawn(this, new Queen(Color, to)); // Default Promotion
     }
 
     internal override bool IsAttackedKing(ChessBoard chessBoard, King enemyKing)
@@ -156,31 +154,5 @@ public sealed class Pawn : Piece
     {
         var attackDirections = AttackDirections[Color];
         return IsPinned ? attackDirections.Intersect(PinnedDirections!) : attackDirections;
-    }
-    
-    private void RaisePromotion(ChessBoard chessBoard, Position to)
-    {
-        var args = new PromotionEventArgs(Color, to);
-        Promoted?.Invoke(this, args);
-        chessBoard.PromotePawn(this, args.PromotedPiece ?? new Queen(Color, to));
-    }
-    
-    public sealed class PromotionEventArgs(Color color, Position position) : EventArgs
-    {
-        public Color Color { get; } = color;
-        public Position Position { get; } = position;
-    
-        public Piece? PromotedPiece 
-        { 
-            get;
-            set
-            {
-                if (value is King or Pawn)
-                    throw new ArgumentException("Cannot promote to King or Pawn.");
-                if (value?.Color != Color)
-                    throw new ArgumentException("Cannot promote to enemy color");
-                field = value;
-            }
-        }
     }
 }

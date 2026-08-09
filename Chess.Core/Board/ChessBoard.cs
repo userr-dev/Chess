@@ -13,6 +13,8 @@ public sealed class ChessBoard
 
     private readonly CheckState _lightCheckState = new(Color.Light);
     private readonly CheckState _darkCheckState = new(Color.Dark);
+
+    public event Action? UpdatedBoardState;
     
     private ChessBoard(PieceSet lightPieces, PieceSet darkPieces)
     {
@@ -117,6 +119,8 @@ public sealed class ChessBoard
         
         GetCheckState(movedPieceColor).Update(this);
         GetCheckState(enemyColor).Update(this);
+        
+        UpdatedBoardState?.Invoke();
     }
 
     public bool IsCheckmate(Color color)
@@ -147,6 +151,16 @@ public sealed class ChessBoard
     
     internal void PromotePawn(Pawn pawn, Piece piece)
     {
+        if (pawn.Color != piece.Color)
+        {
+            throw new ArgumentException("Cannot promote to enemy color.");
+        }
+
+        if (piece is King or Pawn)
+        {
+            throw new ArgumentException("Cannot promote to King or Pawn.");
+        }
+        
         var square = this[pawn.Position];
         square.Piece = piece;
 

@@ -11,16 +11,33 @@ public class Game
 
     public bool TryMove(Piece piece, AvailableMoves availableMoves, Position to)
     {
+        return TryExecuteMove(piece, availableMoves, to, () => piece.Move(ChessBoard, to));
+    }
+
+    public bool TryPromoteMove(Pawn pawn, AvailableMoves availableMoves, Position to, PromotionType promotionType)
+    {
+        if (!to.IsPromotionRow(pawn.Color)) return false;
+
+        return TryExecuteMove(pawn, availableMoves, to, () =>
+        {
+            pawn.Move(ChessBoard, to);
+            var promotionPiece = promotionType.GetPromotionPiece(pawn.Color, to);
+            ChessBoard.PromotePawn(pawn, promotionPiece);
+        });
+    }
+    
+    private bool TryExecuteMove(Piece piece, AvailableMoves availableMoves, Position to, Action move)
+    {
         if (IsGameEnd) return false;
         if (piece.Color != CurrentPlayer) return false;
         if (!availableMoves.Contains(to)) return false;
-        
-        piece.Move(ChessBoard, to);
+
+        move();
         UpdateGameResult();
         CurrentPlayer = CurrentPlayer.Opposite();
         return true;
     }
-
+    
     private void UpdateGameResult()
     {
         var opponent = CurrentPlayer.Opposite();

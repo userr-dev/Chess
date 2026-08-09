@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:Chess.Ui.ViewModels"
+             xmlns:i="using:Avalonia.Xaml.Interactivity"
+             xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Chess.Ui.Views.PromotionMenu"
+             x:DataType="vm:PromotionMenuViewModel"
+             IsVisible="{Binding IsMenuOpened}"
+             Background="{StaticResource PromotionMenuBlurBrush}">
+    <Grid>
+        <Border Width="340"
+                Height="100"
+                Padding="10"
+                CornerRadius="12"
+                Background="DarkGray">
+            <ItemsControl ItemsSource="{Binding OptionViewModels}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="1"
+                                     Columns="4"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:PromotionMenuOptionViewModel">
+                        <Image Source="{Binding PieceImage}">
+                            <i:Interaction.Behaviors>
+                                <ia:EventTriggerBehavior EventName="Tapped">
+                                    <InvokeCommandAction Command="{Binding $parent[ItemsControl].((vm:PromotionMenuViewModel)DataContext).SelectPromotionTypeCommand}"
+                                                         CommandParameter="{Binding}"/>
+                                </ia:EventTriggerBehavior>
+                            </i:Interaction.Behaviors>
+                        </Image>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+    </Grid>
+</UserControl>

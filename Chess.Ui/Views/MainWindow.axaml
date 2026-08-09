@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:Chess.Ui.ViewModels"
+        xmlns:v="using:Chess.Ui.Views"
         xmlns:i="using:Avalonia.Xaml.Interactivity"
         xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -63,6 +64,8 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Border>
+        
+        <v:PromotionMenu DataContext="{Binding Board.PromotionMenuViewModel}"/>
         
     </Grid>
     

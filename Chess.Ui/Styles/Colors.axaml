@@ -12,4 +12,5 @@
     <SolidColorBrush x:Key="DarkSquareBrush" Color="{StaticResource DarkSquare}" />
     <SolidColorBrush x:Key="MovableSquareBrush" Color="{StaticResource MovableSquare}" />
     <SolidColorBrush x:Key="AttackSquareBrush" Color="{StaticResource AttackSquare}" />
+    <SolidColorBrush x:Key="PromotionMenuBlurBrush" Color="Black" Opacity="0.8"/>
 </ResourceDictionary>

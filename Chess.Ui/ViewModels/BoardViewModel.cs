@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using Chess.Core;
 using Chess.Core.Board;
 using Chess.Core.Pieces;
@@ -14,6 +15,8 @@ public partial class BoardViewModel : ViewModelBase
     private readonly Dictionary<Position, SquareViewModel> _squareViewModels = new();
     
     public ObservableCollection<SquareViewModel> Squares { get; } = [];
+
+    public PromotionMenuViewModel PromotionMenuViewModel { get; } = new();
     
     private Piece? _selectedPiece;
     private AvailableMoves? _moveResult;
@@ -24,6 +27,7 @@ public partial class BoardViewModel : ViewModelBase
         _board = _game.ChessBoard;
         BuildSquares();
         RefreshFromBoard();
+        _board.UpdatedBoardState += UpdateBoard;
     }
     
     private void BuildSquares()
@@ -67,33 +71,34 @@ public partial class BoardViewModel : ViewModelBase
         _squareViewModels[kingPosition.Value].IsKingChecked = isKingChecked;
     }
     
-    private void ClearMovesHighlights()
+    private void HideMovesHighlights()
     {
         foreach (var squareVm in Squares)
             squareVm.ClearHighlights();
     }
 
-    private void ClearKingCheckHighlight()
+    private void HideKingCheckHighlight()
     {
         foreach (var squareVm in Squares)
             squareVm.IsKingChecked = false;
     }
     
     [RelayCommand]
-    private void SelectSquare(SquareViewModel squareViewModel)
+    private async Task SelectSquare(SquareViewModel squareViewModel)
     {
         var position = squareViewModel.Position;
 
         if (_selectedPiece is not null)
         {
+            if (_moveResult!.Contains(position) && position.IsPromotionRow(_selectedPiece.Color) && _selectedPiece is Pawn pawn)
+            {
+                var promotionType = await PromotionMenuViewModel.ShowAsync(pawn.Color);
+                _game.TryPromoteMove(pawn, _moveResult!, position, promotionType);
+                return;
+            }
+            
             if (_game.TryMove(_selectedPiece, _moveResult!, position))
             {
-                ClearKingCheckHighlight();
-                ClearSelectedPiece();
-                
-                RefreshFromBoard();
-                HighlightKingCheck(_game.CurrentPlayer.Opposite());
-                HighlightKingCheck(_game.CurrentPlayer);
                 return;
             }
 
@@ -105,9 +110,19 @@ public partial class BoardViewModel : ViewModelBase
         SelectPiece(_board[position]);
     }
 
+    private void UpdateBoard()
+    {
+        HideKingCheckHighlight();
+        ClearSelectedPiece();
+                
+        RefreshFromBoard();
+        HighlightKingCheck(_game.CurrentPlayer.Opposite());
+        HighlightKingCheck(_game.CurrentPlayer);
+    }
+    
     private void ClearSelectedPiece()
     {
-        ClearMovesHighlights();
+        HideMovesHighlights();
         _selectedPiece = null;
         _moveResult = null;
     }
