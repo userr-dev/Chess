@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="using:Chess.Ui.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Chess.Ui.Controls.ChessClock"
+             x:Name="Clock">
+    <UserControl.Styles>
+        
+        <Style Selector="controls|Timer.lightTimer">
+            <Setter Property="Background" Value="{StaticResource LightSquareBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource DarkSquareBrush}"/>
+        </Style>
+        
+        <Style Selector="controls|Timer.darkTimer">
+            <Setter Property="Background" Value="{StaticResource DarkSquareBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource LightSquareBrush}"/>
+        </Style>
+        
+    </UserControl.Styles>
+    
+    <StackPanel Orientation="Vertical"
+                VerticalAlignment="Center"
+                Spacing="10">
+        
+        <controls:Timer Classes="darkTimer" 
+                        Value="{Binding DarkTime, RelativeSource={RelativeSource AncestorType={x:Type controls:ChessClock}}}"/>
+        <controls:Timer Classes="lightTimer" 
+                        Value="{Binding LightTime, RelativeSource={RelativeSource AncestorType={x:Type controls:ChessClock}}}"/>
+    </StackPanel>
+</UserControl>

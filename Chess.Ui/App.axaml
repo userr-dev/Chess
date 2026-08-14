@@ -19,6 +19,7 @@
 
     <Application.Styles>
         <FluentTheme />
-        <StyleInclude Source="/Styles/Styles.axaml"></StyleInclude>
+        <StyleInclude Source="/Styles/Styles.axaml"/>
+        <StyleInclude Source="/Controls/Timer.axaml"/>
     </Application.Styles>
 </Application>

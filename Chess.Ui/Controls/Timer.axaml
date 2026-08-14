@@ -1,0 +1,33 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:Chess.Ui.Controls">
+    <Design.PreviewWith>
+        <controls:Timer/>
+    </Design.PreviewWith>
+
+    <Style Selector="controls|Timer">
+        <!-- Set Defaults -->
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border CornerRadius="8"
+                        Padding="10"
+                        Background="{TemplateBinding Background}">
+                    <Grid
+                        MinWidth="120">
+                        <TextBlock Text="{TemplateBinding Value}"
+                                   FontFeatures="tnum"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   FontFamily="{TemplateBinding FontFamily}"
+                                   FontSize="{TemplateBinding FontSize}"
+                                   FontWeight="{TemplateBinding FontWeight}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

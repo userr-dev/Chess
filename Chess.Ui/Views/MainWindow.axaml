@@ -4,6 +4,7 @@
         xmlns:v="using:Chess.Ui.Views"
         xmlns:i="using:Avalonia.Xaml.Interactivity"
         xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
+        xmlns:controls="using:Chess.Ui.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="800"
@@ -11,62 +12,72 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="Chess.Ui"
-        MinWidth="700"
+        MinWidth="900"
         MinHeight="700"
         Background="{StaticResource WindowBackground}">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
 
     <Grid>
-        
-        <Border Width="640" 
-                Height="640"
-                BorderBrush="{StaticResource LightSquareBrush}"
-                BorderThickness="1">
-            
-            <ItemsControl ItemsSource="{Binding Squares}"
-                          DataContext="{Binding Board}"
-                          x:Name="Board">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Rows="8" 
-                                     Columns="8"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="vm:SquareViewModel">
-                        <Border Classes.lightSquare="{Binding IsLightSquare}"
-                                Classes.darkSquare="{Binding !IsLightSquare}">
-                            <i:Interaction.Behaviors>
-                                <ia:EventTriggerBehavior EventName="Tapped">
-                                    <InvokeCommandAction Command="{Binding $parent[ItemsControl].((vm:BoardViewModel)DataContext).SelectSquareCommand}"
-                                                         CommandParameter="{Binding}"/>
-                                </ia:EventTriggerBehavior>
-                            </i:Interaction.Behaviors>
-                            
-                            <Grid>
-                                <Border Classes.canMove="{Binding CanMovable}"
-                                        Classes.canAttack="{Binding CanAttack}"
-                                        Classes.kingChecked="{Binding IsKingChecked}"
-                                        Margin="6">
+        <StackPanel Spacing="20"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+
+            <controls:ChessClock
+                DarkTime="{Binding DarkTimeRemaining}"
+                LightTime="{Binding LightTimeRemaining}" />
+
+            <Grid Height="644"
+                  Width="644">
+                <Border BorderBrush="{StaticResource LightSquareBrush}"
+                        BorderThickness="2">
+
+                    <ItemsControl ItemsSource="{Binding Squares}"
+                                  DataContext="{Binding Board}"
+                                  x:Name="Board">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Rows="8"
+                                             Columns="8" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:SquareViewModel">
+                                <Border Classes.lightSquare="{Binding IsLightSquare}"
+                                        Classes.darkSquare="{Binding !IsLightSquare}">
+                                    <i:Interaction.Behaviors>
+                                        <ia:EventTriggerBehavior EventName="Tapped">
+                                            <InvokeCommandAction
+                                                Command="{Binding $parent[ItemsControl].((vm:BoardViewModel)DataContext).SelectSquareCommand}"
+                                                CommandParameter="{Binding}" />
+                                        </ia:EventTriggerBehavior>
+                                    </i:Interaction.Behaviors>
+
+                                    <Grid>
+                                        <Border Classes.canMove="{Binding CanMovable}"
+                                                Classes.canAttack="{Binding CanAttack}"
+                                                Classes.kingChecked="{Binding IsKingChecked}"
+                                                Margin="6">
+                                        </Border>
+                                        <Image Source="{Binding PieceImage}"
+                                               Margin="4"
+                                               Stretch="Uniform" />
+                                    </Grid>
+
                                 </Border>
-                                <Image Source="{Binding PieceImage}"
-                                       Margin="4"
-                                       Stretch="Uniform"/>
-                            </Grid>
-                            
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Border>
-        
-        <v:PromotionMenu DataContext="{Binding Board.PromotionMenuViewModel}"/>
-        
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+
+                <v:PromotionMenu DataContext="{Binding Board.PromotionMenuViewModel}" />
+            </Grid>
+
+        </StackPanel>
     </Grid>
-    
 </Window>
