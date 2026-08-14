@@ -9,6 +9,23 @@ public class Game
     
     public ChessBoard ChessBoard { get; } = ChessBoard.CreateStandard();
 
+    public Clock? Clock { get; }
+
+    private Game()
+    {
+    }
+    
+    private Game(Clock clock)
+    {
+        Clock = clock;
+        Clock.TimeExpired += ClockOnTimeExpired;
+    }
+
+    private void ClockOnTimeExpired(Color color)
+    {
+        GameResult = color == Color.Light ? GameResult.DarkWin : GameResult.LightWin;
+    }
+
     public bool TryMove(Piece piece, AvailableMoves availableMoves, Position to)
     {
         return TryExecuteMove(piece, availableMoves, to, () => piece.Move(ChessBoard, to));
@@ -34,6 +51,7 @@ public class Game
 
         move();
         UpdateGameResult();
+        Clock?.OnMoveCompleted(CurrentPlayer);
         CurrentPlayer = CurrentPlayer.Opposite();
         return true;
     }
@@ -49,5 +67,13 @@ public class Game
         {
             GameResult = GameResult.Draw;
         }
+    }
+
+    public static Game Create() => new();
+
+    public static Game CreateWithClock(TimeControl timeControl)
+    {
+        var clock = Clock.FromTimeControl(timeControl);
+        return new Game(clock);
     }
 }
