@@ -35,4 +35,11 @@ public readonly struct TimeControl
     public static readonly TimeControl Rapid10 = new(10);
     public static readonly TimeControl Rapid10Plus5 = new(10, 5);
     public static readonly TimeControl Rapid15Plus10 = new(15, 10);
+    
+    public static readonly TimeControl[] TimeControls =
+    [
+        Bullet1, Bullet1Plus1, Bullet2Plus1, 
+        Blitz3, Blitz3Plus2, Blitz5,
+        Rapid10, Rapid10Plus5, Rapid15Plus10
+    ];
 }

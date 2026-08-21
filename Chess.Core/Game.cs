@@ -5,27 +5,60 @@ public class Game
     public Color CurrentPlayer { get; private set; } = Color.Light;
     public GameResult GameResult { get; private set; } = GameResult.None;
 
+    public bool IsGameStarted { get; private set; }
     public bool IsGameEnd => GameResult is not GameResult.None;
     
-    public ChessBoard ChessBoard { get; } = ChessBoard.CreateStandard();
+    public ChessBoard ChessBoard { get; } = ChessBoard.Create();
 
-    public Clock? Clock { get; }
+    public Clock? Clock { get; private set; }
 
+    public event Action? GameEnded;
+    
     private Game()
     {
+        GameEnded += OnGameEnded;
     }
-    
-    private Game(Clock clock)
+
+    private void OnGameEnded()
     {
-        Clock = clock;
-        Clock.TimeExpired += ClockOnTimeExpired;
+        Stop();
     }
 
     private void ClockOnTimeExpired(Color color)
     {
         GameResult = color == Color.Light ? GameResult.DarkWin : GameResult.LightWin;
+        GameEnded?.Invoke();
     }
 
+    public void Start()
+    {
+        IsGameStarted = true;
+    }
+
+    private void Stop()
+    {
+        IsGameStarted = false;
+    }
+    
+    public void SetTimeControl(TimeControl? timeControl)
+    {
+        if (!timeControl.HasValue)
+        {
+            Clock = null;
+            return;
+        }
+        
+        Clock = Clock.FromTimeControl(timeControl.Value);
+        Clock.TimeExpired += ClockOnTimeExpired;
+    }
+
+    public void Reset()
+    {
+        ChessBoard.Reset();
+        GameResult = GameResult.None;
+        CurrentPlayer = Color.Light;
+    }
+    
     public bool TryMove(Piece piece, AvailableMoves availableMoves, Position to)
     {
         return TryExecuteMove(piece, availableMoves, to, () => piece.Move(ChessBoard, to));
@@ -45,6 +78,7 @@ public class Game
     
     private bool TryExecuteMove(Piece piece, AvailableMoves availableMoves, Position to, Action move)
     {
+        if (!IsGameStarted) return false;
         if (IsGameEnd) return false;
         if (piece.Color != CurrentPlayer) return false;
         if (!availableMoves.Contains(to)) return false;
@@ -62,18 +96,14 @@ public class Game
         if (ChessBoard.IsCheckmate(opponent))
         {
             GameResult = CurrentPlayer == Color.Light ? GameResult.LightWin : GameResult.DarkWin;
+            GameEnded?.Invoke();
         }
         else if (ChessBoard.IsStalemate(opponent))
         {
             GameResult = GameResult.Draw;
+            GameEnded?.Invoke();
         }
     }
 
     public static Game Create() => new();
-
-    public static Game CreateWithClock(TimeControl timeControl)
-    {
-        var clock = Clock.FromTimeControl(timeControl);
-        return new Game(clock);
-    }
 }

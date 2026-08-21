@@ -13,4 +13,5 @@
     <SolidColorBrush x:Key="MovableSquareBrush" Color="{StaticResource MovableSquare}" />
     <SolidColorBrush x:Key="AttackSquareBrush" Color="{StaticResource AttackSquare}" />
     <SolidColorBrush x:Key="PromotionMenuBlurBrush" Color="Black" Opacity="0.8"/>
+    <SolidColorBrush x:Key="PaneBackgroundBrush" Color="#0E1024"/>
 </ResourceDictionary>

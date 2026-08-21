@@ -5,6 +5,7 @@
         xmlns:i="using:Avalonia.Xaml.Interactivity"
         xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
         xmlns:controls="using:Chess.Ui.Controls"
+        xmlns:core="using:Chess.Core"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="800"
@@ -12,7 +13,8 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="Chess.Ui"
-        MinWidth="900"
+        MinWidth="1200"
+        Width="1200"
         MinHeight="700"
         Background="{StaticResource WindowBackground}">
 
@@ -22,62 +24,118 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid>
-        <StackPanel Spacing="20"
-                    Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center">
-
-            <controls:ChessClock
-                DarkTime="{Binding DarkTimeRemaining}"
-                LightTime="{Binding LightTimeRemaining}" />
-
-            <Grid Height="644"
-                  Width="644">
-                <Border BorderBrush="{StaticResource LightSquareBrush}"
-                        BorderThickness="2">
-
-                    <ItemsControl ItemsSource="{Binding Squares}"
-                                  DataContext="{Binding Board}"
-                                  x:Name="Board">
+    <SplitView IsPaneOpen="{Binding IsGameMenuOpen}"
+               DisplayMode="CompactInline"
+               CompactPaneLength="30"
+               PaneBackground="{StaticResource PaneBackgroundBrush}">
+        <SplitView.Pane>
+            <Grid ColumnDefinitions="*, Auto"
+                  ColumnSpacing="10"
+                  VerticalAlignment="Center">
+                
+                <StackPanel
+                    Spacing="10">
+                    <ItemsControl ItemsSource="{x:Static core:TimeControl.TimeControls}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <UniformGrid Rows="8"
-                                             Columns="8" />
+                                <UniformGrid Columns="3"
+                                             ColumnSpacing="10"
+                                             RowSpacing="10"/>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="vm:SquareViewModel">
-                                <Border Classes.lightSquare="{Binding IsLightSquare}"
-                                        Classes.darkSquare="{Binding !IsLightSquare}">
-                                    <i:Interaction.Behaviors>
-                                        <ia:EventTriggerBehavior EventName="Tapped">
-                                            <InvokeCommandAction
-                                                Command="{Binding $parent[ItemsControl].((vm:BoardViewModel)DataContext).SelectSquareCommand}"
-                                                CommandParameter="{Binding}" />
-                                        </ia:EventTriggerBehavior>
-                                    </i:Interaction.Behaviors>
-
-                                    <Grid>
-                                        <Border Classes.canMove="{Binding CanMovable}"
-                                                Classes.canAttack="{Binding CanAttack}"
-                                                Classes.kingChecked="{Binding IsKingChecked}"
-                                                Margin="6">
-                                        </Border>
-                                        <Image Source="{Binding PieceImage}"
-                                               Margin="4"
-                                               Stretch="Uniform" />
-                                    </Grid>
-
-                                </Border>
+                            <DataTemplate x:DataType="core:TimeControl">
+                                <RadioButton Theme="{StaticResource CardRadioButtonTheme}"
+                                             GroupName="TimeControls"
+                                             Content="{Binding}"
+                                             CommandParameter="{Binding}"
+                                             Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).SelectTimeControlCommand}"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </Border>
-
-                <v:PromotionMenu DataContext="{Binding Board.PromotionMenuViewModel}" />
+                    
+                    <RadioButton Theme="{StaticResource CardRadioButtonTheme}"
+                                 Command="{Binding SelectTimeControlCommand}"
+                                 CommandParameter="{x:Null}"
+                                 IsChecked="True"
+                                 Content="No time"
+                                 GroupName="TimeControls"/>
+                    
+                    <Button Content="Start Game"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            CornerRadius="8"
+                            Height="44"
+                            FontWeight="Bold"
+                            Margin="3, 0"
+                            Background="{StaticResource DarkSquareBrush}"
+                            Foreground="{StaticResource LightSquareBrush}"
+                            Command="{Binding StartGameCommand}"/>
+                </StackPanel>
+                
+                <Button Grid.Column="1"
+                        Height="60"
+                        Command="{Binding ToggleStartMenuCommand}" />
             </Grid>
+        </SplitView.Pane>
+        <SplitView.Content>
+            <Grid ColumnSpacing="10"
+                  ColumnDefinitions="Auto, Auto"
+                  HorizontalAlignment="Center">
 
-        </StackPanel>
-    </Grid>
+                <controls:ChessClock Grid.Column="0"
+                                     DarkTime="{Binding DarkTimeRemaining}"
+                                     LightTime="{Binding LightTimeRemaining}" />
+
+                <Grid Grid.Column="1" 
+                      Height="644"
+                      Width="644">
+                    <Border BorderBrush="{StaticResource LightSquareBrush}"
+                            BorderThickness="2">
+
+                        <ItemsControl ItemsSource="{Binding Squares}"
+                                      DataContext="{Binding Board}"
+                                      x:Name="Board">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Rows="8"
+                                                 Columns="8" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:SquareViewModel">
+                                    <Border Classes.lightSquare="{Binding IsLightSquare}"
+                                            Classes.darkSquare="{Binding !IsLightSquare}">
+                                        <i:Interaction.Behaviors>
+                                            <ia:EventTriggerBehavior EventName="Tapped">
+                                                <InvokeCommandAction
+                                                    Command="{Binding $parent[ItemsControl].((vm:BoardViewModel)DataContext).SelectSquareCommand}"
+                                                    CommandParameter="{Binding}" />
+                                            </ia:EventTriggerBehavior>
+                                        </i:Interaction.Behaviors>
+
+                                        <Grid>
+                                            <Border Classes.canMove="{Binding CanMovable}"
+                                                    Classes.canAttack="{Binding CanAttack}"
+                                                    Classes.kingChecked="{Binding IsKingChecked}"
+                                                    Margin="6">
+                                            </Border>
+                                            <Image Source="{Binding PieceImage}"
+                                                   Margin="4"
+                                                   Stretch="Uniform" />
+                                        </Grid>
+
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+
+                    <v:PromotionMenu DataContext="{Binding Board.PromotionMenuViewModel}" />
+                </Grid>
+
+            </Grid>
+        </SplitView.Content>
+    </SplitView>
 </Window>

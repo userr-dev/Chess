@@ -27,7 +27,7 @@ public partial class BoardViewModel : ViewModelBase
         _board = _game.ChessBoard;
         BuildSquares();
         RefreshFromBoard();
-        _board.UpdatedBoardState += UpdateBoard;
+        _board.BoardStateUpdated += UpdateBoard;
     }
     
     private void BuildSquares()
@@ -129,7 +129,7 @@ public partial class BoardViewModel : ViewModelBase
     
     private void SelectPiece(Square square)
     {
-        if (!square.HasPiece || square.Piece?.Color != _game.CurrentPlayer) return;
+        if (!square.HasPiece || square.Piece?.Color != _game.CurrentPlayer || !_game.IsGameStarted) return;
         
         _selectedPiece = square.Piece;
         _moveResult = _selectedPiece.GetAvailableMoves(_board);

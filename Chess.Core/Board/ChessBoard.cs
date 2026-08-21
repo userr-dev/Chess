@@ -8,13 +8,13 @@ public sealed class ChessBoard
     
     private readonly Square[,] _squares;
 
-    private readonly PieceSet _lightPieces;
-    private readonly PieceSet _darkPieces;
+    private PieceSet _lightPieces;
+    private PieceSet _darkPieces;
 
     private readonly CheckState _lightCheckState = new(Color.Light);
     private readonly CheckState _darkCheckState = new(Color.Dark);
 
-    public event Action? UpdatedBoardState;
+    public event Action? BoardStateUpdated;
     
     private ChessBoard(PieceSet lightPieces, PieceSet darkPieces)
     {
@@ -59,6 +59,29 @@ public sealed class ChessBoard
     
         _lightCheckState.Update(this);
         _darkCheckState.Update(this);
+        
+        BoardStateUpdated?.Invoke();
+    }
+    
+    internal void Reset()
+    {
+        foreach (var piece in GetPieces(Color.Light))
+        {
+            this[piece.Position].Piece = null;
+        }
+
+        foreach (var piece in GetPieces(Color.Dark))
+        {
+            this[piece.Position].Piece = null;
+        }
+
+        _lightPieces = StandardPiecesFactory.CreateCollection(Color.Light);
+        _darkPieces = StandardPiecesFactory.CreateCollection(Color.Dark);
+        
+        SetupPieces(_lightPieces);
+        SetupPieces(_darkPieces);
+        
+        InitializeBoardState();
     }
     
     internal bool TryGetKing(Color color, [MaybeNullWhen(false)] out King king)
@@ -120,7 +143,7 @@ public sealed class ChessBoard
         GetCheckState(movedPieceColor).Update(this);
         GetCheckState(enemyColor).Update(this);
         
-        UpdatedBoardState?.Invoke();
+        BoardStateUpdated?.Invoke();
     }
 
     public bool IsCheckmate(Color color)
@@ -194,7 +217,7 @@ public sealed class ChessBoard
         return new ChessBoard(lightSet, darkSet);
     }
     
-    public static ChessBoard CreateStandard()
+    public static ChessBoard Create()
     {
         var lightSet = StandardPiecesFactory.CreateCollection(Color.Light);
         var darkSet = StandardPiecesFactory.CreateCollection(Color.Dark);
