@@ -2,26 +2,49 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style Selector="Border.lightSquare">
-        <Setter Property="Background" Value="{StaticResource LightSquareBrush}" />
+        <Setter Property="Background" Value="{StaticResource LightChessBrush}" />
     </Style>
     <Style Selector="Border.darkSquare">
-        <Setter Property="Background" Value="{StaticResource DarkSquareBrush}" />
+        <Setter Property="Background" Value="{StaticResource DarkChessBrush}" />
     </Style>
 
     <Style Selector="Border.canMove">
         <Setter Property="BorderThickness" Value="4" />
-        <Setter Property="BorderBrush" Value="{StaticResource MovableSquareBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource MoveHighlightBrush}" />
         <Setter Property="CornerRadius" Value="8" />
     </Style>
 
     <Style Selector="Border.canAttack">
         <Setter Property="BorderThickness" Value="4" />
-        <Setter Property="BorderBrush" Value="{StaticResource AttackSquareBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource AttackHighlightBrush}" />
         <Setter Property="CornerRadius" Value="8" />
     </Style>
     
     <Style Selector="Border.kingChecked">
-        <Setter Property="Background" Value="{StaticResource AttackSquareBrush}"/>
+        <Setter Property="Background" Value="{StaticResource AttackHighlightBrush}"/>
         <Setter Property="CornerRadius" Value="8" />
+    </Style>
+    
+    <Style Selector="Button.accentButton">
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        
+        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+            <Setter Property="Background" Value="{StaticResource AccentHoverBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AccentHoverBrush}"/>
+        </Style>
+    
+        <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+            <Setter Property="Background" Value="{StaticResource AccentHoverBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AccentHoverBrush}"/>
+        </Style>
+        
     </Style>
 </Styles>

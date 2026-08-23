@@ -10,6 +10,9 @@
              x:DataType="vm:PromotionMenuViewModel"
              IsVisible="{Binding IsMenuOpened}"
              Background="{StaticResource PromotionMenuBlurBrush}">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="PromotionMenuBlurBrush" Color="Black" Opacity="0.8"/>
+    </UserControl.Resources>
     <Grid>
         <Border Width="340"
                 Height="100"
@@ -28,7 +31,7 @@
                         <Image Source="{Binding PieceImage}">
                             <i:Interaction.Behaviors>
                                 <ia:EventTriggerBehavior EventName="Tapped">
-                                    <InvokeCommandAction Command="{Binding $parent[ItemsControl].((vm:PromotionMenuViewModel)DataContext).SelectPromotionTypeCommand}"
+                                    <InvokeCommandAction Command="{Binding $parent[ItemsControl].((vm:PromotionMenuViewModel)DataContext)?.SelectPromotionTypeCommand}"
                                                          CommandParameter="{Binding}"/>
                                 </ia:EventTriggerBehavior>
                             </i:Interaction.Behaviors>

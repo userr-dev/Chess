@@ -1,12 +1,17 @@
-<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:Chess.Ui.Controls">
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="using:Chess.Ui.Controls">
     <Design.PreviewWith>
-        <controls:Timer/>
+        <StackPanel Width="400" Spacing="10">
+            <StackPanel Background="{DynamicResource SystemRegionBrush}">
+                <controls:Timer />
+            </StackPanel>
+        </StackPanel>
     </Design.PreviewWith>
 
-    <Style Selector="controls|Timer">
-        <!-- Set Defaults -->
+    <ControlTheme x:Key="{x:Type controls:Timer}"
+                  TargetType="controls:Timer">
+        
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="Bold"/>
         
@@ -29,5 +34,5 @@
                 </Border>
             </ControlTemplate>
         </Setter>
-    </Style>
-</Styles>
+    </ControlTheme>
+</ResourceDictionary>

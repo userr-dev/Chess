@@ -12,11 +12,11 @@
         x:Class="Chess.Ui.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Chess.Ui"
+        Title="Chess"
         MinWidth="1200"
         Width="1200"
         MinHeight="700"
-        Background="{StaticResource WindowBackground}">
+        Background="{StaticResource WindowBackgroundBrush}">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -26,15 +26,22 @@
 
     <SplitView IsPaneOpen="{Binding IsGameMenuOpen}"
                DisplayMode="CompactInline"
-               CompactPaneLength="30"
+               CompactPaneLength="20"
                PaneBackground="{StaticResource PaneBackgroundBrush}">
         <SplitView.Pane>
             <Grid ColumnDefinitions="*, Auto"
-                  ColumnSpacing="10"
+                  ColumnSpacing="12"
                   VerticalAlignment="Center">
                 
-                <StackPanel
-                    Spacing="10">
+                <StackPanel Spacing="10"
+                            Margin="10,0,0,0">
+                    
+                    <TextBlock Text="Time Control"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               FontSize="16"/>
+                    
                     <ItemsControl ItemsSource="{x:Static core:TimeControl.TimeControls}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -49,7 +56,7 @@
                                              GroupName="TimeControls"
                                              Content="{Binding}"
                                              CommandParameter="{Binding}"
-                                             Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).SelectTimeControlCommand}"/>
+                                             Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext)?.SelectTimeControlCommand}"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -61,21 +68,19 @@
                                  Content="No time"
                                  GroupName="TimeControls"/>
                     
-                    <Button Content="Start Game"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"
-                            CornerRadius="8"
-                            Height="44"
+                    <Button Classes="accentButton" 
+                            Content="Start Game"
+                            FontSize="14"
                             FontWeight="Bold"
-                            Margin="3, 0"
-                            Background="{StaticResource DarkSquareBrush}"
-                            Foreground="{StaticResource LightSquareBrush}"
-                            Command="{Binding StartGameCommand}"/>
+                            Height="40"
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding StartGameCommand}">
+                    </Button>
                 </StackPanel>
                 
                 <Button Grid.Column="1"
                         Height="60"
+                        Width="8"
                         Command="{Binding ToggleStartMenuCommand}" />
             </Grid>
         </SplitView.Pane>
@@ -91,7 +96,7 @@
                 <Grid Grid.Column="1" 
                       Height="644"
                       Width="644">
-                    <Border BorderBrush="{StaticResource LightSquareBrush}"
+                    <Border BorderBrush="{StaticResource LightChessBrush}"
                             BorderThickness="2">
 
                         <ItemsControl ItemsSource="{Binding Squares}"
@@ -110,7 +115,7 @@
                                         <i:Interaction.Behaviors>
                                             <ia:EventTriggerBehavior EventName="Tapped">
                                                 <InvokeCommandAction
-                                                    Command="{Binding $parent[ItemsControl].((vm:BoardViewModel)DataContext).SelectSquareCommand}"
+                                                    Command="{Binding $parent[ItemsControl].((vm:BoardViewModel)DataContext)?.SelectSquareCommand}"
                                                     CommandParameter="{Binding}" />
                                             </ia:EventTriggerBehavior>
                                         </i:Interaction.Behaviors>

@@ -1,12 +1,11 @@
 using System;
 using Avalonia;
-using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 
 namespace Chess.Ui.Controls;
 
-public partial class ChessClock : UserControl
+public class ChessClock : TemplatedControl
 {
-
     public static readonly StyledProperty<TimeSpan> LightTimeProperty = AvaloniaProperty.Register<ChessClock, TimeSpan>(
         nameof(LightTime));
 
@@ -23,10 +22,5 @@ public partial class ChessClock : UserControl
     {
         get => GetValue(DarkTimeProperty);
         set => SetValue(DarkTimeProperty, value);
-    }
-    
-    public ChessClock()
-    {
-        InitializeComponent();
     }
 }

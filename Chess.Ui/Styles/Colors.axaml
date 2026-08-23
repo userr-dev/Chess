@@ -1,17 +1,31 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <!-- Add Resources Here -->
-    <Color x:Key="WindowBackground">#161A34</Color>
-    <Color x:Key="LightSquare">#EBF0F3</Color>
-    <Color x:Key="DarkSquare">#2B2E38</Color>
-    <Color x:Key="MovableSquare">#0757A1</Color>
-    <Color x:Key="AttackSquare">#992828</Color>
-
-    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{StaticResource WindowBackground}" />
-    <SolidColorBrush x:Key="LightSquareBrush" Color="{StaticResource LightSquare}" />
-    <SolidColorBrush x:Key="DarkSquareBrush" Color="{StaticResource DarkSquare}" />
-    <SolidColorBrush x:Key="MovableSquareBrush" Color="{StaticResource MovableSquare}" />
-    <SolidColorBrush x:Key="AttackSquareBrush" Color="{StaticResource AttackSquare}" />
-    <SolidColorBrush x:Key="PromotionMenuBlurBrush" Color="Black" Opacity="0.8"/>
-    <SolidColorBrush x:Key="PaneBackgroundBrush" Color="#0E1024"/>
+    <Color x:Key="WindowBackgroundColor">#151517</Color>
+    <Color x:Key="PaneBackgroundColor">#18181b</Color>
+    <Color x:Key="BorderColor">#232328</Color>
+    <Color x:Key="AccentColor">#4C7EF3</Color>
+    <Color x:Key="AccentHoverColor">#567CD5</Color>
+    <Color x:Key="AccentMutedColor">#2A4C8F</Color>
+    <Color x:Key="TextPrimaryColor">#F4F5F9</Color>
+    <Color x:Key="TextSecondaryColor">#87899A</Color>
+    
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{StaticResource WindowBackgroundColor}" />
+    <SolidColorBrush x:Key="PaneBackgroundBrush" Color="{StaticResource PaneBackgroundColor}"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}"/>
+    <SolidColorBrush x:Key="AccentMutedBrush" Color="{StaticResource AccentMutedColor}"/>
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}"/>
+    
+    <!-- Chess colors -->
+    <Color x:Key="LightChessColor">#EBF0F3</Color>
+    <Color x:Key="DarkChessColor">#2B2E38</Color>
+    <Color x:Key="MoveHighlightColor">#0757A1</Color>
+    <Color x:Key="AttackHighlightColor">#992828</Color>
+    
+    <SolidColorBrush x:Key="LightChessBrush" Color="{StaticResource LightChessColor}" />
+    <SolidColorBrush x:Key="DarkChessBrush" Color="{StaticResource DarkChessColor}" />
+    <SolidColorBrush x:Key="MoveHighlightBrush" Color="{StaticResource MoveHighlightColor}" />
+    <SolidColorBrush x:Key="AttackHighlightBrush" Color="{StaticResource AttackHighlightColor}" />
 </ResourceDictionary>
