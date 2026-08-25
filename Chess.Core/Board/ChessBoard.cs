@@ -174,16 +174,6 @@ public sealed class ChessBoard
     
     internal void PromotePawn(Pawn pawn, Piece piece)
     {
-        if (pawn.Color != piece.Color)
-        {
-            throw new ArgumentException("Cannot promote to enemy color.");
-        }
-
-        if (piece is King or Pawn)
-        {
-            throw new ArgumentException("Cannot promote to King or Pawn.");
-        }
-        
         var square = this[pawn.Position];
         square.Piece = piece;
 

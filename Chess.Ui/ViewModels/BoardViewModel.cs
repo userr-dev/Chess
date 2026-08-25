@@ -93,8 +93,10 @@ public partial class BoardViewModel : ViewModelBase
             if (_moveResult!.Contains(position) && position.IsPromotionRow(_selectedPiece.Color) && _selectedPiece is Pawn pawn)
             {
                 var promotionType = await PromotionMenuViewModel.ShowAsync(pawn.Color);
-                _game.TryPromoteMove(pawn, _moveResult!, position, promotionType);
-                return;
+                pawn.Promoted += (_, args) =>
+                {
+                    args.PromotedPiece = promotionType.GetPromotionPiece(args.Color, args.Position);
+                };
             }
             
             if (_game.TryMove(_selectedPiece, _moveResult!, position))
