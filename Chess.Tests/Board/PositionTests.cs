@@ -58,9 +58,9 @@ public class PositionTests
     // --- ToString ---
 
     [Theory]
-    [InlineData(Column.A, 0, "A1")]
-    [InlineData(Column.H, 7, "H8")]
-    [InlineData(Column.E, 3, "E4")]
+    [InlineData(Column.A, 0, "a1")]
+    [InlineData(Column.H, 7, "h8")]
+    [InlineData(Column.E, 3, "e4")]
     public void ToString_ReturnsHumanReadableFormat(Column column, int row, string expected)
     {
         var pos = Position.Create(column, row);

@@ -16,6 +16,8 @@ public sealed class Pawn : Piece
     
     public bool CanDoubleAdvance { get; private set; }
 
+    public override char? AnnotationSymbol => null;
+
     public event EventHandler<PromotionEventArgs>? Promoted; 
     
     public Pawn(Color color, Position position) : base(color, position)

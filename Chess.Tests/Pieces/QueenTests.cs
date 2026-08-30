@@ -2,6 +2,14 @@ namespace Chess.Tests.Pieces;
 
 public class QueenTests
 {
+    [Fact]
+    public void AnnotationSymbol()
+    {
+        var queen = new Queen(Color.Light, C1);
+        
+        Assert.Equal('Q', queen.AnnotationSymbol);
+    }
+    
     // GetAttackedPositions
     [Fact]
     public void GetAttackedPositions_FromCenter_ReturnsTwentySevenSquares()

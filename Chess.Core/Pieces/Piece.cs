@@ -6,6 +6,9 @@ public abstract class Piece
     public Position Position { get; private set; }
     protected Direction[]? PinnedDirections { get; set; }
     public bool IsPinned => PinnedDirections is not null;
+    
+    public abstract char? AnnotationSymbol { get; }
+    
     protected Piece(Color color, Position position)
     {
         Color = color;

@@ -9,7 +9,9 @@ public sealed class King : Piece
     ];
 
     public bool CanCastle { get; private set; }
-    
+
+    public override char? AnnotationSymbol => 'K';
+
     public King(Color color, Position position) : base(color, position)
     {
         var startingRow = Color == Color.Light ? 0 : 7;

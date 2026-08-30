@@ -29,7 +29,7 @@ public readonly partial record struct Position
     
     public override string ToString()
     {
-        return $"{Column}{Row + 1}";
+        return $"{Column.ToNotation()}{Row + 1}";
     }
 
     public static Position Create(Column column, int row)

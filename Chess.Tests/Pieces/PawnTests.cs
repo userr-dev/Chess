@@ -14,6 +14,14 @@ public class PawnTests
         };
     }
     
+    [Fact]
+    public void AnnotationSymbol()
+    {
+        var pawn = new Pawn(Color.Light, C1);
+        
+        Assert.Null(pawn.AnnotationSymbol);
+    }
+    
     // GetAttackedPositions
     [Fact]
     public void GetAttackedPositions_OnEdge_ReturnOneSquare()

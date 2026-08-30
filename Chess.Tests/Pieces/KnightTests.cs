@@ -2,6 +2,14 @@ namespace Chess.Tests.Pieces;
 
 public class KnightTests
 {
+    [Fact]
+    public void AnnotationSymbol()
+    {
+        var knight = new Knight(Color.Light, C1);
+        
+        Assert.Equal('N', knight.AnnotationSymbol);
+    }
+    
     // GetAttackedPositions
     [Fact]
     public void GetAttackedPositions_FromCenter_ReturnsEightSquares()

@@ -5,6 +5,8 @@ public sealed class Rook : SlidingPiece
     private static readonly Direction[] Directions = [Direction.Up, Direction.Down, Direction.Left, Direction.Right];
     
     protected override Direction[] OwnDirections => Directions;
+    
+    public override char? AnnotationSymbol => 'R';
 
     public bool CanCastle { get; private set; }
     

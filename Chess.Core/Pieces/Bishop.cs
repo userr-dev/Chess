@@ -7,6 +7,8 @@ public sealed class Bishop : SlidingPiece
 
     protected override Direction[] OwnDirections => Directions;
 
+    public override char? AnnotationSymbol => 'B';
+
     public Bishop(Color color, Position position) : base(color, position)
     {
     }
