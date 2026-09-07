@@ -184,19 +184,22 @@ public sealed class ChessBoard
         UpdateBoardState(pawn.Color);
     }
 
-    internal void Castle(King king, Position from, Position to)
+    internal Castled Castle(King king, Position from, Position to)
     {
-        var isKingSideRook = to.Column > from.Column;
+        var castleSide = to.Column > from.Column ? CastleSide.KingSide : CastleSide.QueenSide;
         
         var rook = GetCastlingRooks(king.Color).First(r =>
-            isKingSideRook
+            castleSide is CastleSide.KingSide
                 ? r.Position.Column > from.Column
                 : r.Position.Column < from.Column);
-        var rookNewColumn = king.Position.Column.Shift(isKingSideRook ? -1 : 1);
+        var rookNewColumn = king.Position.Column.Shift(castleSide is CastleSide.KingSide ? -1 : 1);
 
         var rookToPosition = Position.Create(rookNewColumn, king.Position.Row);
 
-        rook.Move(this, rookToPosition);
+        var rookResult = rook.MoveForCastling(this, rookToPosition);
+        UpdateBoardState(king.Color);
+        
+        return Castled.Create(king, from, to, rookResult, castleSide);
     }
     
     public static ChessBoard Create(IEnumerable<Piece> lightPieces, IEnumerable<Piece> darkPieces)

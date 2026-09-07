@@ -66,11 +66,22 @@ public class Game
         if (piece.Color != CurrentPlayer) return false;
         if (!availableMoves.Contains(to)) return false;
 
-        piece.Move(ChessBoard, to);
+        var result = piece.Move(ChessBoard, to);
         UpdateGameResult();
+        
+        result.AppendCheckSuffix(GetCheckSuffix());
+        Console.WriteLine(result.ToNotation());
+        
         Clock?.OnMoveCompleted(CurrentPlayer);
         CurrentPlayer = CurrentPlayer.Opposite();
         return true;
+    }
+
+    private char? GetCheckSuffix()
+    {
+        var opposite = CurrentPlayer.Opposite();
+        var checkState = ChessBoard.GetCheckState(opposite);
+        return IsGameEnd && checkState.IsChecked ? '#' : checkState.IsChecked ? '+' : null;
     }
     
     private void UpdateGameResult()

@@ -21,15 +21,28 @@ public abstract class Piece
     
     internal abstract IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard);
 
-    internal virtual void Move(ChessBoard chessBoard, Position to)
+    protected Result MoveCore(ChessBoard chessBoard, Position to)
     {
+        Result result = Moved.Create(this, Position, to);
+        
         if (chessBoard[to].HasEnemyPiece(Color))
         {
-            chessBoard.CapturePiece(chessBoard[to].Piece!);
+            var enemyPiece = chessBoard[to].Piece!;
+            chessBoard.CapturePiece(enemyPiece);
+            result = Captured.FromMoved((Moved)result, enemyPiece);
         }
         chessBoard.MovePiece(this, to);
         ChangePosition(to);
+
+        return result;
+    }
+    
+    internal virtual Result Move(ChessBoard chessBoard, Position to)
+    {
+        var result = MoveCore(chessBoard, to);
         chessBoard.UpdateBoardState(Color);
+
+        return result;
     }
 
     protected void ChangePosition(Position to)
