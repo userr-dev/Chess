@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using Avalonia.Threading;
 using Chess.Core;
+using Chess.Core.MoveResults;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -17,18 +19,25 @@ public partial class MainWindowViewModel : ViewModelBase
     
     [ObservableProperty] 
     public partial bool IsGameMenuOpen { get; private set; } = true;
+
+    [ObservableProperty] 
+    public partial bool IsMoveHistoryMenuOpen { get; private set; } = false;
     
     [ObservableProperty]
     public partial TimeSpan? LightTimeRemaining { get; private set; }
     
     [ObservableProperty]
     public partial TimeSpan? DarkTimeRemaining { get; private set; }
+
+    public ObservableCollection<Result> MoveHistory { get; } = [];
     
     public MainWindowViewModel()
     {
         _game = Game.Create();
         _game.GameEnded += GameOnGameEnded;
-
+        _game.MoveHistory.Added += MoveHistoryOnAdded;
+        _game.MoveHistory.Cleared += MoveHistoryOnCleared;
+        
         LightTimeRemaining = _game.Clock?.GetRemaining(Color.Light);
         DarkTimeRemaining = _game.Clock?.GetRemaining(Color.Dark);
         
@@ -38,9 +47,20 @@ public partial class MainWindowViewModel : ViewModelBase
         Board = new BoardViewModel(_game);
     }
 
+    private void MoveHistoryOnCleared()
+    {
+        MoveHistory.Clear();
+    }
+
+    private void MoveHistoryOnAdded(Result result)
+    {
+        MoveHistory.Add(result);
+    }
+
     private void GameOnGameEnded()
     {
         IsGameMenuOpen = true;
+        IsMoveHistoryMenuOpen = false;
         _timer.Stop();
     }
 
@@ -74,18 +94,24 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         IsGameMenuOpen = !IsGameMenuOpen;
     }
+
+    [RelayCommand]
+    private void ToggleMoveHistoryMenu()
+    {
+        IsMoveHistoryMenuOpen = !IsMoveHistoryMenuOpen;
+    }
     
     [RelayCommand]
     private void SelectTimeControl(TimeControl? timeControl)
     {
         _selectedTimeControl = timeControl;
-        Console.WriteLine(_selectedTimeControl);
     }
 
     [RelayCommand]
     private void StartGame()
     {
         IsGameMenuOpen = false;
+        IsMoveHistoryMenuOpen = true;
 
         _game.SetTimeControl(_selectedTimeControl);
         _game.Clock?.IncrementAdded += ClockOnIncrementAdded;
@@ -93,7 +119,7 @@ public partial class MainWindowViewModel : ViewModelBase
         LightTimeRemaining = _game.Clock?.GetRemaining(Color.Light);
         DarkTimeRemaining = _game.Clock?.GetRemaining(Color.Dark);
 
-        if (_game.IsGameStarted) _game.Reset();
+        if (_game.IsGameStarted || _game.IsGameEnd) _game.Reset();
         
         _game.Start();
         _timer.Start();
