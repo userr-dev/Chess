@@ -4,7 +4,9 @@ public sealed class Knight : Piece
 {
     private static readonly HashSet<Direction> Directions =
         [new(-1, 2), new(1, 2), new(-1, -2), new(1, -2), new(-2, 1), new(-2, -1), new(2, 1), new(2, -1)];
-    
+
+    public override char? AnnotationSymbol => 'N';
+
     public Knight(Color color, Position position) : base(color, position)
     {
     }

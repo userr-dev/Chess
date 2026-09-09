@@ -2,6 +2,14 @@ namespace Chess.Tests.Pieces;
 
 public class BishopTests
 {
+    [Fact]
+    public void AnnotationSymbol()
+    {
+        var bishop = new Bishop(Color.Light, C1);
+        
+        Assert.Equal('B', bishop.AnnotationSymbol);
+    }
+    
     // GetAttackedPositions    
     [Fact]
     public void GetAttackedPositions_FromCenter_ReturnsThirteenSquares()

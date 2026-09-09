@@ -5,6 +5,8 @@ public sealed class Rook : SlidingPiece
     private static readonly Direction[] Directions = [Direction.Up, Direction.Down, Direction.Left, Direction.Right];
     
     protected override Direction[] OwnDirections => Directions;
+    
+    public override char? AnnotationSymbol => 'R';
 
     public bool CanCastle { get; private set; }
     
@@ -14,13 +16,22 @@ public sealed class Rook : SlidingPiece
         CanCastle = startingRow == position.Row && position.Column is Column.A or Column.H;
     }
 
-    internal override void Move(ChessBoard chessBoard, Position to)
+    internal override Result Move(ChessBoard chessBoard, Position to)
     {
         CanCastle = false;
         
-        base.Move(chessBoard, to);
+        return base.Move(chessBoard, to);
     }
 
+    internal Moved MoveForCastling(ChessBoard chessBoard, Position to)
+    {
+        var from = Position;
+        CanCastle = false;
+        chessBoard.MovePiece(this, to);
+        ChangePosition(to);
+        return Moved.Create(this, from, to);
+    }
+    
     internal override IEnumerable<Position> GetAttackedPositions(ChessBoard chessBoard) =>
         GetAttackedPositionsAlongDirections(chessBoard, Directions);
 }

@@ -2,6 +2,14 @@ namespace Chess.Tests.Pieces;
 
 public class KingTests
 {
+    [Fact]
+    public void AnnotationSymbol()
+    {
+        var king = new King(Color.Light, C1);
+        
+        Assert.Equal('K', king.AnnotationSymbol);
+    }
+    
     // GetAttackedPositions
     [Fact]
     public void GetAttackedPosition_FromCenter_ReturnEightSquare()

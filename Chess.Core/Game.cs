@@ -12,6 +12,8 @@ public class Game
 
     public Clock? Clock { get; private set; }
 
+    public MovesHistory MovesHistory { get; } = MovesHistory.Create();
+    
     public event Action? GameEnded;
     
     private Game()
@@ -54,9 +56,15 @@ public class Game
 
     public void Reset()
     {
+        ClearMoveHistory();
         ChessBoard.Reset();
         GameResult = GameResult.None;
         CurrentPlayer = Color.Light;
+    }
+
+    private void ClearMoveHistory()
+    {
+        MovesHistory.Clear();
     }
     
     public bool TryMove(Piece piece, AvailableMoves availableMoves, Position to)
@@ -66,11 +74,22 @@ public class Game
         if (piece.Color != CurrentPlayer) return false;
         if (!availableMoves.Contains(to)) return false;
 
-        piece.Move(ChessBoard, to);
+        var result = piece.Move(ChessBoard, to);
         UpdateGameResult();
+        
+        result.AppendCheckSuffix(GetCheckSuffix());
+        MovesHistory.Add(result);
+        
         Clock?.OnMoveCompleted(CurrentPlayer);
         CurrentPlayer = CurrentPlayer.Opposite();
         return true;
+    }
+
+    private char? GetCheckSuffix()
+    {
+        var opposite = CurrentPlayer.Opposite();
+        var checkState = ChessBoard.GetCheckState(opposite);
+        return IsGameEnd && checkState.IsChecked ? '#' : checkState.IsChecked ? '+' : null;
     }
     
     private void UpdateGameResult()

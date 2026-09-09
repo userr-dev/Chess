@@ -9,6 +9,11 @@ public static class ColumnExtensions
 {
     extension(Column column)
     {
+        public string ToNotation()
+        {
+            return column.ToString().ToLowerInvariant();
+        }
+
         public int Delta(Column other)
         {
             return (int)column - (int)other;

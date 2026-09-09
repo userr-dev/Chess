@@ -9,31 +9,29 @@ public sealed class King : Piece
     ];
 
     public bool CanCastle { get; private set; }
-    
+
+    public override char? AnnotationSymbol => 'K';
+
     public King(Color color, Position position) : base(color, position)
     {
         var startingRow = Color == Color.Light ? 0 : 7;
         CanCastle = startingRow == position.Row && position.Column is Column.E;
     }
 
-    internal override void Move(ChessBoard chessBoard, Position to)
+    internal override Result Move(ChessBoard chessBoard, Position to)
     {
         CanCastle = false;
         var from = Position;
-        if (chessBoard[to].HasEnemyPiece(Color))
-        {
-            chessBoard.CapturePiece(chessBoard[to].Piece!);
-        }
-        chessBoard.MovePiece(this, to);
-        ChangePosition(to);
+
+        var result = MoveCore(chessBoard, to);
         
         if (!IsCastlingMove(from, to))
         {
             chessBoard.UpdateBoardState(Color);
-            return;
+            return result;
         }
         
-        chessBoard.Castle(this, from, to);
+        return chessBoard.Castle(this, from, to);
     }
 
     public override AvailableMoves GetAvailableMoves(ChessBoard chessBoard)

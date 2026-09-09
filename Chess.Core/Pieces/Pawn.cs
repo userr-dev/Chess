@@ -16,6 +16,8 @@ public sealed class Pawn : Piece
     
     public bool CanDoubleAdvance { get; private set; }
 
+    public override char? AnnotationSymbol => null;
+
     public event EventHandler<PromotionEventArgs>? Promoted; 
     
     public Pawn(Color color, Position position) : base(color, position)
@@ -24,24 +26,20 @@ public sealed class Pawn : Piece
                       || (color == Color.Dark && position.Row == 6);
     }
 
-    internal override void Move(ChessBoard chessBoard, Position to)
+    internal override Result Move(ChessBoard chessBoard, Position to)
     {
         CanDoubleAdvance = false;
 
-        if (chessBoard[to].HasEnemyPiece(Color))
-        {
-            chessBoard.CapturePiece(chessBoard[to].Piece!);
-        }
-        chessBoard.MovePiece(this, to);
-        ChangePosition(to);
+        var result = MoveCore(chessBoard, to);
 
         if (!to.IsPromotionRow(Color))
         {
             chessBoard.UpdateBoardState(Color);
-            return;
+            return result;
         }
         
-        RaisePromotion(chessBoard, to);
+        var promotionPiece = RaisePromotion(chessBoard, to);
+        return result.ToPromoted(promotionPiece);
     }
 
     internal override bool IsAttackedKing(ChessBoard chessBoard, King enemyKing)
@@ -158,11 +156,15 @@ public sealed class Pawn : Piece
         return IsPinned ? attackDirections.Intersect(PinnedDirections!) : attackDirections;
     }
     
-    private void RaisePromotion(ChessBoard chessBoard, Position to)
+    private Piece RaisePromotion(ChessBoard chessBoard, Position to)
     {
         var args = new PromotionEventArgs(Color, to);
         Promoted?.Invoke(this, args);
-        chessBoard.PromotePawn(this, args.PromotedPiece ?? new Queen(Color, to));
+
+        var promotionPiece = args.PromotedPiece ?? new Queen(Color, to);
+        chessBoard.PromotePawn(this, promotionPiece);
+
+        return promotionPiece;
     }
     
     public sealed class PromotionEventArgs(Color color, Position position) : EventArgs

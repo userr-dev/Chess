@@ -3,6 +3,14 @@ namespace Chess.Tests.Pieces;
 public class RookTests
 {
     [Fact]
+    public void AnnotationSymbol()
+    {
+        var rook = new Rook(Color.Light, C1);
+        
+        Assert.Equal('R', rook.AnnotationSymbol);
+    }
+    
+    [Fact]
     public void CanCastle_StandardPosition()
     {
         var lightRook = new Rook(Color.Light, A1);

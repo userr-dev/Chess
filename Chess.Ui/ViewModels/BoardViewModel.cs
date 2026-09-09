@@ -19,7 +19,7 @@ public partial class BoardViewModel : ViewModelBase
     public PromotionMenuViewModel PromotionMenuViewModel { get; } = new();
     
     private Piece? _selectedPiece;
-    private AvailableMoves? _moveResult;
+    private AvailableMoves? _availableMoves;
     
     public BoardViewModel(Game game)
     {
@@ -90,7 +90,7 @@ public partial class BoardViewModel : ViewModelBase
 
         if (_selectedPiece is not null)
         {
-            if (_moveResult!.Contains(position) && position.IsPromotionRow(_selectedPiece.Color) && _selectedPiece is Pawn pawn)
+            if (_availableMoves!.Contains(position) && position.IsPromotionRow(_selectedPiece.Color) && _selectedPiece is Pawn pawn)
             {
                 var promotionType = await PromotionMenuViewModel.ShowAsync(pawn.Color);
                 pawn.Promoted += (_, args) =>
@@ -99,13 +99,13 @@ public partial class BoardViewModel : ViewModelBase
                 };
             }
             
-            if (_game.TryMove(_selectedPiece, _moveResult!, position))
+            if (_game.TryMove(_selectedPiece, _availableMoves!, position))
             {
                 return;
             }
 
             var isAgainSelectPiece = _selectedPiece == _board[position].Piece;
-            ClearSelectedPiece();
+            UnSelectPiece();
             if (isAgainSelectPiece) return;
         }
 
@@ -115,18 +115,18 @@ public partial class BoardViewModel : ViewModelBase
     private void UpdateBoard()
     {
         HideKingCheckHighlight();
-        ClearSelectedPiece();
+        UnSelectPiece();
                 
         RefreshFromBoard();
         HighlightKingCheck(_game.CurrentPlayer.Opposite());
         HighlightKingCheck(_game.CurrentPlayer);
     }
     
-    private void ClearSelectedPiece()
+    private void UnSelectPiece()
     {
         HideMovesHighlights();
         _selectedPiece = null;
-        _moveResult = null;
+        _availableMoves = null;
     }
     
     private void SelectPiece(Square square)
@@ -134,7 +134,7 @@ public partial class BoardViewModel : ViewModelBase
         if (!square.HasPiece || square.Piece?.Color != _game.CurrentPlayer || !_game.IsGameStarted) return;
         
         _selectedPiece = square.Piece;
-        _moveResult = _selectedPiece.GetAvailableMoves(_board);
-        HighlightsMoves(_moveResult);
+        _availableMoves = _selectedPiece.GetAvailableMoves(_board);
+        HighlightsMoves(_availableMoves);
     }
 }

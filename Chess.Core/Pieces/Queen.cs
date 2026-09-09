@@ -9,7 +9,9 @@ public sealed class Queen : SlidingPiece
     ];
 
     protected override Direction[] OwnDirections => Directions;
-    
+
+    public override char? AnnotationSymbol => 'Q';
+
     public Queen(Color color, Position position) : base(color, position)
     {
     }
