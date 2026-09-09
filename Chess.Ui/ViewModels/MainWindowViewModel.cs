@@ -35,8 +35,8 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         _game = Game.Create();
         _game.GameEnded += GameOnGameEnded;
-        _game.MoveHistory.Added += MoveHistoryOnAdded;
-        _game.MoveHistory.Cleared += MoveHistoryOnCleared;
+        _game.MovesHistory.Added += MovesHistoryOnAdded;
+        _game.MovesHistory.Cleared += MovesHistoryOnCleared;
         
         LightTimeRemaining = _game.Clock?.GetRemaining(Color.Light);
         DarkTimeRemaining = _game.Clock?.GetRemaining(Color.Dark);
@@ -47,12 +47,12 @@ public partial class MainWindowViewModel : ViewModelBase
         Board = new BoardViewModel(_game);
     }
 
-    private void MoveHistoryOnCleared()
+    private void MovesHistoryOnCleared()
     {
         MoveHistory.Clear();
     }
 
-    private void MoveHistoryOnAdded(Result result)
+    private void MovesHistoryOnAdded(Result result)
     {
         MoveHistory.Add(result);
     }

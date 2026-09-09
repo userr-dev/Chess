@@ -12,7 +12,7 @@ public class Game
 
     public Clock? Clock { get; private set; }
 
-    public MoveHistory MoveHistory { get; } = MoveHistory.Create();
+    public MovesHistory MovesHistory { get; } = MovesHistory.Create();
     
     public event Action? GameEnded;
     
@@ -62,9 +62,9 @@ public class Game
         CurrentPlayer = Color.Light;
     }
 
-    public void ClearMoveHistory()
+    private void ClearMoveHistory()
     {
-        MoveHistory.Clear();
+        MovesHistory.Clear();
     }
     
     public bool TryMove(Piece piece, AvailableMoves availableMoves, Position to)
@@ -78,7 +78,7 @@ public class Game
         UpdateGameResult();
         
         result.AppendCheckSuffix(GetCheckSuffix());
-        MoveHistory.Add(result);
+        MovesHistory.Add(result);
         
         Clock?.OnMoveCompleted(CurrentPlayer);
         CurrentPlayer = CurrentPlayer.Opposite();

@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace Chess.Core;
 
-public sealed class MoveHistory : IEnumerable<Result>
+public sealed class MovesHistory : IEnumerable<Result>
 {
     private readonly List<Result> _moveResults = [];
 
@@ -31,7 +31,7 @@ public sealed class MoveHistory : IEnumerable<Result>
         return GetEnumerator();
     }
 
-    internal static MoveHistory Create()
+    internal static MovesHistory Create()
     {
         return [];
     }
