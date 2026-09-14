@@ -184,6 +184,15 @@ public sealed class ChessBoard
         UpdateBoardState(pawn.Color);
     }
 
+    internal Result CaptureEnPassant(Pawn movedPawn, Position from, Position to, Pawn enPassantPawn)
+    {
+        CapturePiece(enPassantPawn);
+        MovePiece(movedPawn, to);
+        
+        UpdateBoardState(movedPawn.Color);
+        return EnPassantCaptured.Create(movedPawn, from, to, enPassantPawn);
+    }
+    
     internal Castled Castle(King king, Position from, Position to)
     {
         var castleSide = to.Column > from.Column ? CastleSide.KingSide : CastleSide.QueenSide;

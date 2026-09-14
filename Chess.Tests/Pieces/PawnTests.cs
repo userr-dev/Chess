@@ -174,6 +174,88 @@ public class PawnTests
         Assert.Empty(attacks);
     }
 
+    // EnPassant
+    [Fact]
+    public void GetAvailableMoves_EnPassantOnLeft_Included()
+    {
+        var lightPawn = new Pawn(Color.Light, E5);
+        var darkPawn = new Pawn(Color.Dark, D7);
+
+        var board = ChessBoard.Create([lightPawn], [darkPawn]);
+
+        darkPawn.Move(board, D5);
+
+        var lightPawnAttacks = lightPawn.GetAvailableMoves(board).Attacks;
+        Assert.Contains(D6, lightPawnAttacks);
+    }
+    
+    [Fact]
+    public void GetAvailableMoves_EnPassantOnRight_Included()
+    {
+        var lightPawn = new Pawn(Color.Light, E5);
+        var darkPawn = new Pawn(Color.Dark, F7);
+
+        var board = ChessBoard.Create([lightPawn], [darkPawn]);
+
+        darkPawn.Move(board, F5);
+
+        var lightPawnAttacks = lightPawn.GetAvailableMoves(board).Attacks;
+        Assert.Contains(F6, lightPawnAttacks);
+    }
+
+    [Fact]
+    public void GetAvailableMoves_PinnedAlongDiagonal_CannotEnPassant()
+    {
+        var lightPawn = new Pawn(Color.Light, E5);
+        var lightKing = new King(Color.Light, B2);
+        var darkPawn = new Pawn(Color.Dark, D7);
+        var darkBishop = new Bishop(Color.Dark, G7);
+
+        var board = ChessBoard.Create([lightPawn, lightKing], [darkBishop, darkPawn]);
+
+        darkPawn.Move(board, D5);
+        var lightPawnAttacks = lightPawn.GetAvailableMoves(board).Attacks;
+        
+        Assert.True(darkPawn.IsEnPassant);
+        Assert.DoesNotContain(D6, lightPawnAttacks);
+    }
+    
+    [Fact]
+    public void GetAvailableMoves_PinnedVertically_CannotEnPassant()
+    {
+        var lightPawn = new Pawn(Color.Light, E5);
+        var lightKing = new King(Color.Light, E1);
+        var darkPawn = new Pawn(Color.Dark, D7);
+        var darkRook = new Rook(Color.Dark, E8);
+
+        var board = ChessBoard.Create([lightPawn, lightKing], [darkRook, darkPawn]);
+
+        darkPawn.Move(board, D5);
+        var lightPawnAttacks = lightPawn.GetAvailableMoves(board).Attacks;
+        
+        Assert.True(darkPawn.IsEnPassant);
+        Assert.DoesNotContain(D6, lightPawnAttacks);
+    }
+
+    [Fact]
+    public void GetAvailableMoves_KingInCheck_CannotEnPassant()
+    {
+        var lightPawn = new Pawn(Color.Light, E5);
+        var lightKing = new King(Color.Light, C4);
+        var darkPawn = new Pawn(Color.Dark, D7);
+        
+        var board = ChessBoard.Create([lightPawn, lightKing], [darkPawn]);
+        
+        darkPawn.Move(board, D5);
+        var lightPawnAttacks = lightPawn.GetAvailableMoves(board).Attacks;
+
+        var checkState = board.GetCheckState(lightKing.Color);
+        
+        Assert.True(darkPawn.IsEnPassant);
+        Assert.True(checkState.IsChecked);
+        Assert.Contains(D6, lightPawnAttacks);
+    }
+    
     [Fact]
     public void GetAvailableMoves_PinnedAlongDiagonal_CannotMove()
     {
@@ -498,5 +580,17 @@ public class PawnTests
         Assert.DoesNotContain(lightPawn, lightPieces);
         Assert.DoesNotContain(darkKnight, darkPieces);
         Assert.IsType<Queen>(board[darkKnight.Position].Piece);
+    }
+
+    [Fact]
+    public void Move_DoubleAdvance_EnPassant()
+    {
+        var lightPawn = new Pawn(Color.Light, A2);
+
+        var board = ChessBoard.Create([lightPawn], []);
+
+        lightPawn.Move(board, A4);
+        
+        Assert.True(lightPawn.IsEnPassant);
     }
 }
