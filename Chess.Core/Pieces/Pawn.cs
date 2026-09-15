@@ -36,19 +36,18 @@ public sealed class Pawn : Piece
 
         var from = Position;
         
-        if (Math.Abs(to.OffsetFrom(from).RowOffset) == 2)
+        if (Math.Abs(to.Row - from.Row) == 2)
         {
             IsEnPassant = true;
         }
+        var result = MoveCore(chessBoard, to);
 
         if (IsEnPassantCapturedMove(chessBoard, to, out var enPassantPawn))
         {
             var enPassantResult = chessBoard.CaptureEnPassant(this, from, to, enPassantPawn);
-            ChangePosition(to);
             return enPassantResult;
         }
         
-        var result = MoveCore(chessBoard, to);
         if (!to.IsPromotionRow(Color))
         {
             chessBoard.UpdateBoardState(Color);
@@ -114,7 +113,7 @@ public sealed class Pawn : Piece
         
         var attacks = GetCheckEvasionAttacks(attackerPosition);
         var enPassantMove = GetEnPassantCheckEvasionAttack(chessBoard, checkState);
-        if (enPassantMove is not null) attacks.Add(enPassantMove.Value);
+        if (enPassantMove.HasValue) attacks.Add(enPassantMove.Value);
         
         var moves = GetCheckBlockingMoves(chessBoard, checkState, attackerPosition);
         
@@ -131,11 +130,10 @@ public sealed class Pawn : Piece
     
     private List<Position> GetCheckEvasionAttacks(Position attackerPosition)
     {
-        List<Position> attacks = [];
+        List<Position> attacks = new(2);
         
         var attackDirection = Position.GetDirectionFromTo(Position, attackerPosition);
-        if (!AttackDirections[Color].Contains(attackDirection)) return attacks;
-        if (IsPinned && !PinnedDirections!.Contains(attackDirection)) return attacks;
+        if (!GetAttacksDirections().Contains(attackDirection)) return attacks;
         
         attacks.Add(attackerPosition);
         return attacks;
@@ -179,23 +177,22 @@ public sealed class Pawn : Piece
         return moves;
     }
 
-    private Position? GetEnPassantMove(ChessBoard chessBoard, Direction[] directions)
+    private Position? GetEnPassantMove(ChessBoard chessBoard, Direction[] attackDirections)
     {
-        Direction[] enPassantDirections = [Direction.Left, Direction.Right];
+        Position? enPassantAttackPosition = null;
         
-        foreach (var enPassantDirection in enPassantDirections)
+        foreach (var attackDirection in attackDirections)
         {
             var position = Position;
-            if (Position.TryMove(ref position, enPassantDirection) && chessBoard[position].Piece is Pawn { IsEnPassant: true})
-            {
-                var rowIncrement = Color is Color.Light ? 1 : -1;
-                var enPassantAttackPosition = Position.Create(position.Column, position.Row + rowIncrement);
-                var direction = Position.GetDirectionFromTo(Position, enPassantAttackPosition);
-                if (directions.Contains(direction)) return enPassantAttackPosition;
-            }
+            if (!Position.TryMove(ref position, attackDirection)) continue;
+            
+            var rowIncrement = Color is Color.Light ? 1 : -1;
+            var enPassantPosition = Position.Create(position.Column, position.Row - rowIncrement);
+            enPassantAttackPosition ??=
+                chessBoard[enPassantPosition].Piece is Pawn { IsEnPassant: true } ? position : null;
         }
 
-        return null;
+        return enPassantAttackPosition;
     }
     
     private List<Position> GetAttacks(ChessBoard chessBoard)

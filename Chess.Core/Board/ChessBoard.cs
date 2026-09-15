@@ -187,7 +187,6 @@ public sealed class ChessBoard
     internal Result CaptureEnPassant(Pawn movedPawn, Position from, Position to, Pawn enPassantPawn)
     {
         CapturePiece(enPassantPawn);
-        MovePiece(movedPawn, to);
         
         UpdateBoardState(movedPawn.Color);
         return EnPassantCaptured.Create(movedPawn, from, to, enPassantPawn);
