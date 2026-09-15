@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Chess.Core.Pieces;
 
 public sealed class Pawn : Piece
@@ -16,6 +18,8 @@ public sealed class Pawn : Piece
     
     public bool CanDoubleAdvance { get; private set; }
 
+    public bool IsEnPassant { get; private set; }
+    
     public override char? AnnotationSymbol => null;
 
     public event EventHandler<PromotionEventArgs>? Promoted; 
@@ -30,8 +34,20 @@ public sealed class Pawn : Piece
     {
         CanDoubleAdvance = false;
 
+        var from = Position;
+        
+        if (Math.Abs(to.Row - from.Row) == 2)
+        {
+            IsEnPassant = true;
+        }
         var result = MoveCore(chessBoard, to);
 
+        if (IsEnPassantCapturedMove(chessBoard, to, out var enPassantPawn))
+        {
+            var enPassantResult = chessBoard.CaptureEnPassant(this, from, to, enPassantPawn);
+            return enPassantResult;
+        }
+        
         if (!to.IsPromotionRow(Color))
         {
             chessBoard.UpdateBoardState(Color);
@@ -42,6 +58,23 @@ public sealed class Pawn : Piece
         return result.ToPromoted(promotionPiece);
     }
 
+    private bool IsEnPassantCapturedMove(ChessBoard chessBoard, Position to, [MaybeNullWhen(false)] out Pawn enPassantPawn)
+    {
+        var rowIncrement = Color is Color.Light ? 1 : -1;
+        var enPassantPosition = Position.Create(to.Column, to.Row - rowIncrement);
+        enPassantPawn = null;
+
+        if (chessBoard[enPassantPosition].Piece is not Pawn { IsEnPassant: true }) return false;
+        
+        enPassantPawn = (Pawn)chessBoard[enPassantPosition].Piece!;
+        return true;
+    }
+
+    internal void NotEnPassant()
+    {
+        IsEnPassant = false;
+    }
+    
     internal override bool IsAttackedKing(ChessBoard chessBoard, King enemyKing)
     {
         var direction = Position.GetDirectionFromTo(Position, enemyKing.Position);
@@ -79,18 +112,28 @@ public sealed class Pawn : Piece
         var attackerPosition = checkState.Attacker!.Position;
         
         var attacks = GetCheckEvasionAttacks(attackerPosition);
+        var enPassantMove = GetEnPassantCheckEvasionAttack(chessBoard, checkState);
+        if (enPassantMove.HasValue) attacks.Add(enPassantMove.Value);
+        
         var moves = GetCheckBlockingMoves(chessBoard, checkState, attackerPosition);
         
         return new AvailableMoves(moves, attacks);
     }
 
+    private Position? GetEnPassantCheckEvasionAttack(ChessBoard chessBoard, CheckState checkState)
+    {
+        if (checkState.Attacker is not Pawn { IsEnPassant: true }) return null;
+
+        var enPassantMove = GetEnPassantMove(chessBoard, GetAttacksDirections());
+        return enPassantMove;
+    }
+    
     private List<Position> GetCheckEvasionAttacks(Position attackerPosition)
     {
-        List<Position> attacks = [];
+        List<Position> attacks = new(2);
         
         var attackDirection = Position.GetDirectionFromTo(Position, attackerPosition);
-        if (!AttackDirections[Color].Contains(attackDirection)) return attacks;
-        if (IsPinned && !PinnedDirections!.Contains(attackDirection)) return attacks;
+        if (!GetAttacksDirections().Contains(attackDirection)) return attacks;
         
         attacks.Add(attackerPosition);
         return attacks;
@@ -133,6 +176,24 @@ public sealed class Pawn : Piece
 
         return moves;
     }
+
+    private Position? GetEnPassantMove(ChessBoard chessBoard, Direction[] attackDirections)
+    {
+        Position? enPassantAttackPosition = null;
+        
+        foreach (var attackDirection in attackDirections)
+        {
+            var position = Position;
+            if (!Position.TryMove(ref position, attackDirection)) continue;
+            
+            var rowIncrement = Color is Color.Light ? 1 : -1;
+            var enPassantPosition = Position.Create(position.Column, position.Row - rowIncrement);
+            enPassantAttackPosition ??=
+                chessBoard[enPassantPosition].Piece is Pawn { IsEnPassant: true } ? position : null;
+        }
+
+        return enPassantAttackPosition;
+    }
     
     private List<Position> GetAttacks(ChessBoard chessBoard)
     {
@@ -147,13 +208,19 @@ public sealed class Pawn : Piece
             }
         }
 
+        var enPassantMove = GetEnPassantMove(chessBoard, attacksDirections);
+        if (enPassantMove.HasValue)
+        {
+            attacks.Add(enPassantMove.Value);
+        }
+        
         return attacks;
     }
 
-    private IEnumerable<Direction> GetAttacksDirections()
+    private Direction[] GetAttacksDirections()
     {
         var attackDirections = AttackDirections[Color];
-        return IsPinned ? attackDirections.Intersect(PinnedDirections!) : attackDirections;
+        return IsPinned ? [.. attackDirections.Intersect(PinnedDirections!)] : attackDirections;
     }
     
     private Piece RaisePromotion(ChessBoard chessBoard, Position to)

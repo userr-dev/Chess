@@ -7,7 +7,9 @@ public sealed class MovesHistory : IEnumerable<Result>
     private readonly List<Result> _moveResults = [];
 
     public event Action<Result>? Added;
-    public event Action? Cleared; 
+    public event Action? Cleared;
+
+    public Result? Last() => _moveResults.LastOrDefault();
     
     internal void Clear()
     {

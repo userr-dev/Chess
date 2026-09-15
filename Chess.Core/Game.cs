@@ -73,12 +73,18 @@ public class Game
         if (IsGameEnd) return false;
         if (piece.Color != CurrentPlayer) return false;
         if (!availableMoves.Contains(to)) return false;
-
+        var lastMovedPiece = MovesHistory.Last()?.MovedPiece;
+        
         var result = piece.Move(ChessBoard, to);
         UpdateGameResult();
         
         result.AppendCheckSuffix(GetCheckSuffix());
         MovesHistory.Add(result);
+        
+        if (lastMovedPiece is Pawn {IsEnPassant: true} pawn && piece != pawn)
+        {
+            pawn.NotEnPassant();
+        }
         
         Clock?.OnMoveCompleted(CurrentPlayer);
         CurrentPlayer = CurrentPlayer.Opposite();
