@@ -131,7 +131,7 @@ public partial class BoardViewModel : ViewModelBase
     
     private void SelectPiece(Square square)
     {
-        if (!square.HasPiece || square.Piece?.Color != _game.CurrentPlayer || !_game.IsGameStarted) return;
+        if (!square.HasPiece || square.Piece?.Color != _game.CurrentPlayer || !_game.IsGameStarted || _game.IsGamePaused) return;
         
         _selectedPiece = square.Piece;
         _availableMoves = _selectedPiece.GetAvailableMoves(_board);

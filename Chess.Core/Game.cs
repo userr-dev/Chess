@@ -7,6 +7,7 @@ public class Game
 
     public bool IsGameStarted { get; private set; }
     public bool IsGameEnd => GameResult is not GameResult.None;
+    public bool IsGamePaused => (Clock?.IsPaused).GetValueOrDefault();
     
     public ChessBoard ChessBoard { get; } = ChessBoard.Create();
 
@@ -54,6 +55,11 @@ public class Game
         Clock.TimeExpired += ClockOnTimeExpired;
     }
 
+    public void PauseClock()
+    {
+        Clock?.TogglePause();
+    }
+    
     public void Reset()
     {
         ClearMoveHistory();
@@ -70,7 +76,7 @@ public class Game
     public bool TryMove(Piece piece, AvailableMoves availableMoves, Position to)
     {
         if (!IsGameStarted) return false;
-        if (IsGameEnd) return false;
+        if (IsGameEnd || IsGamePaused) return false;
         if (piece.Color != CurrentPlayer) return false;
         if (!availableMoves.Contains(to)) return false;
         var lastMovedPiece = MovesHistory.Last()?.MovedPiece;

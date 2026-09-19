@@ -6,7 +6,6 @@
         xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
         xmlns:controls="using:Chess.Ui.Controls"
         xmlns:core="using:Chess.Core"
-        xmlns:results="using:Chess.Core.MoveResults"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="800"
@@ -129,6 +128,10 @@
                           Margin="10, 0">
 
                         <controls:ChessClock Grid.Column="0"
+                                             IsRunning="{Binding IsClockRunning}"
+                                             IsPaused="{Binding IsClockPaused}"
+                                             PauseCommand="{Binding ClockPauseCommand}"
+                                             TickCommand="{Binding TimerTickCommand}"
                                              DarkTime="{Binding DarkTimeRemaining}"
                                              LightTime="{Binding LightTimeRemaining}" />
 

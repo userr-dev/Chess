@@ -18,6 +18,10 @@ public sealed class Clock
 
     public event Action<Color>? TimeExpired;
     public event Action<Color>? IncrementAdded;
+
+    public bool IsPaused { get; private set; }
+
+    internal void TogglePause() => IsPaused = !IsPaused;
     
     public TimeSpan GetRemaining(Color color) => _remaining[color];
     

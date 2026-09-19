@@ -15,8 +15,9 @@
                 <ResourceInclude Source="avares://Chess.Ui/Styles/ControlThemes/ControlThemes.axaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
+        <FontFamily x:Key="FontAwesome">avares://Chess.Ui/Assets/Fonts/#Font Awesome 7</FontFamily>
     </Application.Resources>
-
+    
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://Chess.Ui/Styles/Styles.axaml"/>

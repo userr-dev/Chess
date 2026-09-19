@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using Avalonia.Threading;
 using Chess.Core;
 using Chess.Core.MoveResults;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,7 +9,6 @@ namespace Chess.Ui.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    private readonly DispatcherTimer _timer;
     private readonly Game _game;
 
     private TimeControl? _selectedTimeControl;
@@ -22,6 +20,12 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty] 
     public partial bool IsMoveHistoryMenuOpen { get; private set; } = false;
+
+    [ObservableProperty] 
+    public partial bool IsClockRunning { get; private set; } = false;
+    
+    [ObservableProperty]
+    public partial bool IsClockPaused { get; private set; }
     
     [ObservableProperty]
     public partial TimeSpan? LightTimeRemaining { get; private set; }
@@ -41,9 +45,6 @@ public partial class MainWindowViewModel : ViewModelBase
         LightTimeRemaining = _game.Clock?.GetRemaining(Color.Light);
         DarkTimeRemaining = _game.Clock?.GetRemaining(Color.Dark);
         
-        _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-        _timer.Tick += TimerOnTick;
-        
         Board = new BoardViewModel(_game);
     }
 
@@ -61,7 +62,8 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         IsGameMenuOpen = true;
         IsMoveHistoryMenuOpen = false;
-        _timer.Stop();
+        IsClockRunning = false;
+        IsClockPaused = false;
     }
 
     private void ClockOnIncrementAdded(Color color)
@@ -76,7 +78,15 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private void TimerOnTick(object? sender, EventArgs e)
+    [RelayCommand]
+    private void ClockPause()
+    {
+        _game.PauseClock();
+        IsClockPaused = _game.IsGamePaused;
+    }
+    
+    [RelayCommand]
+    private void TimerTick()
     {
         _game.Clock?.Tick(_game.CurrentPlayer, TimeSpan.FromSeconds(1));
         if (_game.CurrentPlayer == Color.Light)
@@ -112,6 +122,8 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         IsGameMenuOpen = false;
         IsMoveHistoryMenuOpen = true;
+        IsClockRunning = false;
+        IsClockPaused = false;
 
         _game.SetTimeControl(_selectedTimeControl);
         _game.Clock?.IncrementAdded += ClockOnIncrementAdded;
@@ -122,6 +134,6 @@ public partial class MainWindowViewModel : ViewModelBase
         if (_game.IsGameStarted || _game.IsGameEnd) _game.Reset();
         
         _game.Start();
-        _timer.Start();
+        if (_game.Clock is not null) IsClockRunning = true;
     }
 }
