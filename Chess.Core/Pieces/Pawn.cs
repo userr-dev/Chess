@@ -42,7 +42,7 @@ public sealed class Pawn : Piece
         }
         var result = MoveCore(chessBoard, to);
 
-        if (IsEnPassantCapturedMove(chessBoard, to, out var enPassantPawn))
+        if (result is Moved && from.Column != to.Column && IsEnPassantCapturedMove(chessBoard, to, out var enPassantPawn))
         {
             var enPassantResult = chessBoard.CaptureEnPassant(this, from, to, enPassantPawn);
             return enPassantResult;
@@ -64,7 +64,8 @@ public sealed class Pawn : Piece
         var enPassantPosition = Position.Create(to.Column, to.Row - rowIncrement);
         enPassantPawn = null;
 
-        if (chessBoard[enPassantPosition].Piece is not Pawn { IsEnPassant: true }) return false;
+        if (!chessBoard[enPassantPosition].HasEnemyPiece(Color) 
+            || chessBoard[enPassantPosition].Piece is not Pawn { IsEnPassant: true}) return false;
         
         enPassantPawn = (Pawn)chessBoard[enPassantPosition].Piece!;
         return true;
@@ -189,10 +190,27 @@ public sealed class Pawn : Piece
             var rowIncrement = Color is Color.Light ? 1 : -1;
             var enPassantPosition = Position.Create(position.Column, position.Row - rowIncrement);
             enPassantAttackPosition ??=
-                chessBoard[enPassantPosition].Piece is Pawn { IsEnPassant: true } ? position : null;
+                chessBoard[enPassantPosition].Piece is Pawn { IsEnPassant: true } enPassant && enPassant.Color != Color && !ExposesKingOnRank(chessBoard, enPassant) ? position : null;
         }
 
         return enPassantAttackPosition;
+    }
+    
+    private bool ExposesKingOnRank(ChessBoard board, Pawn captured)
+    {
+        if (!board.TryGetKing(Color, out var king) || king.Position.Row != Position.Row) return false;
+
+        var step = king.Position.Column < Position.Column ? Direction.Right : Direction.Left;
+        var pos = king.Position;
+
+        while (Position.TryMove(ref pos, step))
+        {
+            var piece = board[pos].Piece;
+            if (piece is null || piece == this || piece == captured) continue;
+            return piece.Color != Color && piece is Rook or Queen;
+        }
+
+        return false;
     }
     
     private List<Position> GetAttacks(ChessBoard chessBoard)

@@ -188,6 +188,84 @@ public class PawnTests
         var lightPawnAttacks = lightPawn.GetAvailableMoves(board).Attacks;
         Assert.Contains(D6, lightPawnAttacks);
     }
+
+    [Fact]
+    public void GetAvailableMoves_FriendlyEnPassantOnLeft_NotIncluded()
+    {
+        var lightPawn1 = new Pawn(Color.Light, E4);
+        var lightPawn2 = new Pawn(Color.Light, D2);
+
+        var board = ChessBoard.Create([lightPawn1, lightPawn2], []);
+
+        lightPawn2.Move(board, D4);
+
+        var lightPawnAttacks = lightPawn1.GetAvailableMoves(board).Attacks;
+        Assert.DoesNotContain(D5, lightPawnAttacks);
+    }
+
+    [Fact]
+    public void GetAvailableMoves_PinnedHorizontally_CannotCaptureEnPassant()
+    {
+        var lightPawn = new Pawn(Color.Light, E5);
+        var lightKing = new King(Color.Light, G5);
+        var darkRook = new Rook(Color.Dark, A5);
+        var darkPawn = new Pawn(Color.Dark, D7);
+
+        var board = ChessBoard.Create([lightPawn, lightKing], [darkRook, darkPawn]);
+
+        darkPawn.Move(board, D5);
+        board.UpdateBoardState(darkRook.Color);
+        var (lightPawnMoves, lightPawnAttacks) = lightPawn.GetAvailableMoves(board);
+        
+        Assert.NotEmpty(lightPawnMoves);
+        Assert.DoesNotContain(D6, lightPawnAttacks);
+    }
+    
+    [Fact]
+    public void GetAvailableMoves_HorizontalPinThroughBothPawns_CannotEnPassant()
+    {
+        var lightKing = new King(Color.Light, A5);
+        var lightPawn = new Pawn(Color.Light, B5);
+        var darkPawn = new Pawn(Color.Dark, C7);
+        var darkRook = new Rook(Color.Dark, H5);
+
+        var board = ChessBoard.Create([lightKing, lightPawn], [darkPawn, darkRook]);
+
+        darkPawn.Move(board, C5);
+        var attacks = lightPawn.GetAvailableMoves(board).Attacks;
+
+        Assert.True(darkPawn.IsEnPassant);
+        Assert.DoesNotContain(C6, attacks);
+    }
+
+    [Fact]
+    public void GetAvailableMoves_FriendlyPawnJustDoubleAdvanced_CannotEnPassantOwnPawn()
+    {
+        var movedPawn = new Pawn(Color.Light, D2);
+        var neighbour = new Pawn(Color.Light, E4);
+
+        var board = ChessBoard.Create([movedPawn, neighbour], []);
+
+        movedPawn.Move(board, D4);
+        var attacks = neighbour.GetAvailableMoves(board).Attacks;
+
+        Assert.DoesNotContain(D5, attacks);
+    }
+    
+    [Fact]
+    public void Move_NormalCapture_DoesNotRemovePieceBehindTarget()
+    {
+        var lightPawn = new Pawn(Color.Light, E4);
+        var darkKnight = new Knight(Color.Dark, D5);
+        var darkPawn = new Pawn(Color.Dark, D4);
+
+        var board = ChessBoard.Create([lightPawn], [darkKnight, darkPawn]);
+
+        lightPawn.Move(board, D5);
+
+        Assert.Equal(darkPawn, board[D4].Piece);
+        Assert.Contains(darkPawn, board.GetPieces(Color.Dark));
+    }
     
     [Fact]
     public void GetAvailableMoves_EnPassantOnRight_Included()
