@@ -95,10 +95,8 @@ public sealed class King : Piece
         var position = Position;
         while (Position.TryMove(ref position, direction) && position != rookPosition)
         {
-            if (chessBoard[position].HasPiece || enemyAttackedPositions.Contains(position))
-            {
-                return false;
-            }
+            if (chessBoard[position].HasPiece) return false;
+            if (position.Column.DistanceTo(Position.Column) <= 2 && enemyAttackedPositions.Contains(position)) return false;
         }
 
         return true;

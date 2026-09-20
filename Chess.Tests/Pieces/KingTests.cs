@@ -269,6 +269,20 @@ public class KingTests
         Assert.Contains(C1, moves);
     }
     
+    [Fact]
+    public void GetAvailableMoves_AttackedB1_CanCastle()
+    {
+        var lightKing = new King(Color.Light, E1);
+        var lightLeftRook = new Rook(Color.Light, A1);
+        var darkRook = new Rook(Color.Dark, B8);
+
+        var board = ChessBoard.Create([lightKing, lightLeftRook], [darkRook]);
+
+        var moves = lightKing.GetAvailableMoves(board).Moves;
+        
+        Assert.Contains(C1, moves);
+    }
+    
     // Move
 
     [Theory]
@@ -314,7 +328,7 @@ public class KingTests
     {
         var lightKing = new King(Color.Light, E1);
         var lightQueenSideRook = new Rook(Color.Light, A1);
-        var lightKingSideRook = new Rook(Color.Light, H8);
+        var lightKingSideRook = new Rook(Color.Light, H1);
 
         var board = ChessBoard.Create([lightKing, lightQueenSideRook, lightKingSideRook], []);
         
