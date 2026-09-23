@@ -3,5 +3,6 @@
     <ResourceDictionary.MergedDictionaries>
         <MergeResourceInclude Source="avares://Chess.Ui/Controls/Timer.axaml"/>
         <MergeResourceInclude Source="avares://Chess.Ui/Controls/ChessClock.axaml"/>
+        <MergeResourceInclude Source="avares://Chess.Ui/Controls/BoardAxisLabels.axaml"/>
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

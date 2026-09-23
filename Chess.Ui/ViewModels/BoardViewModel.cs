@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Chess.Core;
 using Chess.Core.Board;
@@ -20,6 +22,9 @@ public partial class BoardViewModel : ViewModelBase
     
     private Piece? _selectedPiece;
     private AvailableMoves? _availableMoves;
+
+    public int[] Rows { get; } = [.. Enumerable.Range(1, 8).Reverse()];
+    public Column[] Columns { get; } = [.. Enum.GetValues<Column>()];
     
     public BoardViewModel(Game game)
     {

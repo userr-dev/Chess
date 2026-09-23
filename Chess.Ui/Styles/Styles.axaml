@@ -1,5 +1,6 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:Chess.Ui.Controls">
 
     <Style Selector="Border.lightSquare">
         <Setter Property="Background" Value="{StaticResource LightChessBrush}" />
@@ -46,5 +47,15 @@
             <Setter Property="BorderBrush" Value="{StaticResource AccentHoverBrush}"/>
         </Style>
         
+    </Style>
+    
+    <Style Selector="controls|BoardAxisLabels[Orientation=Horizontal] > ItemsControl > Border > ItemsPresenter#PART_ItemsPresenter > UniformGrid">
+        <Setter Property="Rows" Value="1"/>
+        <Setter Property="Columns" Value="8"/>
+    </Style>
+        
+    <Style Selector="controls|BoardAxisLabels[Orientation=Vertical] > ItemsControl > Border > ItemsPresenter#PART_ItemsPresenter > UniformGrid">
+        <Setter Property="Rows" Value="8"/>
+        <Setter Property="Columns" Value="1"/>
     </Style>
 </Styles>
