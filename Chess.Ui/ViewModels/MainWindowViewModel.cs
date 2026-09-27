@@ -21,6 +21,9 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] 
     public partial bool IsMoveHistoryMenuOpen { get; private set; } = false;
 
+    [ObservableProperty]
+    public partial string? GameResultText { get; private set; }
+    
     [ObservableProperty] 
     public partial bool IsClockRunning { get; private set; } = false;
     
@@ -58,12 +61,25 @@ public partial class MainWindowViewModel : ViewModelBase
         MoveHistory.Add(result);
     }
 
+    private string? GetResultText(GameResult result)
+    {
+        return result switch
+        {
+            GameResult.DarkWin => "Dark Win",
+            GameResult.LightWin => "Light Win",
+            GameResult.Draw => "Draw",
+            _ => null
+        };
+    }
+    
     private void GameOnGameEnded()
     {
         IsGameMenuOpen = true;
         IsMoveHistoryMenuOpen = false;
         IsClockRunning = false;
         IsClockPaused = false;
+
+        GameResultText = GetResultText(_game.GameResult);
     }
 
     private void ClockOnIncrementAdded(Color color)
@@ -120,6 +136,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private void StartGame()
     {
+        GameResultText = null;
         IsGameMenuOpen = false;
         IsMoveHistoryMenuOpen = true;
         IsClockRunning = false;
