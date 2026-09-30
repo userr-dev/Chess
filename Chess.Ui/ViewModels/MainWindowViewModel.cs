@@ -15,6 +15,9 @@ public partial class MainWindowViewModel : ViewModelBase
     
     public BoardViewModel Board { get; }
     
+    [ObservableProperty]
+    public partial bool IsGameStarted { get; private set; }
+    
     [ObservableProperty] 
     public partial bool IsGameMenuOpen { get; private set; } = true;
 
@@ -61,7 +64,7 @@ public partial class MainWindowViewModel : ViewModelBase
         MoveHistory.Add(result);
     }
 
-    private string? GetResultText(GameResult result)
+    private static string? GetResultText(GameResult result)
     {
         return result switch
         {
@@ -78,7 +81,7 @@ public partial class MainWindowViewModel : ViewModelBase
         IsMoveHistoryMenuOpen = false;
         IsClockRunning = false;
         IsClockPaused = false;
-
+        IsGameStarted = _game.IsGameStarted;
         GameResultText = GetResultText(_game.GameResult);
     }
 
@@ -134,6 +137,18 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private void Resign()
+    {
+        _game.Resign();
+    }
+    
+    [RelayCommand]
+    private void DeclareDraw()
+    {
+        _game.DeclareDraw();
+    }
+    
+    [RelayCommand]
     private void StartGame()
     {
         GameResultText = null;
@@ -151,6 +166,7 @@ public partial class MainWindowViewModel : ViewModelBase
         if (_game.IsGameStarted || _game.IsGameEnd) _game.Reset();
         
         _game.Start();
+        IsGameStarted = _game.IsGameStarted;
         if (_game.Clock is not null) IsClockRunning = true;
     }
 }

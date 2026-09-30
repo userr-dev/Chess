@@ -97,6 +97,20 @@ public class Game
         return true;
     }
 
+    public void Resign()
+    {
+        if (!IsGameStarted || IsGameEnd) return;
+        GameResult = CurrentPlayer == Color.Light ? GameResult.DarkWin : GameResult.LightWin;
+        GameEnded?.Invoke();
+    }
+
+    public void DeclareDraw()
+    {
+        if (!IsGameStarted || IsGameEnd) return;
+        GameResult = GameResult.Draw;
+        GameEnded?.Invoke();
+    }
+    
     private char? GetCheckSuffix()
     {
         var opposite = CurrentPlayer.Opposite();

@@ -101,26 +101,49 @@
                                 Width="8"
                                 Command="{Binding ToggleMoveHistoryMenuCommand}" />
                         
-                        <Border Grid.Column="1"
-                                Margin="10, 75"
-                                BorderThickness="1"
-                                Background="{StaticResource WindowBackgroundBrush}"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                CornerRadius="8">
-                            <ScrollViewer>
-                                <ItemsControl ItemsSource="{Binding MoveHistory}"
-                                              Padding="10">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <UniformGrid Columns="2"
-                                                         ColumnSpacing="5"
-                                                         RowSpacing="10"
-                                                         VerticalAlignment="Top"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                </ItemsControl>
-                            </ScrollViewer>
-                        </Border>
+                        <Grid Grid.Column="1"
+                              Margin="10, 75"
+                              RowDefinitions="*, Auto"
+                              RowSpacing="10">
+                            
+                            <Border Grid.Row="0" 
+                                    BorderThickness="1"
+                                    Background="{StaticResource WindowBackgroundBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    CornerRadius="8">
+                                <ScrollViewer>
+                                    <ItemsControl ItemsSource="{Binding MoveHistory}"
+                                                  Padding="10">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <UniformGrid Columns="2"
+                                                             ColumnSpacing="5"
+                                                             RowSpacing="10"
+                                                             VerticalAlignment="Top"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </Border>
+                            
+                            <StackPanel Grid.Row="1"
+                                        Spacing="10">
+                                
+                                <Button Classes="accentButton"
+                                        Content="Draw"
+                                        HorizontalAlignment="Stretch"
+                                        IsEnabled="{Binding IsGameStarted}"
+                                        Command="{Binding DeclareDrawCommand}"/>
+                                
+                                <Button Classes="accentButton"
+                                        Content="Resign"
+                                        HorizontalAlignment="Stretch"
+                                        IsEnabled="{Binding IsGameStarted}"
+                                        Command="{Binding ResignCommand}"/>
+                                
+                            </StackPanel>
+                            
+                        </Grid>
                         
                     </Grid>
                 </SplitView.Pane>
