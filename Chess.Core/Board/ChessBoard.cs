@@ -221,6 +221,28 @@ public sealed class ChessBoard
         
         return Castled.Create(king, from, to, rookResult, castleSide);
     }
+
+    public IEnumerable<Position> GetPositionsFromLightPerspective()
+    {
+        for (int row = Rows - 1; row >= 0; row--)
+        {
+            for (int column = 0; column < Columns; column++)
+            {
+                yield return _squares[row, column].Position;
+            }
+        }
+    }
+    
+    public IEnumerable<Position> GetPositionsFromDarkPerspective()
+    {
+        for (int row = 0; row < Rows; row++)
+        {
+            for (int column = Columns - 1; column >= 0; column--)
+            {
+                yield return _squares[row, column].Position;
+            }
+        }
+    }
     
     public static ChessBoard Create(IEnumerable<Piece> lightPieces, IEnumerable<Piece> darkPieces)
     {

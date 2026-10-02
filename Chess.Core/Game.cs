@@ -16,6 +16,7 @@ public class Game
     public MovesHistory MovesHistory { get; } = MovesHistory.Create();
     
     public event Action? GameEnded;
+    public event Action<Color>? PlayerChanged; 
     
     private Game()
     {
@@ -94,6 +95,7 @@ public class Game
         
         Clock?.OnMoveCompleted(CurrentPlayer);
         CurrentPlayer = CurrentPlayer.Opposite();
+        PlayerChanged?.Invoke(CurrentPlayer);
         return true;
     }
 
