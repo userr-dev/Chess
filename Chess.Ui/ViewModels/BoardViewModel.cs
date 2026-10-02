@@ -21,7 +21,6 @@ public partial class BoardViewModel : ViewModelBase
     public PromotionMenuViewModel PromotionMenuViewModel { get; } = new();
     
     private Piece? _selectedPiece;
-    private AvailableMoves? _availableMoves;
 
     public int[] Rows { get; } = [.. Enumerable.Range(1, 8).Reverse()];
     public Column[] Columns { get; } = [.. Enum.GetValues<Column>()];
@@ -95,7 +94,8 @@ public partial class BoardViewModel : ViewModelBase
 
         if (_selectedPiece is not null)
         {
-            if (_availableMoves!.Contains(position) && position.IsPromotionRow(_selectedPiece.Color) && _selectedPiece is Pawn pawn)
+            var currentMoves = _selectedPiece.GetAvailableMoves(_board);
+            if (currentMoves.Contains(position) && position.IsPromotionRow(_selectedPiece.Color) && _selectedPiece is Pawn pawn)
             {
                 var promotionType = await PromotionMenuViewModel.ShowAsync(pawn.Color);
                 pawn.Promoted += (_, args) =>
@@ -104,7 +104,7 @@ public partial class BoardViewModel : ViewModelBase
                 };
             }
             
-            if (_game.TryMove(_selectedPiece, _availableMoves!, position))
+            if (_game.TryMove(_selectedPiece, position))
             {
                 return;
             }
@@ -131,7 +131,6 @@ public partial class BoardViewModel : ViewModelBase
     {
         HideMovesHighlights();
         _selectedPiece = null;
-        _availableMoves = null;
     }
     
     private void SelectPiece(Square square)
@@ -139,7 +138,7 @@ public partial class BoardViewModel : ViewModelBase
         if (!square.HasPiece || square.Piece?.Color != _game.CurrentPlayer || !_game.IsGameStarted || _game.IsGamePaused) return;
         
         _selectedPiece = square.Piece;
-        _availableMoves = _selectedPiece.GetAvailableMoves(_board);
-        HighlightsMoves(_availableMoves);
+        var availableMoves = _selectedPiece.GetAvailableMoves(_board);
+        HighlightsMoves(availableMoves);
     }
 }

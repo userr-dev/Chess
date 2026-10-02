@@ -73,12 +73,12 @@ public class Game
         MovesHistory.Clear();
     }
     
-    public bool TryMove(Piece piece, AvailableMoves availableMoves, Position to)
+    public bool TryMove(Piece piece, Position to)
     {
         if (!IsGameStarted) return false;
         if (IsGameEnd || IsGamePaused) return false;
         if (piece.Color != CurrentPlayer) return false;
-        if (!availableMoves.Contains(to)) return false;
+        if (!piece.GetAvailableMoves(ChessBoard).Contains(to)) return false;
         var lastMovedPiece = MovesHistory.Last()?.MovedPiece;
         
         var result = piece.Move(ChessBoard, to);
