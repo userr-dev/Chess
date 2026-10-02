@@ -157,6 +157,18 @@ public sealed class ChessBoard
         return !GetCheckState(color).IsChecked 
                && GetPieces(color).All(p => !p.GetAvailableMoves(this).HasMoves);
     }
+
+    public bool IsInsufficientMaterial()
+    {
+        var pieces = GetPieces(Color.Light).Concat(GetPieces(Color.Dark))
+            .Where(p => p is not King).ToList();
+
+        if (pieces.Count == 0) return true;
+        if (pieces.Count == 1) return pieces[0] is Bishop or Knight;
+
+        return pieces.All(p => p is Bishop)
+               && pieces.Select(p => this[p.Position].Color).Distinct().Count() == 1;
+    }
     
     // Moves
     internal void MovePiece(Piece movedPiece, Position to)

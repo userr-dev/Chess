@@ -126,7 +126,7 @@ public class Game
             GameResult = CurrentPlayer == Color.Light ? GameResult.LightWin : GameResult.DarkWin;
             GameEnded?.Invoke();
         }
-        else if (ChessBoard.IsStalemate(opponent))
+        else if (ChessBoard.IsStalemate(opponent) || ChessBoard.IsInsufficientMaterial())
         {
             GameResult = GameResult.Draw;
             GameEnded?.Invoke();
