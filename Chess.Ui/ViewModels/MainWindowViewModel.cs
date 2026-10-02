@@ -26,6 +26,9 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial string? GameResultText { get; private set; }
+
+    [ObservableProperty] 
+    public partial bool IsClockVisible { get; private set; } = false;
     
     [ObservableProperty] 
     public partial bool IsClockRunning { get; private set; } = false;
@@ -167,6 +170,6 @@ public partial class MainWindowViewModel : ViewModelBase
         
         _game.Start();
         IsGameStarted = _game.IsGameStarted;
-        if (_game.Clock is not null) IsClockRunning = true;
+        IsClockRunning = IsClockVisible = _game.Clock is not null;
     }
 }

@@ -101,7 +101,7 @@ public class ChessClock : TemplatedControl
         base.OnApplyTemplate(e);
         
         _pauseButton = e.NameScope.Find<Button>(PauseButtonPartName);
-        _pauseButton?.Content = PlayIcon;
+        _pauseButton?.Content = IsPaused ? PlayIcon : PauseIcon;
     }
 
     private void UpdateTimerState()
