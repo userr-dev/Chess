@@ -22,8 +22,8 @@ public partial class BoardViewModel : ViewModelBase
     
     private Piece? _selectedPiece;
 
-    public int[] Rows { get; } = [.. Enumerable.Range(1, 8).Reverse()];
-    public Column[] Columns { get; } = [.. Enum.GetValues<Column>()];
+    public ObservableCollection<int> Rows { get; } = [.. Enumerable.Range(1, 8).Reverse()];
+    public ObservableCollection<Column> Columns { get; } = [.. Enum.GetValues<Column>()];
     
     public BoardViewModel(Game game)
     {
@@ -32,8 +32,14 @@ public partial class BoardViewModel : ViewModelBase
         BuildSquares();
         RefreshFromBoard();
         _board.BoardStateUpdated += UpdateBoard;
+        _game.PlayerChanged += GameOnPlayerChanged;
     }
     
+    private void GameOnPlayerChanged(Color currentPlayer)
+    {
+        RotateBoard(currentPlayer);
+    }
+
     private void BuildSquares()
     {
         for (var row = 7; row >= 0; row--)
@@ -140,5 +146,40 @@ public partial class BoardViewModel : ViewModelBase
         _selectedPiece = square.Piece;
         var availableMoves = _selectedPiece.GetAvailableMoves(_board);
         HighlightsMoves(availableMoves);
+    }
+
+    private void RotateBoard(Color currentPlayer)
+    {
+        RotateSquaresOnBoard(currentPlayer);
+        ReverseAxis(Rows);
+        ReverseAxis(Columns);
+    }
+
+    private void RotateSquaresOnBoard(Color currentPlayer)
+    {
+        var positions = currentPlayer is Color.Light 
+            ? _board.GetPositionsFromLightPerspective() 
+            : _board.GetPositionsFromDarkPerspective();
+        var index = 0;
+        foreach (var position in positions)
+        {
+            var targetViewModel = _squareViewModels[position];
+            var currentIndex = Squares.IndexOf(targetViewModel);
+
+            if (currentIndex != index)
+            {
+                Squares.Move(currentIndex, index);
+            }
+            index++;
+        }
+    }
+
+    private void ReverseAxis<T>(ObservableCollection<T> collection)
+    {
+        var length = collection.Count;
+        for (int i = 0; i < length; i++)
+        {
+            collection.Move(0, length - 1 - i);
+        }
     }
 }
