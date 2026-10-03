@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia.Media;
-using Avalonia.Svg.Skia;
 using Chess.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -54,9 +53,6 @@ public partial class PromotionMenuOptionViewModel(PromotionType type) : ViewMode
 
     internal void Update(Color color)
     {
-        var path = PieceIconMapper.GetResourcePath(color, Type);
-        PieceImage = string.IsNullOrEmpty(path)
-            ? null
-            : new SvgImage { Source = SvgSource.Load(path) };
+        PieceImage = PieceIconMapper.GetPieceImage(color, Type);
     }
 }

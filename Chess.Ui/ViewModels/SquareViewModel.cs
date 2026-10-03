@@ -1,5 +1,4 @@
 using Avalonia.Media;
-using Avalonia.Svg.Skia;
 using Chess.Core.Board;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -30,10 +29,7 @@ public partial class SquareViewModel : ViewModelBase
     
     public void UpdateFrom(Square square)
     {
-        var path = PieceIconMapper.GetResourcePath(square.Piece);
-        PieceImage = string.IsNullOrEmpty(path)
-            ? null
-            : new SvgImage { Source = SvgSource.Load(path) };
+        PieceImage = PieceIconMapper.GetPieceImage(square.Piece);
     }
 
     internal void ClearHighlights()
