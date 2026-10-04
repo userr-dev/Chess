@@ -6,16 +6,16 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="avares://Chess.Ui/Styles/Colors.axaml" />
-                <ResourceInclude Source="avares://Chess.Ui/Controls/Controls.axaml"/>
-                <ResourceInclude Source="avares://Chess.Ui/Styles/ControlThemes/ControlThemes.axaml"/>
+                <ResourceInclude Source="avares://Chess/Styles/Colors.axaml" />
+                <ResourceInclude Source="avares://Chess/Controls/Controls.axaml"/>
+                <ResourceInclude Source="avares://Chess/Styles/ControlThemes/ControlThemes.axaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-        <FontFamily x:Key="FontAwesome">avares://Chess.Ui/Assets/Fonts/#Font Awesome 7</FontFamily>
+        <FontFamily x:Key="FontAwesome">avares://Chess/Assets/Fonts/#Font Awesome 7</FontFamily>
     </Application.Resources>
     
     <Application.Styles>
         <FluentTheme />
-        <StyleInclude Source="avares://Chess.Ui/Styles/Styles.axaml"/>
+        <StyleInclude Source="avares://Chess/Styles/Styles.axaml"/>
     </Application.Styles>
 </Application>

@@ -39,7 +39,7 @@ public static class PieceIconMapper
     {
         var colorPrefix = color.ToString().ToLowerInvariant();
         
-        return $"avares://Chess.Ui/Assets/Pieces/{colorPrefix}_{pieceTypeName}.svg";
+        return $"avares://Chess/Assets/Pieces/{colorPrefix}_{pieceTypeName}.svg";
     }
     
     public static SvgImage? GetPieceImage(Piece? piece)
