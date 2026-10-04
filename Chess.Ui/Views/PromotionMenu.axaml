@@ -2,8 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="using:Chess.Ui.ViewModels"
-             xmlns:i="using:Avalonia.Xaml.Interactivity"
-             xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Chess.Ui.Views.PromotionMenu"
@@ -28,14 +26,8 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:PromotionMenuOptionViewModel">
-                        <Image Source="{Binding PieceImage}">
-                            <i:Interaction.Behaviors>
-                                <ia:EventTriggerBehavior EventName="Tapped">
-                                    <InvokeCommandAction Command="{Binding $parent[ItemsControl].((vm:PromotionMenuViewModel)DataContext)?.SelectPromotionTypeCommand}"
-                                                         CommandParameter="{Binding}"/>
-                                </ia:EventTriggerBehavior>
-                            </i:Interaction.Behaviors>
-                        </Image>
+                        <Image Source="{Binding PieceImage}"
+                               Tapped="Option_OnTapped"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
